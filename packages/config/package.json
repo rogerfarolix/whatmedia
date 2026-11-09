@@ -3,8 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./presets.json": "./src/presets.json",
     "./whatsapp-limits.json": "./src/whatsapp-limits.json",
     "./tokens.css": "./src/tokens.css"
@@ -23,4 +28,3 @@
     "zod": "^3.23.0"
   }
 }
-

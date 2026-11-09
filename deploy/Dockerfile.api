@@ -20,7 +20,7 @@ RUN pnpm install --frozen-lockfile
 COPY packages/ ./packages/
 COPY apps/api/ ./apps/api/
 
-# Build core and API
+# Build core and API using turbo to ensure all dependencies build their dist
 RUN pnpm --filter @whatmedia/config build && \
     pnpm --filter @whatmedia/core build && \
     pnpm --filter @whatmedia/api build
@@ -48,4 +48,3 @@ USER node
 EXPOSE 3000
 
 CMD ["node", "apps/api/dist/server.js"]
-
