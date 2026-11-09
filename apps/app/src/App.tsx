@@ -7,9 +7,11 @@ import { PresetSelector } from './components/PresetSelector';
 import { AnalysisScreen } from './components/AnalysisScreen';
 import { ProcessingScreen } from './components/ProcessingScreen';
 import { ResultsScreen } from './components/ResultsScreen';
+import { ConsentModal } from './components/ConsentModal';
 import { Footer } from './components/Footer';
 import { useMediaStore } from './store/useMediaStore';
 import { probe, plan, run, detectCapabilities } from '@whatmedia/core';
+import { runServerJob } from './utils/serverClient';
 
 export const App: React.FC = () => {
   const {
@@ -33,6 +35,7 @@ export const App: React.FC = () => {
   } = useMediaStore();
 
   const abortControllerRef = React.useRef<AbortController | null>(null);
+  const [showConsentModal, setShowConsentModal] = React.useState(false);
 
   const handleFilesSelected = async (files: File[]) => {
     const file = files[0];
@@ -72,8 +75,41 @@ export const App: React.FC = () => {
 
       setOutputFiles(outputs);
       setScreen('results');
-    } catch (err) {
-      console.error('Processing error:', err);
+    } catch (err: unknown) {
+      console.warn('Local processing failed, prompting for server fallback:', err);
+      const isAbort =
+        (err as { name?: string })?.name === 'AbortError' ||
+        (err as { message?: string })?.message?.includes('aborted');
+
+      if (isAbort) {
+        setScreen('analysis');
+        return;
+      }
+
+      setShowConsentModal(true);
+    }
+  };
+
+  const handleConfirmServerFallback = async () => {
+    setShowConsentModal(false);
+    if (!selectedFile) return;
+
+    setScreen('processing');
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const outputs = await runServerJob(selectedFile, {
+        preset: currentPresetId,
+        signal: abortControllerRef.current.signal,
+        onProgress: setProgress,
+      });
+
+      setOutputFiles(outputs);
+      setScreen('results');
+    } catch (err: unknown) {
+      console.error('Server processing error:', err);
+      const msg = (err as { message?: string })?.message || 'Server processing failed';
+      alert(msg);
       setScreen('analysis');
     }
   };
@@ -112,6 +148,7 @@ export const App: React.FC = () => {
             plan={currentPlan}
             isAnalyzing={isAnalyzing}
             onOptimize={handleOptimize}
+            onServerFallback={() => setShowConsentModal(true)}
             onCancel={resetAll}
           />
         )}
@@ -131,6 +168,15 @@ export const App: React.FC = () => {
             onReset={resetAll}
           />
         )}
+
+        <ConsentModal
+          isOpen={showConsentModal}
+          onConfirm={handleConfirmServerFallback}
+          onCancel={() => {
+            setShowConsentModal(false);
+            setScreen('analysis');
+          }}
+        />
       </main>
 
       <Footer />

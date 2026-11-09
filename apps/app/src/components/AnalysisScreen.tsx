@@ -9,6 +9,7 @@ interface Props {
   plan: Plan | null;
   isAnalyzing: boolean;
   onOptimize: () => void;
+  onServerFallback?: () => void;
   onCancel: () => void;
 }
 
@@ -18,6 +19,7 @@ export const AnalysisScreen: React.FC<Props> = ({
   plan,
   isAnalyzing,
   onOptimize,
+  onServerFallback,
   onCancel,
 }) => {
   const { t } = useTranslation();
@@ -101,6 +103,19 @@ export const AnalysisScreen: React.FC<Props> = ({
           {t('startOptimization')}
         </button>
       </div>
+
+      {onServerFallback && (
+        <div className="text-center pt-1 border-t border-[var(--wm-border)]/60">
+          <button
+            type="button"
+            onClick={onServerFallback}
+            className="text-xs text-[var(--wm-muted)] hover:text-[var(--wm-signal)] transition-colors inline-flex items-center gap-1.5"
+          >
+            <span>☁️</span>
+            <span className="underline">Appareil ancien ou lent ? Traiter via notre serveur de secours</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
