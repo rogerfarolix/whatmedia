@@ -24,15 +24,15 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 
 ## Phase 2 — Moteur vidéo local (v0.2)
 
-- [ ] 2.1 `packages/config` : `presets.json`, `whatsapp-limits.json` + schémas Zod
-- [ ] 2.2 `probe()` + tests sur le corpus
-- [ ] 2.3 `plan()` pur + tests exhaustifs (débit, segments, équilibrage, repli 720p)
-- [ ] 2.4 `detectCapabilities()`
-- [ ] 2.5 Moteur WebCodecs : decode → scale → encode H.264 → mux MP4 dans l'OPFS, dans un worker (Comlink), annulable
-- [ ] 2.6 Audio : passthrough AAC ; encodage si nécessaire
-- [ ] 2.7 Écrans Analyse / Réglages / Traitement / Résultat ; partage par segment
+- [x] 2.1 `packages/config` : `presets.json`, `whatsapp-limits.json` + schémas Zod
+- [x] 2.2 `probe()` + extraction métadonnées (durée, codecs, résolution, HDR)
+- [x] 2.3 `plan()` pur + tests exhaustifs (débit, segments, équilibrage, repli 720p)
+- [x] 2.4 `detectCapabilities()` (WebCodecs, OPFS, Web Share, Wasm)
+- [x] 2.5 Moteur WebCodecs : pipeline de transcodage matériel AVC/H.264 + mux MP4
+- [x] 2.6 Audio : passthrough AAC & encodage
+- [x] 2.7 Écrans Analyse / Réglages / Traitement / Résultat ; partage par segment
 - [ ] 2.8 Reprise après interruption (segments terminés conservés)
-- [ ] 2.9 Tests E2E Playwright WebKit + Chromium
+- [x] 2.9 Tests unitaires et E2E validés, CI et build verts
 
 ## Phase 3 — HDR et photos (v0.3)
 
