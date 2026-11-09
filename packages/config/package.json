@@ -1,7 +1,18 @@
 {
   "name": "@whatmedia/config",
-  "version": "0.0.0",
-  "private": true,
+  "version": "1.0.0",
+  "description": "WhatsApp status limits, validated video/image presets, and lab quality benchmarks",
+  "license": "MIT",
+  "author": "Roger Gnanih <roger@nealix.org>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerfarolix/whatmedia.git",
+    "directory": "packages/config"
+  },
+  "bugs": {
+    "url": "https://github.com/rogerfarolix/whatmedia/issues"
+  },
+  "homepage": "https://whatmedia.nealix.org",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,6 +26,12 @@
     "./measurements.json": "./src/measurements.json",
     "./tokens.css": "./src/tokens.css"
   },
+  "files": [
+    "dist",
+    "src/*.json",
+    "src/tokens.css",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "lint": "eslint src/",
