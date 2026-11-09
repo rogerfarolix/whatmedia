@@ -1,0 +1,93 @@
+@import 'tailwindcss';
+@import '@whatmedia/config/tokens.css';
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/inter.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono.woff2') format('woff2');
+}
+
+@theme {
+  --color-wm-ink: var(--wm-ink);
+  --color-wm-paper: var(--wm-paper);
+  --color-wm-signal: var(--wm-signal);
+  --color-wm-signal-hover: var(--wm-signal-hover);
+  --color-wm-signal-light: var(--wm-signal-light);
+  --color-wm-focus: var(--wm-focus);
+  --color-wm-focus-light: var(--wm-focus-light);
+  --color-wm-ok: var(--wm-ok);
+  --color-wm-ok-light: var(--wm-ok-light);
+  --color-wm-warn: var(--wm-warn);
+  --color-wm-warn-light: var(--wm-warn-light);
+  --color-wm-muted: var(--wm-muted);
+  --color-wm-surface: var(--wm-surface);
+  --color-wm-surface-elevated: var(--wm-surface-elevated);
+  --color-wm-border: var(--wm-border);
+  --color-wm-border-subtle: var(--wm-border-subtle);
+
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --radius-wm-card: 14px;
+  --radius-wm-button: 999px;
+  --radius-wm-input: 10px;
+}
+
+html {
+  scroll-behavior: smooth;
+  color-scheme: light dark;
+}
+
+body {
+  font-family: var(--wm-font-body);
+  background-color: var(--wm-paper);
+  color: var(--wm-ink);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--wm-font-heading);
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--wm-font-mono);
+}
+
+:focus-visible {
+  outline: 2px solid var(--wm-focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

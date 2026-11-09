@@ -5,3 +5,4 @@ describe('@whatmedia/api stub test', () => {
     expect(true).toBe(true);
   });
 });
+

@@ -1,0 +1,203 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const testClips = [
+  {
+    name: 'clip_01_hdr_sunset_landscape.mov',
+    type: 'Landscape 4K HDR (Dolby Vision 60fps)',
+    vmafDirect: 'Mesures en cours',
+    vmafWM: 'Mesures en cours',
+    status: 'Testing',
+  },
+  {
+    name: 'clip_02_talking_head_indoor.mp4',
+    type: 'Indoor face 1080p 30fps SDR',
+    vmafDirect: 'Mesures en cours',
+    vmafWM: 'Mesures en cours',
+    status: 'Testing',
+  },
+  {
+    name: 'clip_03_sports_fast_motion.mp4',
+    type: 'Action sports 4K 60fps SDR',
+    vmafDirect: 'Mesures en cours',
+    vmafWM: 'Mesures en cours',
+    status: 'Testing',
+  },
+  {
+    name: 'clip_04_night_neon_city.mov',
+    type: 'Low-light urban 4K HDR',
+    vmafDirect: 'Mesures en cours',
+    vmafWM: 'Mesures en cours',
+    status: 'Testing',
+  },
+  {
+    name: 'clip_05_screencast_code_text.mp4',
+    type: 'Fine text & UI 1080p 60fps',
+    vmafDirect: 'Mesures en cours',
+    vmafWM: 'Mesures en cours',
+    status: 'Testing',
+  },
+];
+---
+
+<BaseLayout
+  title="Quality Benchmarks & Measurements — WhatMedia"
+  description="Scientific video quality evaluation protocol (VMAF, SSIM) on real WhatsApp status delivery."
+  lang="en"
+  currentPath="/en/measurements"
+>
+  <div class="py-12 md:py-20">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-xs font-mono text-wm-muted">
+        <a href="/en/" class="hover:text-wm-ink">Home</a>
+        <span>/</span>
+        <span class="text-wm-signal font-semibold">Measurements</span>
+      </div>
+
+      <div class="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 class="font-heading text-3xl font-extrabold tracking-tight text-wm-ink sm:text-4xl">
+            Objective Quality Benchmarks (VMAF / SSIM)
+          </h1>
+          <p class="mt-2 text-base text-wm-muted">
+            Radical honesty. We benchmark actual streams received over WhatsApp networks.
+          </p>
+        </div>
+
+        <div
+          class="inline-flex items-center gap-2 rounded-full border border-wm-warn/30 bg-wm-warn-light px-4 py-1.5 text-xs font-mono font-bold text-wm-warn"
+        >
+          <span class="inline-block h-2 w-2 rounded-full bg-wm-warn animate-pulse"></span>
+          ACTIVE BENCHMARK RUN IN PROGRESS
+        </div>
+      </div>
+
+      <!-- Scientific Honesty Banner -->
+      <div
+        class="mt-8 rounded-xl border border-wm-border bg-wm-surface p-6 text-sm text-wm-muted leading-relaxed"
+      >
+        <p class="font-semibold text-wm-ink mb-1">Scientific Integrity Principle:</p>
+        <p>
+          Unlike proprietary software that invents fictional quality percentage increases for
+          marketing hype, WhatMedia refuses to display fabricated scores. Until our comprehensive
+          testing corpus is fully finalized and open-sourced, all metrics display <strong
+            >"Mesures en cours" (Measurements in progress)</strong
+          >.
+        </p>
+      </div>
+
+      <!-- Protocol Section -->
+      <section class="mt-12 space-y-6">
+        <h2 class="font-heading text-2xl font-bold text-wm-ink border-b border-wm-border pb-3">
+          1. End-to-End Evaluation Protocol
+        </h2>
+        <p class="text-sm text-wm-muted leading-relaxed">
+          To measure real-world performance, we do not compare local test files: we measure the
+          video as received on the viewer's device after traversing WhatsApp's cloud ingest
+          pipeline.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-xs font-mono">
+          <div class="rounded-lg border border-wm-border bg-wm-paper p-4">
+            <span class="text-wm-signal font-bold">Step 1</span>
+            <p class="mt-1 font-sans text-wm-ink font-semibold">Master Reference</p>
+            <p class="text-wm-muted">Uncompressed 4K ProRes/HDR master clip</p>
+          </div>
+          <div class="rounded-lg border border-wm-border bg-wm-paper p-4">
+            <span class="text-wm-signal font-bold">Step 2</span>
+            <p class="mt-1 font-sans text-wm-ink font-semibold">Status Ingest</p>
+            <p class="text-wm-muted">Posted to real WhatsApp status via test rig</p>
+          </div>
+          <div class="rounded-lg border border-wm-border bg-wm-paper p-4">
+            <span class="text-wm-signal font-bold">Step 3</span>
+            <p class="mt-1 font-sans text-wm-ink font-semibold">Stream Capture</p>
+            <p class="text-wm-muted">Extracted from viewer recipient device</p>
+          </div>
+          <div class="rounded-lg border border-wm-border bg-wm-paper p-4">
+            <span class="text-wm-signal font-bold">Step 4</span>
+            <p class="mt-1 font-sans text-wm-ink font-semibold">VMAF Calculation</p>
+            <p class="text-wm-muted">Frame-by-frame scoring via Netflix libvmaf</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reference Clips Table -->
+      <section class="mt-12 space-y-6">
+        <h2 class="font-heading text-2xl font-bold text-wm-ink border-b border-wm-border pb-3">
+          2. Standardized Reference Test Corpus
+        </h2>
+
+        <div
+          class="overflow-x-auto rounded-wm-card border border-wm-border bg-wm-surface shadow-sm"
+        >
+          <table class="w-full text-left text-sm">
+            <thead class="border-b border-wm-border bg-wm-paper/80 font-mono text-xs text-wm-ink">
+              <tr>
+                <th scope="col" class="px-5 py-3">File / Scene</th>
+                <th scope="col" class="px-5 py-3">Source Spec</th>
+                <th scope="col" class="px-5 py-3">Direct Upload</th>
+                <th scope="col" class="px-5 py-3">With WhatMedia</th>
+                <th scope="col" class="px-5 py-3">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-wm-border">
+              {
+                testClips.map((clip) => (
+                  <tr class="hover:bg-wm-paper/40 transition-colors">
+                    <td class="px-5 py-4 font-mono text-xs font-semibold text-wm-ink">
+                      {clip.name}
+                    </td>
+                    <td class="px-5 py-4 text-xs text-wm-muted">{clip.type}</td>
+                    <td class="px-5 py-4 font-mono text-xs text-wm-warn">{clip.vmafDirect}</td>
+                    <td class="px-5 py-4 font-mono text-xs font-semibold text-wm-warn">
+                      {clip.vmafWM}
+                    </td>
+                    <td class="px-5 py-4">
+                      <span class="inline-flex items-center rounded-full bg-wm-warn-light px-2.5 py-0.5 text-[11px] font-mono font-medium text-wm-warn">
+                        {clip.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Reproducibility -->
+      <section class="mt-12 space-y-4">
+        <h2 class="font-heading text-2xl font-bold text-wm-ink border-b border-wm-border pb-3">
+          3. Open Source Reproducibility
+        </h2>
+        <p class="text-sm text-wm-muted leading-relaxed">
+          The entire benchmark toolchain is open source under <code>tools/benchmarks</code>. Any
+          video engineer or researcher can inspect our methodology or reproduce results with their
+          own test vectors.
+        </p>
+        <div class="pt-2">
+          <a
+            href="https://github.com/nealix/whatmedia/tree/main/tools"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-wm-button border border-wm-border bg-wm-surface px-5 py-2.5 text-xs font-mono font-semibold text-wm-ink hover:border-wm-ink transition-colors"
+          >
+            <span>Inspect Benchmark Scripts on GitHub</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                clip-rule="evenodd"></path>
+            </svg>
+          </a>
+        </div>
+      </section>
+    </div>
+  </div>
+</BaseLayout>
