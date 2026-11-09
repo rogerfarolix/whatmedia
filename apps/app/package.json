@@ -15,6 +15,7 @@
   "dependencies": {
     "@whatmedia/config": "workspace:*",
     "@whatmedia/core": "workspace:*",
+    "comlink": "^4.4.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "zustand": "^5.0.0"
@@ -32,4 +33,3 @@
     "workbox-window": "^7.0.0"
   }
 }
-

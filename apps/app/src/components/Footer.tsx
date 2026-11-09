@@ -1,47 +1,45 @@
+import React from 'react';
 import { useTranslation } from '../i18n/useTranslation';
 
-export function Footer() {
+export const Footer: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <footer className="mt-auto border-t border-wm-border/40 py-8 px-4 text-center text-xs text-wm-muted transition-colors">
-      <div className="max-w-2xl mx-auto space-y-3">
-        {/* Links & Credits */}
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 font-medium">
+    <footer className="w-full border-t border-[var(--wm-border)] bg-[var(--wm-surface)] py-6 mt-auto">
+      <div className="max-w-xl mx-auto px-4 flex flex-col items-center gap-3 text-center text-xs text-[var(--wm-muted)]">
+        <div className="flex items-center gap-4">
           <a
-            href="https://github.com/rogergnanih/whatmedia"
+            href="https://whatmedia.nealix.org"
+            className="hover:text-[var(--wm-ink)] transition-colors"
+          >
+            Site
+          </a>
+          <span>·</span>
+          <a
+            href="https://github.com/rogerfarolix/whatmedia"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-wm-ink underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wm-focus rounded py-1 px-1"
+            className="hover:text-[var(--wm-ink)] transition-colors"
           >
-            {t.footer.github}
+            GitHub
           </a>
-          <span className="text-wm-border select-none" aria-hidden="true">•</span>
+          <span>·</span>
           <a
             href="/confidentialite"
-            className="hover:text-wm-ink underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wm-focus rounded py-1 px-1"
+            className="hover:text-[var(--wm-ink)] transition-colors"
           >
-            {t.footer.privacy}
-          </a>
-          <span className="text-wm-border select-none" aria-hidden="true">•</span>
-          <a
-            href="/comment-ca-marche"
-            className="hover:text-wm-ink underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wm-focus rounded py-1 px-1"
-          >
-            {t.footer.howItWorks}
+            Confidentialité
           </a>
         </div>
 
-        {/* Author / Nealix credit */}
-        <p className="text-wm-muted/80">
-          {t.footer.credits}
+        <p className="text-[11px] max-w-sm leading-relaxed">
+          {t('disclaimer')}
         </p>
 
-        {/* Mandatory WhatsApp Non-Affiliation Disclaimer */}
-        <p className="pt-2 text-[11px] text-wm-muted/60 max-w-md mx-auto leading-normal">
-          {t.footer.disclaimer}
-        </p>
+        <span className="text-[10px] text-[var(--wm-muted)]/60">
+          Un projet Nealix par Roger Gnanih · MIT License
+        </span>
       </div>
     </footer>
   );
-}
+};

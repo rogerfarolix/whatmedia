@@ -1,48 +1,29 @@
+import React from 'react';
 import { useTranslation } from '../i18n/useTranslation';
 
-export function HeroSection() {
+export const HeroSection: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="text-center pt-2 pb-6">
-      <h1 className="font-heading font-extrabold text-3xl sm:text-4xl md:text-5xl tracking-tight text-wm-ink">
-        {t.hero.title}
+    <div className="flex flex-col items-center text-center gap-3 pt-2">
+      <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-[var(--wm-ink)] tracking-tight">
+        {t('heroTitle')}
       </h1>
-
-      <p className="mt-3 text-base sm:text-lg text-wm-muted max-w-lg mx-auto leading-relaxed">
-        {t.hero.subtitle}
+      <p className="text-sm text-[var(--wm-muted)] max-w-sm">
+        {t('heroSubtitle')}
       </p>
 
-      {/* 3 feature pills */}
-      <div
-        className="mt-5 flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm"
-        role="list"
-        aria-label="Caractéristiques principales"
-      >
-        <span
-          role="listitem"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-wm-surface border border-wm-border text-wm-ink font-medium shadow-2xs"
-        >
-          <span className="w-2 h-2 rounded-full bg-wm-ok shrink-0" aria-hidden="true" />
-          {t.pills.local}
+      <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-[11px] font-medium text-[var(--wm-muted)]">
+        <span className="px-2.5 py-1 rounded-full bg-[var(--wm-surface)] border border-[var(--wm-border)]">
+          ✨ {t('pill1')}
         </span>
-
-        <span
-          role="listitem"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-wm-surface border border-wm-border text-wm-ink font-medium shadow-2xs"
-        >
-          <span className="w-2 h-2 rounded-full bg-wm-signal shrink-0" aria-hidden="true" />
-          {t.pills.free}
+        <span className="px-2.5 py-1 rounded-full bg-[var(--wm-surface)] border border-[var(--wm-border)]">
+          🎁 {t('pill2')}
         </span>
-
-        <span
-          role="listitem"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-wm-surface border border-wm-border text-wm-ink font-medium shadow-2xs"
-        >
-          <span className="w-2 h-2 rounded-full bg-wm-focus shrink-0" aria-hidden="true" />
-          {t.pills.openSource}
+        <span className="px-2.5 py-1 rounded-full bg-[var(--wm-surface)] border border-[var(--wm-border)]">
+          🌱 {t('pill3')}
         </span>
       </div>
-    </section>
+    </div>
   );
-}
+};
