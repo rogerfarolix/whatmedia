@@ -56,3 +56,4 @@ RUN printf ':8080 {\n\
 EXPOSE 8080
 
 CMD ["caddy", "run", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"]
+
