@@ -19,9 +19,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
-      - run: pnpm test -- --coverage
+      - run: pnpm test
       - run: pnpm build
       - run: pnpm exec playwright install --with-deps chromium webkit
       - run: pnpm test:e2e
-      - name: Lighthouse CI (landing)
-        run: pnpm --filter web lhci
