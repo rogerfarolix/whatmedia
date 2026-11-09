@@ -12,13 +12,19 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@fastify/cors": "^11.4.1",
+    "@fastify/multipart": "^10.1.8",
+    "@fastify/rate-limit": "^11.2.2",
+    "@fastify/sensible": "^6.0.7",
     "@whatmedia/config": "workspace:*",
+    "@whatmedia/core": "workspace:*",
     "fastify": "^5.0.0",
+    "nanoid": "^6.0.2",
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.28",
     "tsx": "^4.0.0",
     "vitest": "^3.0.0"
   }
 }
-
