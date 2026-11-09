@@ -15,7 +15,8 @@
   "dependencies": {
     "@whatmedia/config": "workspace:*",
     "mediabunny": "^1.65.2",
-    "mp4box": "^2.5.0"
+    "mp4box": "^2.5.0",
+    "piexifjs": "^1.0.6"
   },
   "devDependencies": {
     "vitest": "^3.0.0"
