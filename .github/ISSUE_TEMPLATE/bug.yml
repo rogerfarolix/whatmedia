@@ -1,0 +1,39 @@
+name: Bug
+description: Quelque chose ne marche pas
+labels: [bug, triage]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: "Que s'est-il passé ?"
+      description: "Et qu'attendais-tu ?"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Étapes pour reproduire"
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: "Appareil et OS"
+      placeholder: "iPhone 14, iOS 18.3"
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: "Navigateur / PWA installée ?"
+      placeholder: "Safari, PWA installée"
+  - type: textarea
+    id: media
+    attributes:
+      label: "Média source"
+      description: "Durée, résolution, HDR, codec (visibles dans l'écran Analyse). N'envoie pas de vidéo privée."
+  - type: input
+    id: version
+    attributes:
+      label: "Version de WhatMedia"
+      description: "Visible dans le pied de page de l'app"

@@ -1,0 +1,44 @@
+{
+	email {$ACME_EMAIL}
+}
+
+whatmedia.nealix.org {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+		Cross-Origin-Resource-Policy "same-origin"
+		Content-Security-Policy "default-src 'self'; img-src 'self' blob: data:; media-src 'self' blob:; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+		-Server
+	}
+
+	# Décommenter seulement si le spike S3 retient ffmpeg.wasm multi-thread
+	# @app path /app/*
+	# header @app Cross-Origin-Opener-Policy "same-origin"
+	# header @app Cross-Origin-Embedder-Policy "require-corp"
+
+	@sw path /app/sw.js /app/manifest.webmanifest
+	header @sw Cache-Control "no-cache"
+
+	@assets path /app/assets/* /_astro/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+
+	handle /api/* {
+		request_body {
+			max_size 1GB
+		}
+		reverse_proxy api:3000
+	}
+
+	handle {
+		reverse_proxy web:8080
+	}
+
+	log {
+		output stdout
+		format json
+	}
+}

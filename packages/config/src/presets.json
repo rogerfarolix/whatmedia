@@ -1,0 +1,124 @@
+{
+  "status-hd": {
+    "id": "status-hd",
+    "label": { "fr": "Statut HD", "en": "Status HD" },
+    "description": {
+      "fr": "Résolution et netteté maximales pour les statuts",
+      "en": "Maximum resolution and sharpness for statuses"
+    },
+    "kind": "video",
+    "default": true,
+    "video": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 30,
+      "codec": "avc1.640028",
+      "profile": "high",
+      "level": "4.0",
+      "targetBps": 5000000,
+      "minBps": 1500000,
+      "keyframeIntervalSec": 2
+    },
+    "audio": {
+      "bitrate": 128000,
+      "sampleRate": 48000,
+      "channels": 2
+    },
+    "color": {
+      "primaries": "bt709",
+      "transfer": "bt709",
+      "matrix": "bt709",
+      "range": "limited"
+    },
+    "segmentSec": null
+  },
+  "status-light": {
+    "id": "status-light",
+    "label": { "fr": "Statut léger", "en": "Status Light" },
+    "description": {
+      "fr": "Fichier plus petit, réseau lent",
+      "en": "Smaller file, slow network"
+    },
+    "kind": "video",
+    "default": false,
+    "video": {
+      "width": 720,
+      "height": 1280,
+      "fps": 30,
+      "codec": "avc1.64001f",
+      "profile": "high",
+      "level": "3.1",
+      "targetBps": 2500000,
+      "minBps": 800000,
+      "keyframeIntervalSec": 2
+    },
+    "audio": {
+      "bitrate": 96000,
+      "sampleRate": 48000,
+      "channels": 2
+    },
+    "color": {
+      "primaries": "bt709",
+      "transfer": "bt709",
+      "matrix": "bt709",
+      "range": "limited"
+    },
+    "segmentSec": null
+  },
+  "chat-hd": {
+    "id": "chat-hd",
+    "label": { "fr": "Discussion HD", "en": "Chat HD" },
+    "description": {
+      "fr": "Qualité maximale pour les messages privés",
+      "en": "Maximum quality for private messages"
+    },
+    "kind": "video",
+    "default": false,
+    "video": {
+      "width": 1920,
+      "height": 1920,
+      "fps": 30,
+      "codec": "avc1.640028",
+      "profile": "high",
+      "level": "4.0",
+      "targetBps": 6000000,
+      "minBps": 1500000,
+      "keyframeIntervalSec": 2
+    },
+    "audio": {
+      "bitrate": 128000,
+      "sampleRate": 48000,
+      "channels": 2
+    },
+    "color": {
+      "primaries": "bt709",
+      "transfer": "bt709",
+      "matrix": "bt709",
+      "range": "limited"
+    },
+    "segmentSec": null
+  },
+  "status-photo": {
+    "id": "status-photo",
+    "label": { "fr": "Photo statut", "en": "Status Photo" },
+    "description": {
+      "fr": "Photo optimisée pour les statuts",
+      "en": "Optimized photo for statuses"
+    },
+    "kind": "image",
+    "default": false,
+    "image": {
+      "width": 1440,
+      "height": 2560,
+      "quality": 0.9,
+      "format": "jpeg"
+    },
+    "color": {
+      "primaries": "bt709",
+      "transfer": "bt709",
+      "matrix": "bt709",
+      "range": "full"
+    }
+  }
+}
+

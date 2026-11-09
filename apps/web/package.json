@@ -1,0 +1,22 @@
+{
+  "name": "@whatmedia/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "eslint src/",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "astro": "^5.1.0",
+    "@astrojs/tailwind": "^6.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "vitest": "^3.0.0"
+  }
+}
+
