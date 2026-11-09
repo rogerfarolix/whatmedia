@@ -1,0 +1,78 @@
+/*
+ * WhatMedia Design Tokens
+ * Shared across apps/web (Astro) and apps/app (React PWA)
+ *
+ * Usage: @import '@whatmedia/config/tokens.css';
+ */
+
+:root {
+  /* Brand colors */
+  --wm-ink: #0b0f1a;
+  --wm-paper: #f7f7f2;
+  --wm-signal: #ff5a1f;
+  --wm-focus: #3d5afe;
+  --wm-ok: #12b76a;
+  --wm-warn: #f79009;
+  --wm-muted: #667085;
+
+  /* Signal variants */
+  --wm-signal-hover: #e64e18;
+  --wm-signal-light: #fff0ea;
+  --wm-focus-light: #eef1ff;
+  --wm-ok-light: #e7f8ef;
+  --wm-warn-light: #fef5e7;
+
+  /* Surfaces */
+  --wm-surface: #ffffff;
+  --wm-surface-elevated: #ffffff;
+  --wm-border: #e4e5e0;
+  --wm-border-subtle: #f0f0ec;
+
+  /* Radii */
+  --wm-radius-card: 14px;
+  --wm-radius-button: 999px;
+  --wm-radius-input: 10px;
+
+  /* Typography scale */
+  --wm-font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --wm-font-body: 'Inter', system-ui, sans-serif;
+  --wm-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Spacing */
+  --wm-space-xs: 0.25rem;
+  --wm-space-sm: 0.5rem;
+  --wm-space-md: 1rem;
+  --wm-space-lg: 1.5rem;
+  --wm-space-xl: 2rem;
+  --wm-space-2xl: 3rem;
+  --wm-space-3xl: 4rem;
+
+  /* Transitions */
+  --wm-transition-fast: 150ms ease;
+  --wm-transition-normal: 250ms ease;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --wm-ink: #f0f0ec;
+    --wm-paper: #0b0f1a;
+    --wm-surface: #151922;
+    --wm-surface-elevated: #1c2130;
+    --wm-border: #2a2f3d;
+    --wm-border-subtle: #1f2433;
+    --wm-signal-light: #2a1a12;
+    --wm-focus-light: #161a2e;
+    --wm-ok-light: #0f2018;
+    --wm-warn-light: #2a1f10;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --wm-transition-fast: 0ms;
+    --wm-transition-normal: 0ms;
+  }
+}
+

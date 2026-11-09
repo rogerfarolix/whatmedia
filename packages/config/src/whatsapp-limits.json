@@ -1,0 +1,9 @@
+{
+  "$schema": "./whatsapp-limits.schema.json",
+  "measuredAt": null,
+  "maxStatusVideoSec": 60,
+  "allowedStatusVideoSec": [30, 60, 90],
+  "maxMediaBytes": 16000000,
+  "safetyMarginBytes": 500000
+}
+
