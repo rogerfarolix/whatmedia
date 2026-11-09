@@ -57,8 +57,13 @@ export async function buildServer() {
   });
 
   await server.register(rateLimit, {
-    max: 10,
-    timeWindow: '1 hour',
+    max: 60,
+    timeWindow: '1 minute',
+    allowList: (req) =>
+      req.url === '/health' ||
+      req.url === '/config' ||
+      req.ip === '127.0.0.1' ||
+      req.ip === '::1',
   });
 
   await server.register(multipart, {
