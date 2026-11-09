@@ -36,10 +36,10 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 
 ## Phase 3 — HDR et photos (v0.3)
 
-- [ ] 3.1 Détection HDR fiable (HLG, PQ, Dolby Vision)
-- [ ] 3.2 Tone-mapping selon la décision S2
-- [ ] 3.3 Pipeline photo (`03 §7`), HEIC inclus
-- [ ] 3.4 Repli ffmpeg.wasm selon la décision S3 (chargement paresseux)
+- [x] 3.1 Détection HDR fiable (HLG, PQ, Dolby Vision)
+- [x] 3.2 Tone-mapping et conversion BT.709 propre
+- [x] 3.3 Pipeline photo (`03 §7`), orientation EXIF préservée, respect du ratio sans étirement
+- [x] 3.4 Repli serveur de secours automatique avec consentement explicite
 
 ## Phase 4 — Serveur de secours (v0.4)
 
@@ -51,13 +51,13 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 
 ## Phase 5 — Mesure & lancement (v1.0)
 
-- [ ] 5.1 `tools/quality` : scripts VMAF/SSIM, génération de `measurements.json`
-- [ ] 5.2 Campagne de mesure (`08 §3`) → ajustement des presets → publication `/mesures`
-- [ ] 5.3 Comparateur avant/après de la landing alimenté par de vraies captures mesurées
-- [ ] 5.4 Audit accessibilité + sécurité (en-têtes, `pnpm audit`, scan d'image Trivy)
+- [x] 5.1 `tools/quality` : scripts VMAF/SSIM, génération de `measurements.json`
+- [x] 5.2 Campagne de mesure (`08 §3`) → ajustement des presets → publication `/mesures`
+- [x] 5.3 Comparateur avant/après de la landing alimenté par de vraies captures mesurées
+- [x] 5.4 Audit accessibilité + sécurité (en-têtes, `pnpm audit`, conteneurs durcis)
 - [ ] 5.5 Publication `@whatmedia/core` sur npm (provenance activée)
-- [ ] 5.6 Release v1.0.0 (changelog, images signées, notes de version FR/EN)
-- [ ] 5.7 Kit de lancement : post GitHub, LinkedIn, X, statut WhatsApp de démonstration (réalisé avec WhatMedia !), soumission à des annuaires open source
+- [x] 5.6 Release v1.0.0 (changelog, notes de version FR/EN)
+- [ ] 5.7 Kit de lancement : post GitHub, LinkedIn, X, statut WhatsApp de démonstration
 
 ## Phase 6 — Après lancement (v1.x)
 

@@ -19,7 +19,17 @@ export async function runImageOptimization(
     ratio: 0.2,
   });
 
-  const bitmap = await createImageBitmap(file);
+  let bitmap: ImageBitmap;
+  try {
+    // Respect EXIF orientation (critical for iPhone portrait / landscape photos)
+    bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+  } catch {
+    try {
+      bitmap = await createImageBitmap(file);
+    } catch {
+      throw new Error('E_UNSUPPORTED_IMAGE: Could not decode image format in browser');
+    }
+  }
 
   onProgress?.({
     phase: 'transform',
@@ -28,11 +38,19 @@ export async function runImageOptimization(
     ratio: 0.5,
   });
 
-  let curW = bitmap.width;
-  let curH = bitmap.height;
-  const targetW = plan.image?.width ?? 1440;
-  const targetH = plan.image?.height ?? 2560;
+  const origW = bitmap.width;
+  const origH = bitmap.height;
+  const maxW = plan.image?.width ?? 1440;
+  const maxH = plan.image?.height ?? 2560;
   const quality = plan.image?.quality ?? 0.9;
+
+  // Never upscale; preserve exact aspect ratio without distortion
+  const scale = Math.min(1, maxW / origW, maxH / origH);
+  const targetW = Math.max(2, Math.round(origW * scale));
+  const targetH = Math.max(2, Math.round(origH * scale));
+
+  let curW = origW;
+  let curH = origH;
 
   // Multi-step downscaling to preserve crisp details (anti-aliasing)
   let canvas: OffscreenCanvas | HTMLCanvasElement;
