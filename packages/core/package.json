@@ -1,11 +1,32 @@
 {
   "name": "@whatmedia/core",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
+  "version": "1.0.0",
+  "description": "Client-side WebCodecs media optimization engine for WhatsApp status and messaging",
+  "license": "MIT",
+  "author": "Roger Gnanih <roger@nealix.org>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerfarolix/whatmedia.git",
+    "directory": "packages/core"
   },
+  "bugs": {
+    "url": "https://github.com/rogerfarolix/whatmedia/issues"
+  },
+  "homepage": "https://whatmedia.nealix.org",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "lint": "eslint src/",
