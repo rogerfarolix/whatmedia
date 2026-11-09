@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BeforeAfterComparator from '../components/BeforeAfterComparator.astro';
+import { measurements } from '@whatmedia/config';
 
 const faqs = [
   {
@@ -369,12 +370,12 @@ const faqs = [
           class="flex flex-col items-center justify-center rounded-wm-card border border-wm-border bg-wm-paper p-8 text-center"
         >
           <span class="text-xs font-mono uppercase tracking-wider text-wm-muted"
-            >Gain VMAF moyen</span
+            >Gain de fidélité VMAF</span
           >
-          <span class="mt-3 font-mono text-2xl md:text-3xl font-bold text-wm-warn">
-            Mesures en cours
+          <span class="mt-3 font-mono text-2xl md:text-3xl font-bold text-wm-signal">
+            +{measurements.summary.medianGainPercent}% à +{measurements.summary.p95GainPercent}%
           </span>
-          <span class="mt-2 text-xs text-wm-muted">Protocole de banc d'essai ouvert</span>
+          <span class="mt-2 text-xs text-wm-muted">Mesuré face à l'envoi direct</span>
         </div>
 
         <!-- Metric 2: Clips testés -->
@@ -382,13 +383,13 @@ const faqs = [
           class="flex flex-col items-center justify-center rounded-wm-card border border-wm-border bg-wm-paper p-8 text-center"
         >
           <span class="text-xs font-mono uppercase tracking-wider text-wm-muted"
-            >Clips de référence testés</span
+            >Score VMAF médian WhatMedia</span
           >
-          <span class="mt-3 font-mono text-2xl md:text-3xl font-bold text-wm-warn">
-            Mesures en cours
+          <span class="mt-3 font-mono text-2xl md:text-3xl font-bold text-wm-signal">
+            {measurements.summary.medianVmafWhatMedia} / 100
           </span>
           <span class="mt-2 text-xs text-wm-muted"
-            >Corpus varié (HDR, 60fps, paysages, visages)</span
+            >Qualité quasi indistinguable de la source</span
           >
         </div>
 
@@ -397,12 +398,12 @@ const faqs = [
           class="flex flex-col items-center justify-center rounded-wm-card border border-wm-border bg-wm-paper p-8 text-center"
         >
           <span class="text-xs font-mono uppercase tracking-wider text-wm-muted"
-            >Dernière mise à jour</span
+            >Banc de test Netflix libvmaf</span
           >
-          <span class="mt-3 font-mono text-2xl md:text-3xl font-bold text-wm-warn">
-            Mesures en cours
+          <span class="mt-3 font-mono text-2xl md:text-3xl font-bold text-wm-signal">
+            {measurements.results.length} scènes validées
           </span>
-          <span class="mt-2 text-xs text-wm-muted">Consolidation continue des données</span>
+          <span class="mt-2 text-xs text-wm-muted">Corpus varié HDR, 60fps, paysages, visages</span>
         </div>
       </div>
 

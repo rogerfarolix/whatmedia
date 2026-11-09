@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { presetsMapSchema, whatsappLimitsSchema } from '../src/schemas.js';
+import { presetsMapSchema, whatsappLimitsSchema, measurementsSchema } from '../src/schemas.js';
 import presetsJson from '../src/presets.json' with { type: 'json' };
 import whatsappLimitsJson from '../src/whatsapp-limits.json' with { type: 'json' };
+import measurementsJson from '../src/measurements.json' with { type: 'json' };
 
 describe('presets.json', () => {
   it('validates against the Zod schema', () => {
@@ -45,4 +46,28 @@ describe('whatsapp-limits.json', () => {
     expect(limits.safetyMarginBytes).toBeLessThan(limits.maxMediaBytes);
   });
 });
+
+describe('measurements.json', () => {
+  it('validates against the measurements schema', () => {
+    const result = measurementsSchema.safeParse(measurementsJson);
+    expect(result.success).toBe(true);
+  });
+
+  it('contains valid VMAF numbers higher than 0', () => {
+    const data = measurementsSchema.parse(measurementsJson);
+    expect(data.results.length).toBeGreaterThan(0);
+    for (const res of data.results) {
+      expect(res.metrics.whatmedia.vmaf).toBeGreaterThan(0);
+      expect(res.metrics.directUpload.vmaf).toBeGreaterThan(0);
+    }
+  });
+
+  it('shows WhatMedia VMAF greater than or equal to direct upload across test scenes', () => {
+    const data = measurementsSchema.parse(measurementsJson);
+    for (const res of data.results) {
+      expect(res.metrics.whatmedia.vmaf).toBeGreaterThanOrEqual(res.metrics.directUpload.vmaf);
+    }
+  });
+});
+
 

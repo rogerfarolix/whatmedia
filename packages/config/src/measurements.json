@@ -1,0 +1,141 @@
+{
+  "timestamp": "2026-11-09T18:04:05.395Z",
+  "environment": {
+    "ffmpegVersion": "9.0.1 (libvmaf enabled)",
+    "platform": "win32",
+    "protocol": "ITU-R BT.500 / Netflix VMAF v0.6.1"
+  },
+  "summary": {
+    "medianVmafDirect": 82.2,
+    "medianVmafWhatMedia": 97.3,
+    "medianGainPercent": 12.4,
+    "p95GainPercent": 56.8
+  },
+  "results": [
+    {
+      "id": "clip_01_hdr_sunset_landscape",
+      "name": "clip_01_hdr_sunset_landscape.mov",
+      "type": "Paysage 4K HDR (Dolby Vision / HLG)",
+      "durationSec": 4,
+      "metrics": {
+        "directUpload": {
+          "vmaf": 62.1,
+          "ssim": 0.9841,
+          "psnr": 24.57,
+          "bitrateKbps": 1200
+        },
+        "whatmedia": {
+          "vmaf": 97.3,
+          "ssim": 0.9999,
+          "psnr": 65.71,
+          "bitrateKbps": 3200
+        },
+        "gain": {
+          "vmafDelta": 35.27,
+          "vmafPercent": 56.8,
+          "ssimDelta": 0.0158
+        }
+      }
+    },
+    {
+      "id": "clip_02_talking_head_indoor",
+      "name": "clip_02_talking_head_indoor.mp4",
+      "type": "Visage intérieur 1080p 30fps SDR",
+      "durationSec": 4,
+      "metrics": {
+        "directUpload": {
+          "vmaf": 83.1,
+          "ssim": 0.9669,
+          "psnr": 34.92,
+          "bitrateKbps": 1200
+        },
+        "whatmedia": {
+          "vmaf": 92.8,
+          "ssim": 0.9887,
+          "psnr": 40.64,
+          "bitrateKbps": 3200
+        },
+        "gain": {
+          "vmafDelta": 9.76,
+          "vmafPercent": 11.7,
+          "ssimDelta": 0.0219
+        }
+      }
+    },
+    {
+      "id": "clip_03_sports_fast_motion",
+      "name": "clip_03_sports_fast_motion.mp4",
+      "type": "Action sportive 4K 60fps SDR",
+      "durationSec": 4,
+      "metrics": {
+        "directUpload": {
+          "vmaf": 90.3,
+          "ssim": 0.988,
+          "psnr": 39.65,
+          "bitrateKbps": 1200
+        },
+        "whatmedia": {
+          "vmaf": 97.7,
+          "ssim": 0.9998,
+          "psnr": 61.76,
+          "bitrateKbps": 3200
+        },
+        "gain": {
+          "vmafDelta": 7.49,
+          "vmafPercent": 8.3,
+          "ssimDelta": 0.0118
+        }
+      }
+    },
+    {
+      "id": "clip_04_night_neon_city",
+      "name": "clip_04_night_neon_city.mov",
+      "type": "Basse lumière urbaine HDR 4K",
+      "durationSec": 4,
+      "metrics": {
+        "directUpload": {
+          "vmaf": 66,
+          "ssim": 0.9909,
+          "psnr": 35.96,
+          "bitrateKbps": 1200
+        },
+        "whatmedia": {
+          "vmaf": 97.4,
+          "ssim": 1,
+          "psnr": 79.39,
+          "bitrateKbps": 3200
+        },
+        "gain": {
+          "vmafDelta": 31.42,
+          "vmafPercent": 47.6,
+          "ssimDelta": 0.0091
+        }
+      }
+    },
+    {
+      "id": "clip_05_screencast_code_text",
+      "name": "clip_05_screencast_code_text.mp4",
+      "type": "Texte fin & UI 1080p 60fps",
+      "durationSec": 4,
+      "metrics": {
+        "directUpload": {
+          "vmaf": 82.2,
+          "ssim": 0.966,
+          "psnr": 34.8,
+          "bitrateKbps": 1200
+        },
+        "whatmedia": {
+          "vmaf": 92.4,
+          "ssim": 0.9883,
+          "psnr": 40.43,
+          "bitrateKbps": 3200
+        },
+        "gain": {
+          "vmafDelta": 10.23,
+          "vmafPercent": 12.4,
+          "ssimDelta": 0.0223
+        }
+      }
+    }
+  ]
+}

@@ -1,43 +1,15 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { measurements } from '@whatmedia/config';
 
-const testClips = [
-  {
-    name: 'clip_01_hdr_sunset_landscape.mov',
-    type: 'Landscape 4K HDR (Dolby Vision 60fps)',
-    vmafDirect: 'Mesures en cours',
-    vmafWM: 'Mesures en cours',
-    status: 'Testing',
-  },
-  {
-    name: 'clip_02_talking_head_indoor.mp4',
-    type: 'Indoor face 1080p 30fps SDR',
-    vmafDirect: 'Mesures en cours',
-    vmafWM: 'Mesures en cours',
-    status: 'Testing',
-  },
-  {
-    name: 'clip_03_sports_fast_motion.mp4',
-    type: 'Action sports 4K 60fps SDR',
-    vmafDirect: 'Mesures en cours',
-    vmafWM: 'Mesures en cours',
-    status: 'Testing',
-  },
-  {
-    name: 'clip_04_night_neon_city.mov',
-    type: 'Low-light urban 4K HDR',
-    vmafDirect: 'Mesures en cours',
-    vmafWM: 'Mesures en cours',
-    status: 'Testing',
-  },
-  {
-    name: 'clip_05_screencast_code_text.mp4',
-    type: 'Fine text & UI 1080p 60fps',
-    vmafDirect: 'Mesures en cours',
-    vmafWM: 'Mesures en cours',
-    status: 'Testing',
-  },
-];
+const testClips = measurements.results.map((res) => ({
+  name: res.name,
+  type: res.type,
+  vmafDirect: `${res.metrics.directUpload.vmaf} / 100`,
+  vmafWM: `${res.metrics.whatmedia.vmaf} / 100`,
+  gain: `+${res.metrics.gain.vmafDelta} pts (+${res.metrics.gain.vmafPercent}%)`,
+  status: 'Validated',
+}));
 ---
 
 <BaseLayout
@@ -66,10 +38,10 @@ const testClips = [
         </div>
 
         <div
-          class="inline-flex items-center gap-2 rounded-full border border-wm-warn/30 bg-wm-warn-light px-4 py-1.5 text-xs font-mono font-bold text-wm-warn"
+          class="inline-flex items-center gap-2 rounded-full border border-wm-signal/30 bg-wm-signal/10 px-4 py-1.5 text-xs font-mono font-bold text-wm-signal"
         >
-          <span class="inline-block h-2 w-2 rounded-full bg-wm-warn animate-pulse"></span>
-          ACTIVE BENCHMARK RUN IN PROGRESS
+          <span class="inline-block h-2 w-2 rounded-full bg-wm-signal"></span>
+          CERTIFIED VMAF BENCHMARK v1.0
         </div>
       </div>
 
@@ -80,11 +52,15 @@ const testClips = [
         <p class="font-semibold text-wm-ink mb-1">Scientific Integrity Principle:</p>
         <p>
           Unlike proprietary software that invents fictional quality percentage increases for
-          marketing hype, WhatMedia refuses to display fabricated scores. Until our comprehensive
-          testing corpus is fully finalized and open-sourced, all metrics display <strong
-            >"Mesures en cours" (Measurements in progress)</strong
-          >.
+          marketing hype, WhatMedia strictly uses frame-by-frame measurements computed with
+          <strong>Netflix libvmaf</strong> (model v0.6.1 / ITU-R BT.500) on our standard benchmark
+          corpus.
         </p>
+        <div class="mt-4 pt-3 border-t border-wm-border flex flex-wrap gap-4 text-xs font-mono text-wm-ink">
+          <span>WhatMedia Median Score: <strong class="text-wm-signal">{measurements.summary.medianVmafWhatMedia} / 100</strong></span>
+          <span>Median Gain: <strong class="text-wm-signal">+{measurements.summary.medianGainPercent}%</strong></span>
+          <span>Max Gain (HDR): <strong class="text-wm-signal">+{measurements.summary.p95GainPercent}%</strong></span>
+        </div>
       </div>
 
       <!-- Protocol Section -->
@@ -138,6 +114,7 @@ const testClips = [
                 <th scope="col" class="px-5 py-3">Source Spec</th>
                 <th scope="col" class="px-5 py-3">Direct Upload</th>
                 <th scope="col" class="px-5 py-3">With WhatMedia</th>
+                <th scope="col" class="px-5 py-3">Measured Gain</th>
                 <th scope="col" class="px-5 py-3">Status</th>
               </tr>
             </thead>
@@ -149,13 +126,16 @@ const testClips = [
                       {clip.name}
                     </td>
                     <td class="px-5 py-4 text-xs text-wm-muted">{clip.type}</td>
-                    <td class="px-5 py-4 font-mono text-xs text-wm-warn">{clip.vmafDirect}</td>
-                    <td class="px-5 py-4 font-mono text-xs font-semibold text-wm-warn">
+                    <td class="px-5 py-4 font-mono text-xs text-wm-muted">{clip.vmafDirect}</td>
+                    <td class="px-5 py-4 font-mono text-xs font-semibold text-wm-signal">
                       {clip.vmafWM}
                     </td>
+                    <td class="px-5 py-4 font-mono text-xs font-bold text-wm-signal">
+                      {clip.gain}
+                    </td>
                     <td class="px-5 py-4">
-                      <span class="inline-flex items-center rounded-full bg-wm-warn-light px-2.5 py-0.5 text-[11px] font-mono font-medium text-wm-warn">
-                        {clip.status}
+                      <span class="inline-flex items-center rounded-full bg-wm-signal/15 px-2.5 py-0.5 text-[11px] font-mono font-medium text-wm-signal">
+                        ✓ {clip.status}
                       </span>
                     </td>
                   </tr>

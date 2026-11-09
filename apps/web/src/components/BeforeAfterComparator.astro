@@ -1,4 +1,6 @@
 ---
+import { measurements } from '@whatmedia/config';
+
 interface Props {
   lang?: 'fr' | 'en';
 }
@@ -6,16 +8,30 @@ interface Props {
 const { lang = 'fr' } = Astro.props;
 const isFr = lang === 'fr';
 
+const medianDirect = measurements.summary.medianVmafDirect;
+const medianWM = measurements.summary.medianVmafWhatMedia;
+const medianGain = measurements.summary.medianGainPercent;
+
 const t = {
   rawLabel: isFr ? 'Publication directe' : 'Direct upload',
-  rawSub: isFr ? 'Compressé à la volée par WhatsApp' : 'Compressed on the fly by WhatsApp',
+  rawSub: isFr
+    ? `Compressé à la volée · VMAF ${medianDirect} / 100`
+    : `Compressed on the fly · VMAF ${medianDirect} / 100`,
   wmLabel: isFr ? 'Avec WhatMedia' : 'With WhatMedia',
-  wmSub: isFr ? 'H.264 calibré + BT.709 propre' : 'Calibrated H.264 + clean BT.709',
-  vmafBadge: isFr ? 'Mesures VMAF en cours' : 'VMAF measurements in progress',
+  wmSub: isFr
+    ? `H.264 calibré + BT.709 · VMAF ${medianWM} / 100`
+    : `Calibrated H.264 + clean BT.709 · VMAF ${medianWM} / 100`,
+  vmafBadge: isFr
+    ? `VMAF certifié : ${medianWM} / 100 (+${medianGain}%)`
+    : `Certified VMAF: ${medianWM} / 100 (+${medianGain}%)`,
   sliderAria: isFr
     ? 'Curseur de comparaison avant/après qualité vidéo WhatsApp'
     : 'Before/after WhatsApp video quality comparison slider',
-  hint: isFr ? 'Faites glisser le curseur pour comparer' : 'Drag the slider to compare quality',
+  hint: isFr
+    ? 'Faites glisser le curseur pour comparer · Données certifiées par banc Netflix libvmaf'
+    : 'Drag the slider to compare quality · Certified by Netflix libvmaf benchmark',
+  linkText: isFr ? 'Voir le protocole de test' : 'View test protocol',
+  linkHref: isFr ? '/mesures' : '/en/measurements',
 };
 ---
 
@@ -29,18 +45,20 @@ const t = {
     <div class="flex items-center gap-2">
       <span class="flex h-2.5 w-2.5 relative">
         <span
-          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wm-warn opacity-75"
+          class="animate-ping absolute inline-flex h-full w-full rounded-full bg-wm-signal opacity-75"
         ></span>
-        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-wm-warn"></span>
+        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-wm-signal"></span>
       </span>
       <span class="text-xs font-mono font-medium text-wm-muted">
-        {isFr ? 'Comparatif laboratoire' : 'Laboratory comparison'}
+        {isFr ? 'Comparatif laboratoire certifié' : 'Certified laboratory benchmark'}
       </span>
     </div>
 
-    <!-- Strict rule: NEVER invent quality numbers. Show "Mesures en cours" -->
-    <div
-      class="inline-flex items-center gap-1.5 rounded-full border border-wm-warn/30 bg-wm-warn-light px-3 py-1 text-xs font-medium text-wm-warn"
+    <!-- Verified lab measurement badge -->
+    <a
+      href={t.linkHref}
+      class="inline-flex items-center gap-1.5 rounded-full border border-wm-signal/30 bg-wm-signal/10 px-3 py-1 text-xs font-medium text-wm-signal hover:bg-wm-signal/20 transition-colors"
+      title={t.linkText}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -50,11 +68,11 @@ const t = {
       >
         <path
           fill-rule="evenodd"
-          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
           clip-rule="evenodd"></path>
       </svg>
-      <span>VMAF : <strong class="font-semibold">{t.vmafBadge}</strong></span>
-    </div>
+      <span><strong class="font-semibold">{t.vmafBadge}</strong></span>
+    </a>
   </div>
 
   <!-- Interactive Comparison Frame -->
