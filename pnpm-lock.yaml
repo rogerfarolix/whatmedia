@@ -317,6 +317,9 @@ importers:
       mp4box:
         specifier: ^2.5.0
         version: 2.5.0
+      piexifjs:
+        specifier: ^1.0.6
+        version: 1.0.6
     devDependencies:
       vitest:
         specifier: ^3.0.0
@@ -4042,6 +4045,9 @@ packages:
     resolution: {integrity: sha512-e0F9AOF1JMrCfBsyJOwU9lNvQ0WtXTq0j/4jk0BQ5JSI9VAybPXmDpPRw/2FQ3e5d3ZFN1mLh7jW99m/jjaptw==}
     engines: {node: '>=0.10'}
     hasBin: true
+
+  piexifjs@1.0.6:
+    resolution: {integrity: sha512-0wVyH0cKohzBQ5Gi2V1BuxYpxWfxF3cSqfFXfPIpl5tl9XLS5z4ogqhUCD20AbHi0h9aJkqXNJnkVev6gwh2ag==}
 
   pino-abstract-transport@3.0.0:
     resolution: {integrity: sha512-wlfUczU+n7Hy/Ha5j9a/gZNy7We5+cXp8YL+X+PG8S0KXxw7n/JXA3c46Y0zQznIJ83URJiwy7Lh56WLokNuxg==}
@@ -9309,6 +9315,8 @@ snapshots:
   picomatch@4.0.7: {}
 
   pidtree@0.6.1: {}
+
+  piexifjs@1.0.6: {}
 
   pino-abstract-transport@3.0.0:
     dependencies:
