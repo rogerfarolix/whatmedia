@@ -12,6 +12,7 @@
     },
     "./presets.json": "./src/presets.json",
     "./whatsapp-limits.json": "./src/whatsapp-limits.json",
+    "./measurements.json": "./src/measurements.json",
     "./tokens.css": "./src/tokens.css"
   },
   "scripts": {

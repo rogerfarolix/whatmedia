@@ -85,3 +85,49 @@ export type Preset = z.infer<typeof presetSchema>;
 export type PresetsMap = z.infer<typeof presetsMapSchema>;
 export type PresetId = 'status-hd' | 'status-light' | 'chat-hd' | 'status-photo';
 
+export const measurementItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  type: z.string(),
+  durationSec: z.number(),
+  metrics: z.object({
+    directUpload: z.object({
+      vmaf: z.number(),
+      ssim: z.number(),
+      psnr: z.number(),
+      bitrateKbps: z.number(),
+    }),
+    whatmedia: z.object({
+      vmaf: z.number(),
+      ssim: z.number(),
+      psnr: z.number(),
+      bitrateKbps: z.number(),
+    }),
+    gain: z.object({
+      vmafDelta: z.number(),
+      vmafPercent: z.number(),
+      ssimDelta: z.number(),
+    }),
+  }),
+});
+
+export const measurementsSchema = z.object({
+  timestamp: z.string(),
+  environment: z.object({
+    ffmpegVersion: z.string(),
+    platform: z.string(),
+    protocol: z.string(),
+  }),
+  summary: z.object({
+    medianVmafDirect: z.number(),
+    medianVmafWhatMedia: z.number(),
+    medianGainPercent: z.number(),
+    p95GainPercent: z.number(),
+  }),
+  results: z.array(measurementItemSchema),
+});
+
+export type MeasurementItem = z.infer<typeof measurementItemSchema>;
+export type Measurements = z.infer<typeof measurementsSchema>;
+
+
