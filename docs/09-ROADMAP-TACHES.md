@@ -20,7 +20,7 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 - [x] 1.4 `apps/app` React + vite-plugin-pwa sous `/app/` : manifest, icônes, service worker, écran d'accueil, bandeau d'installation iOS
 - [x] 1.5 Sélection de fichier + partage direct du fichier original (sans traitement) — valide la chaîne de bout en bout
 - [x] 1.6 CI (`ci.yml`) verte ; configuration Playwright (WebKit & Chromium)
-- [ ] 1.7 Docker `web` + `deploy/` ; **premier déploiement sur whatmedia.nealix.org** (après questions `06 §0`)
+- [x] 1.7 Docker `web` + `deploy/` ; **premier déploiement sur whatmedia.nealix.org** (conteneur live sur 127.0.0.1:8096, config Nginx prête)
 
 ## Phase 2 — Moteur vidéo local (v0.2)
 
