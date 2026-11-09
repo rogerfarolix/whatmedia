@@ -43,11 +43,11 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 
 ## Phase 4 — Serveur de secours (v0.4)
 
-- [ ] 4.1 `apps/api` Fastify : endpoints `04`, Zod, rate limit, purge
-- [ ] 4.2 Constructeur de commandes ffmpeg depuis `presets.json` + tests (snapshot des arguments)
-- [ ] 4.3 Image Docker durcie (non-root, read-only, ffmpeg avec libzimg/libx264)
-- [ ] 4.4 Modale de consentement + client API dans l'app
-- [ ] 4.5 Déploiement avec profil `api`
+- [x] 4.1 `apps/api` Fastify : endpoints `04`, Zod, rate limit, purge
+- [x] 4.2 Constructeur de commandes ffmpeg depuis `presets.json` + tests (snapshot des arguments)
+- [x] 4.3 Image Docker durcie (non-root, read-only, ffmpeg avec libzimg/libx264)
+- [x] 4.4 Modale de consentement + client API dans l'app
+- [x] 4.5 Déploiement avec profil `api`
 
 ## Phase 5 — Mesure & lancement (v1.0)
 

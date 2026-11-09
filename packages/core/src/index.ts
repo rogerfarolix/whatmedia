@@ -5,6 +5,7 @@ export { probe } from './probe.js';
 export { runWebCodecs, type RunOptions } from './engines/webcodecs.js';
 export { runImageOptimization } from './image.js';
 export { presets, whatsappLimits } from '@whatmedia/config';
+export * from './api-schema.js';
 
 import type { Plan, OutputFile } from './types.js';
 import { runWebCodecs, type RunOptions } from './engines/webcodecs.js';
