@@ -1,0 +1,131 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: 'fr' | 'en';
+  currentPath?: string;
+}
+
+const {
+  title = 'WhatMedia — Statuts WhatsApp nets, gratuit et open source',
+  description = "WhatMedia prépare tes vidéos et photos pour qu'elles survivent à la compression de WhatsApp. Directement sur ton téléphone. Rien n'est envoyé.",
+  lang = 'fr',
+  currentPath = '/',
+} = Astro.props;
+
+const isFr = lang === 'fr';
+const siteUrl = 'https://whatmedia.nealix.org';
+const canonicalUrl = new URL(currentPath, siteUrl).href;
+
+const frPath = (() => {
+  if (isFr) return currentPath;
+  if (currentPath === '/en' || currentPath === '/en/') return '/';
+  if (currentPath.startsWith('/en/how-it-works')) return '/comment-ca-marche';
+  if (currentPath.startsWith('/en/measurements')) return '/mesures';
+  if (currentPath.startsWith('/en/privacy')) return '/confidentialite';
+  if (currentPath.startsWith('/en/legal')) return '/mentions';
+  return '/';
+})();
+
+const enPath = (() => {
+  if (!isFr) return currentPath;
+  if (currentPath === '/') return '/en/';
+  if (currentPath.startsWith('/comment-ca-marche')) return '/en/how-it-works';
+  if (currentPath.startsWith('/mesures')) return '/en/measurements';
+  if (currentPath.startsWith('/confidentialite')) return '/en/privacy';
+  if (currentPath.startsWith('/mentions')) return '/en/legal';
+  return '/en/';
+})();
+
+const frUrl = new URL(frPath, siteUrl).href;
+const enUrl = new URL(enPath, siteUrl).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'WhatMedia',
+  applicationCategory: 'MultimediaApplication',
+  operatingSystem: 'iOS, Android, Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'EUR',
+  },
+  description: isFr
+    ? 'Outil open-source et gratuit pour optimiser la qualité des vidéos et photos pour les statuts WhatsApp. Traitement 100% local.'
+    : 'Free and open-source tool to optimize video and photo quality for WhatsApp statuses. 100% local in-browser processing.',
+  url: siteUrl,
+  author: {
+    '@type': 'Organization',
+    name: 'Nealix',
+    url: 'https://github.com/nealix',
+  },
+};
+---
+
+<!doctype html>
+<html lang={lang} dir="ltr" class="bg-wm-paper text-wm-ink antialiased">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Canonical & Alternate Links -->
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="alternate" hreflang="fr" href={frUrl} />
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="x-default" href={new URL('/', siteUrl).href} />
+
+    <!-- Self-Hosted Fonts Preload -->
+    <link rel="preload" href="/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Favicon & Touch Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <meta name="theme-color" content="#FF5A1F" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${siteUrl}/og-image.svg`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={isFr ? 'fr_FR' : 'en_US'} />
+    <meta property="og:site_name" content="WhatMedia" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={canonicalUrl} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}/og-image.svg`} />
+
+    <!-- Schema.org SoftwareApplication JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class="flex min-h-screen flex-col bg-wm-paper text-wm-ink">
+    <!-- Accessible Skip to Content Link -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-wm-button focus:bg-wm-signal focus:px-4 focus:py-2 focus:text-white focus:shadow-lg focus:outline-none"
+    >
+      {isFr ? 'Passer au contenu principal' : 'Skip to main content'}
+    </a>
+
+    <Header lang={lang} currentPath={currentPath} />
+
+    <main id="main-content" class="flex-1">
+      <slot />
+    </main>
+
+    <Footer lang={lang} currentPath={currentPath} />
+  </body>
+</html>

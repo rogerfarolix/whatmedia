@@ -7,3 +7,4 @@ describe('@whatmedia/core basic sanity', () => {
     expect(whatsappLimits.maxMediaBytes).toBe(16000000);
   });
 });
+

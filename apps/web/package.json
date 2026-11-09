@@ -7,16 +7,17 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "lint": "eslint src/",
+    "lint": "eslint --no-error-on-unmatched-pattern src/",
     "typecheck": "astro check"
   },
   "dependencies": {
+    "@whatmedia/config": "workspace:*",
+    "@tailwindcss/vite": "^4.0.0",
     "astro": "^5.1.0",
-    "@astrojs/tailwind": "^6.0.0"
+    "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.0",
-    "vitest": "^3.0.0"
+    "typescript": "^5.7.0"
   }
 }
-

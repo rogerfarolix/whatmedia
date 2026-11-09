@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://whatmedia.nealix.org/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/" />
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://whatmedia.nealix.org/en/</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/" />
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://whatmedia.nealix.org/comment-ca-marche</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/comment-ca-marche" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/how-it-works" />
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whatmedia.nealix.org/en/how-it-works</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/comment-ca-marche" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/how-it-works" />
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whatmedia.nealix.org/mesures</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/mesures" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/measurements" />
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whatmedia.nealix.org/en/measurements</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/mesures" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/measurements" />
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://whatmedia.nealix.org/confidentialite</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/confidentialite" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/privacy" />
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://whatmedia.nealix.org/en/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/confidentialite" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/privacy" />
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://whatmedia.nealix.org/mentions</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/mentions" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/legal" />
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://whatmedia.nealix.org/en/legal</loc>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://whatmedia.nealix.org/mentions" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://whatmedia.nealix.org/en/legal" />
+    <priority>0.5</priority>
+  </url>
+</urlset>

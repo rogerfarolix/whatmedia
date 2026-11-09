@@ -1,0 +1,118 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Politique de Confidentialité — WhatMedia"
+  description="Politique de confidentialité et protection des données personnelles de WhatMedia : traitement 100% local, aucun traceur."
+  lang="fr"
+  currentPath="/confidentialite"
+>
+  <div class="py-12 md:py-20">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-xs font-mono text-wm-muted">
+        <a href="/" class="hover:text-wm-ink">Accueil</a>
+        <span>/</span>
+        <span class="text-wm-signal font-semibold">Confidentialité</span>
+      </div>
+
+      <h1 class="mt-4 font-heading text-3xl font-extrabold tracking-tight text-wm-ink sm:text-4xl">
+        Politique de Confidentialité
+      </h1>
+      <p class="mt-2 font-mono text-xs text-wm-muted">
+        Dernière mise à jour : 9 novembre 2026 · Conforme RGPD & Code du Numérique (Bénin)
+      </p>
+
+      <div class="mt-10 space-y-8 text-sm leading-relaxed text-wm-ink">
+        <section class="rounded-xl border border-wm-ok/30 bg-wm-ok-light/30 p-6">
+          <h2 class="font-heading text-base font-bold text-wm-ok">
+            Le principe fondamental : Traitement local par défaut
+          </h2>
+          <p class="mt-2 text-wm-muted">
+            WhatMedia a été conçu dès la première ligne de code selon le paradigme <strong
+              >« Privacy by Design »</strong
+            >. Lorsque vous utilisez l'application, l'analyse et la ré-encodage de vos photos et
+            vidéos se déroulent exclusivement dans la mémoire vive de votre propre navigateur
+            internet. <strong>Aucun fichier n'est téléversé sur nos serveurs.</strong>
+          </p>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="font-heading text-xl font-bold text-wm-ink">
+            1. Données personnelles collectées
+          </h2>
+          <p class="text-wm-muted">
+            WhatMedia ne requiert aucune création de compte, aucun identifiant, aucune adresse
+            e-mail, aucun numéro de téléphone et aucun mot de passe. Nous ne posons aucun cookie de
+            pistage, aucun cookie publicitaire et aucune empreinte navigateur (fingerprinting).
+          </p>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="font-heading text-xl font-bold text-wm-ink">
+            2. Cas exceptionnel : Serveur de secours
+          </h2>
+          <p class="text-wm-muted">
+            Si votre appareil mobile ne prend pas en charge l'encodage local (absence de codecs
+            requis), WhatMedia peut vous proposer de confier le traitement à un serveur d'appoint
+            temporaire.
+          </p>
+          <ul class="list-disc pl-5 space-y-1.5 text-wm-muted">
+            <li>
+              Ce recours nécessite systématiquement votre <strong>consentement explicite</strong> via
+              une modale dédiée.
+            </li>
+            <li>
+              Le fichier est traité sous identifiant éphémère (UUID 256 bits), sans conservation de
+              métadonnées.
+            </li>
+            <li>
+              Le fichier d'origine et le fichier résultant sont <strong
+                >automatiquement purgés sous 15 minutes</strong
+              > au maximum.
+            </li>
+            <li>
+              Aucun fichier n'est partagé avec des tiers ni utilisé à des fins d'entraînement ou
+              d'analyse.
+            </li>
+          </ul>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="font-heading text-xl font-bold text-wm-ink">
+            3. Ressources externes et polices
+          </h2>
+          <p class="text-wm-muted">
+            Afin d'éviter toute fuite d'adresse IP vers des tiers, toutes les polices de caractères
+            (Space Grotesk, Inter, JetBrains Mono) et tous les scripts sont auto-hébergés sur notre
+            propre infrastructure. Aucun appel vers Google Fonts ou un CDN tiers n'est effectué.
+          </p>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="font-heading text-xl font-bold text-wm-ink">4. Vos droits</h2>
+          <p class="text-wm-muted">
+            Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi
+            béninoise portant Code du Numérique (protection des données personnelles encadrée par
+            l'APDP), n'hébergeant aucune base de données d'utilisateurs nominative, aucun traitement
+            de profilage n'existe. Pour toute question relative à la sécurité du projet, vous pouvez
+            contacter l'équipe via GitHub ou par courriel.
+          </p>
+        </section>
+
+        <section class="space-y-3">
+          <h2 class="font-heading text-xl font-bold text-wm-ink">5. Contact</h2>
+          <p class="text-wm-muted">
+            Pour tout signalement ou question : <code>contact@nealix.org</code> ou via les <a
+              href="https://github.com/nealix/whatmedia/security"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-wm-focus underline">avis de sécurité GitHub</a
+            >.
+          </p>
+        </section>
+      </div>
+    </div>
+  </div>
+</BaseLayout>

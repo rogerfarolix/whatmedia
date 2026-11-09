@@ -1,0 +1,41 @@
+@import "tailwindcss";
+@import "@whatmedia/config/tokens.css";
+
+@theme {
+  --color-wm-ink: var(--wm-ink);
+  --color-wm-paper: var(--wm-paper);
+  --color-wm-signal: var(--wm-signal);
+  --color-wm-focus: var(--wm-focus);
+  --color-wm-ok: var(--wm-ok);
+  --color-wm-warn: var(--wm-warn);
+  --color-wm-muted: var(--wm-muted);
+  --color-wm-signal-hover: var(--wm-signal-hover);
+  --color-wm-signal-light: var(--wm-signal-light);
+  --color-wm-focus-light: var(--wm-focus-light);
+  --color-wm-ok-light: var(--wm-ok-light);
+  --color-wm-warn-light: var(--wm-warn-light);
+  --color-wm-surface: var(--wm-surface);
+  --color-wm-surface-elevated: var(--wm-surface-elevated);
+  --color-wm-border: var(--wm-border);
+  --color-wm-border-subtle: var(--wm-border-subtle);
+
+  --font-heading: var(--wm-font-heading);
+  --font-body: var(--wm-font-body);
+  --font-mono: var(--wm-font-mono);
+
+  --radius-card: var(--wm-radius-card);
+  --radius-button: var(--wm-radius-button);
+  --radius-input: var(--wm-radius-input);
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  font-family: var(--wm-font-body);
+  background-color: var(--wm-paper);
+  color: var(--wm-ink);
+  min-height: 100vh;
+  min-height: 100dvh;
+}

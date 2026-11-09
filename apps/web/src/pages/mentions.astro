@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Mentions Légales — WhatMedia"
+  description="Mentions légales, éditeur, licence open source et avertissement de non-affiliation de WhatMedia."
+  lang="fr"
+  currentPath="/mentions"
+>
+  <div class="py-12 md:py-20">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <!-- Breadcrumb -->
+      <div class="flex items-center gap-2 text-xs font-mono text-wm-muted">
+        <a href="/" class="hover:text-wm-ink">Accueil</a>
+        <span>/</span>
+        <span class="text-wm-signal font-semibold">Mentions Légales</span>
+      </div>
+
+      <h1 class="mt-4 font-heading text-3xl font-extrabold tracking-tight text-wm-ink sm:text-4xl">
+        Mentions Légales
+      </h1>
+      <p class="mt-2 font-mono text-xs text-wm-muted">
+        Conformément aux obligations légales de transparence et d'identification.
+      </p>
+
+      <div class="mt-10 space-y-8 text-sm leading-relaxed text-wm-ink">
+        <!-- Section 1: Éditeur -->
+        <section class="space-y-2">
+          <h2 class="font-heading text-xl font-bold text-wm-ink">1. Édition du site</h2>
+          <p class="text-wm-muted">
+            Le site et l'application <strong>WhatMedia</strong> (<a
+              href="https://whatmedia.nealix.org"
+              class="text-wm-focus underline">whatmedia.nealix.org</a
+            >) sont édités par l'initiative open source <strong>Nealix</strong>, fondée et dirigée
+            par <strong>Roger Gnanih</strong>.
+          </p>
+          <p class="text-wm-muted">
+            Courriel de contact : <code>contact@nealix.org</code>
+          </p>
+          <p class="text-wm-muted">
+            Dépôt du code source : <a
+              href="https://github.com/nealix/whatmedia"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-wm-focus underline">github.com/nealix/whatmedia</a
+            >
+          </p>
+        </section>
+
+        <!-- Section 2: Hébergement -->
+        <section class="space-y-2">
+          <h2 class="font-heading text-xl font-bold text-wm-ink">2. Hébergement</h2>
+          <p class="text-wm-muted">
+            Le site statique et l'application web progressive sont hébergés sur les infrastructures
+            d'hébergement réparties (Cloudflare, Inc. / Vercel, Inc.).
+          </p>
+        </section>
+
+        <!-- Section 3: Propriété intellectuelle et licence -->
+        <section class="space-y-2">
+          <h2 class="font-heading text-xl font-bold text-wm-ink">3. Licence logicielle (MIT)</h2>
+          <p class="text-wm-muted">
+            L'ensemble du code source de WhatMedia (application web, site statique, bibliothèque
+            TypeScript <code>@whatmedia/core</code> et outils de mesure) est publié sous <strong
+              >licence libre MIT</strong
+            >. Vous êtes libre de l'utiliser, le copier, le modifier, le fusionner, le publier ou le
+            distribuer conformément aux termes de ladite licence.
+          </p>
+        </section>
+
+        <!-- Section 4: Avertissement de non-affiliation WhatsApp/Meta -->
+        <section class="rounded-xl border border-wm-warn/30 bg-wm-warn-light/30 p-6 space-y-3">
+          <h2 class="font-heading text-base font-bold text-wm-warn">
+            4. Absence d'affiliation — Marques et propriété des tiers
+          </h2>
+          <p class="text-wm-ink font-medium">Avertissement impératif :</p>
+          <p class="text-xs text-wm-muted leading-relaxed">
+            <strong>WhatMedia</strong> est un projet indépendant d'utilité publique. WhatMedia n'est en
+            aucune manière sponsorisé, certifié, associé, géré ou officiellement affilié à <strong
+              >WhatsApp LLC</strong
+            >, <strong>Meta Platforms, Inc.</strong> ou l'une de leurs filiales.
+          </p>
+          <p class="text-xs text-wm-muted leading-relaxed">
+            Le nom « WhatsApp » ainsi que les logos, icônes et marques associées sont des marques
+            protégées et déposées appartenant exclusivement à Meta Platforms, Inc. L'utilisation du
+            mot « WhatsApp » sur ce site a pour unique vocation d'identifier de manière descriptive
+            la destination technique des fichiers optimisés par l'utilisateur, dans le cadre légal
+            de l'usage loyal et descriptif de marque.
+          </p>
+        </section>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
