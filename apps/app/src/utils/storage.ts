@@ -1,74 +1,67 @@
-/**
- * Safe wrapper around localStorage adhering to project rules:
- * - Only used for: language, last preset, install banner dismissed.
- * - Always enclosed in try/catch (private browsing / quota / disabled storage).
- */
+import type { PresetId } from '@whatmedia/config';
 
-const STORAGE_KEYS = {
-  LANGUAGE: 'whatmedia_lang',
-  LAST_PRESET: 'whatmedia_last_preset',
-  INSTALL_BANNER_DISMISSED: 'whatmedia_install_dismissed_at',
+export type Language = 'fr' | 'en';
+
+export const STORAGE_KEYS = {
+  LANGUAGE: 'whatmedia:lang',
+  LAST_PRESET: 'whatmedia:preset',
+  INSTALL_BANNER_DISMISSED: 'whatmedia:install_dismissed',
 } as const;
 
-export function safeGetStorage<T>(key: string, fallback: T): T {
-  if (typeof window === 'undefined') return fallback;
+export function getStoredLanguage(): Language {
   try {
-    const value = window.localStorage.getItem(key);
-    if (value === null) return fallback;
-    return value as unknown as T;
-  } catch {
-    return fallback;
-  }
-}
-
-export function safeSetStorage(key: string, value: string): void {
-  if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.setItem(key, value);
-  } catch {
-    // Gracefully ignore storage failures (private mode, quota exceeded)
-  }
-}
-
-export function safeRemoveStorage(key: string): void {
-  if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.removeItem(key);
-  } catch {
-    // Gracefully ignore
-  }
-}
-
-export const appStorage = {
-  getLanguage: (fallback: 'fr' | 'en' = 'fr'): 'fr' | 'en' => {
-    const val = safeGetStorage<string>(STORAGE_KEYS.LANGUAGE, '');
-    if (val === 'fr' || val === 'en') return val;
-    // Autodetect if first visit
-    if (typeof navigator !== 'undefined' && navigator.language?.toLowerCase().startsWith('en')) {
-      return 'en';
+    const stored = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
+    if (stored === 'fr' || stored === 'en') return stored;
+    if (typeof navigator !== 'undefined' && navigator.language?.startsWith('fr')) {
+      return 'fr';
     }
-    return fallback;
-  },
+    return 'fr';
+  } catch {
+    return 'fr';
+  }
+}
 
-  setLanguage: (lang: 'fr' | 'en') => {
-    safeSetStorage(STORAGE_KEYS.LANGUAGE, lang);
-  },
+export function setStoredLanguage(lang: Language): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.LANGUAGE, lang);
+  } catch {
+    // Ignore storage issues
+  }
+}
 
-  getLastPreset: (fallback: string = 'status-hd'): string => {
-    return safeGetStorage<string>(STORAGE_KEYS.LAST_PRESET, fallback);
-  },
+export function getStoredPreset(): PresetId {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEYS.LAST_PRESET);
+    if (stored === 'status-hd' || stored === 'status-light' || stored === 'chat-hd' || stored === 'status-photo') {
+      return stored;
+    }
+    return 'status-hd';
+  } catch {
+    return 'status-hd';
+  }
+}
 
-  setLastPreset: (presetId: string) => {
-    safeSetStorage(STORAGE_KEYS.LAST_PRESET, presetId);
-  },
+export function setStoredPreset(presetId: PresetId): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.LAST_PRESET, presetId);
+  } catch {
+    // Ignore storage issues
+  }
+}
 
-  getInstallBannerDismissedAt: (): number | null => {
-    const val = safeGetStorage<string>(STORAGE_KEYS.INSTALL_BANNER_DISMISSED, '');
-    const timestamp = parseInt(val, 10);
-    return isNaN(timestamp) ? null : timestamp;
-  },
+export function getInstallBannerDismissedTimestamp(): number | null {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.INSTALL_BANNER_DISMISSED);
+    return raw ? parseInt(raw, 10) : null;
+  } catch {
+    return null;
+  }
+}
 
-  setInstallBannerDismissed: () => {
-    safeSetStorage(STORAGE_KEYS.INSTALL_BANNER_DISMISSED, Date.now().toString());
-  },
-};
+export function setInstallBannerDismissed(): void {
+  try {
+    localStorage.setItem(STORAGE_KEYS.INSTALL_BANNER_DISMISSED, Date.now().toString());
+  } catch {
+    // Ignore storage issues
+  }
+}

@@ -1,72 +1,65 @@
-import { presets, type PresetId } from '@whatmedia/config';
-import { useMediaStore } from '../store/useMediaStore';
+import React from 'react';
+import type { PresetId } from '@whatmedia/config';
+import { presets } from '@whatmedia/config';
 import { useTranslation } from '../i18n/useTranslation';
-import { SparklesIcon } from './icons/Icons';
 
-export function PresetSelector() {
-  const currentPresetId = useMediaStore((s) => s.currentPresetId);
-  const setPreset = useMediaStore((s) => s.setPreset);
-  const { t, lang } = useTranslation();
+interface Props {
+  selectedPresetId: PresetId;
+  onSelectPreset: (presetId: PresetId) => void;
+}
 
-  const presetList = Object.entries(presets) as [PresetId, (typeof presets)[PresetId]][];
+export const PresetSelector: React.FC<Props> = ({
+  selectedPresetId,
+  onSelectPreset,
+}) => {
+  const { language } = useTranslation();
+  const presetKeys: PresetId[] = ['status-hd', 'status-light', 'chat-hd', 'status-photo'];
 
   return (
-    <section aria-label={t.presets.title} className="w-full">
-      <div className="flex items-center justify-between mb-2.5">
-        <h3 className="font-heading font-semibold text-sm sm:text-base text-wm-ink flex items-center gap-1.5">
-          <SparklesIcon className="w-4 h-4 text-wm-signal" />
-          {t.presets.title}
-        </h3>
-        <span className="text-xs text-wm-muted font-medium">
-          {t.presets.selectLabel}
-        </span>
-      </div>
+    <div className="flex flex-col gap-2.5">
+      <span className="text-xs font-semibold text-[var(--wm-muted)] uppercase tracking-wider">
+        Format & Qualité
+      </span>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-        {presetList.map(([id, preset]) => {
-          const isSelected = id === currentPresetId;
-          const label = preset.label[lang] || preset.label.fr;
-          const description = preset.description[lang] || preset.description.fr;
-          const resolution =
-            preset.kind === 'video'
-              ? `${preset.video.width}×${preset.video.height}`
-              : `${preset.image.width}×${preset.image.height}`;
+      <div className="grid grid-cols-2 gap-2.5">
+        {presetKeys.map((key) => {
+          const preset = presets[key];
+          if (!preset) return null;
+
+          const isSelected = selectedPresetId === key;
+          const label = preset.label[language] ?? preset.label.fr;
+          const description = preset.description[language] ?? preset.description.fr;
 
           return (
             <button
-              key={id}
+              key={key}
               type="button"
-              onClick={() => setPreset(id)}
-              className={`p-3.5 rounded-2xl text-left border transition-all cursor-pointer relative flex flex-col justify-between ${
+              onClick={() => onSelectPreset(key)}
+              className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                 isSelected
-                  ? 'border-wm-signal bg-wm-signal-light/40 ring-1 ring-wm-signal/30'
-                  : 'border-wm-border bg-wm-surface hover:border-wm-border/90 hover:bg-wm-surface-elevated'
-              } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-wm-focus`}
+                  ? 'border-[var(--wm-signal)] bg-[var(--wm-signal-light)] shadow-sm'
+                  : 'border-[var(--wm-border)] bg-[var(--wm-surface)] hover:border-[var(--wm-muted)]'
+              }`}
             >
-              <div>
-                <div className="flex items-center justify-between gap-2">
-                  <span className="font-semibold text-sm text-wm-ink">
-                    {label}
-                  </span>
-                  {preset.default && (
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-wm-signal text-white">
-                      {t.presets.recommended}
-                    </span>
-                  )}
-                </div>
-                <p className="mt-1 text-xs text-wm-muted line-clamp-2">
-                  {description}
-                </p>
+              <div className="flex items-center justify-between w-full mb-1">
+                <span
+                  className={`font-semibold text-xs ${
+                    isSelected ? 'text-[var(--wm-signal)]' : 'text-[var(--wm-ink)]'
+                  }`}
+                >
+                  {label}
+                </span>
+                {isSelected && (
+                  <span className="w-2 h-2 rounded-full bg-[var(--wm-signal)]" />
+                )}
               </div>
-
-              <div className="mt-2.5 pt-2 border-t border-wm-border/50 flex items-center justify-between text-[11px] text-wm-muted font-mono">
-                <span>{resolution}</span>
-                <span className="uppercase">{preset.kind}</span>
-              </div>
+              <span className="text-[11px] text-[var(--wm-muted)] line-clamp-2">
+                {description}
+              </span>
             </button>
           );
         })}
       </div>
-    </section>
+    </div>
   );
-}
+};

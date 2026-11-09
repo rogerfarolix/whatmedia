@@ -1,73 +1,25 @@
-/**
- * @whatmedia/core — Public API
- *
- * The video/image processing engine. Built in Phase 2.
- * This file defines the type contracts used by the app.
- */
-
-export type { PresetId, Preset, VideoPreset, ImagePreset, WhatsAppLimits } from '@whatmedia/config';
+export * from './types.js';
+export { plan, type PlanOverrides } from './plan.js';
+export { detectCapabilities } from './capabilities.js';
+export { probe } from './probe.js';
+export { runWebCodecs, type RunOptions } from './engines/webcodecs.js';
 export { presets, whatsappLimits } from '@whatmedia/config';
 
-// --- Types (implemented in Phase 2) ---
+import type { Plan, OutputFile } from './types.js';
+import { runWebCodecs, type RunOptions } from './engines/webcodecs.js';
 
-export interface MediaInfo {
-  kind: 'video' | 'image';
-  container: string;
-  durationSec?: number;
-  width: number;
-  height: number;
-  rotation: 0 | 90 | 180 | 270;
-  fps?: number;
-  videoCodec?: string;
-  audioCodec?: string;
-  hdr: 'none' | 'hlg' | 'pq' | 'dolby-vision';
-  sizeBytes: number;
+/**
+ * Universal runner that dispatches to the planned engine (webcodecs, etc.)
+ */
+export async function run(
+  file: File | Blob,
+  plan: Plan,
+  options?: RunOptions,
+): Promise<OutputFile[]> {
+  if (plan.engine === 'webcodecs') {
+    return runWebCodecs(file, plan, options);
+  }
+
+  // Fallback to webcodecs as primary engine for local processing
+  return runWebCodecs(file, plan, options);
 }
-
-export type EngineType = 'webcodecs' | 'ffmpeg-wasm' | 'server';
-
-export interface Plan {
-  preset: string;
-  engine: EngineType;
-  segments: { startSec: number; endSec: number; targetBytes: number }[];
-  video?: {
-    width: number;
-    height: number;
-    fps: number;
-    bitrate: number;
-    codec: string;
-    toneMap: boolean;
-  };
-  audio?: { mode: 'passthrough' | 'encode'; bitrate?: number };
-  image?: { width: number; height: number; quality: number };
-}
-
-export interface Capabilities {
-  webcodecs: boolean;
-  hevcDecode: boolean;
-  avcEncode: boolean;
-  avcEncode720: boolean;
-  aacEncode: boolean;
-  opfs: boolean;
-  webShare: boolean;
-  webShareFiles: boolean;
-  wasm: boolean;
-  sharedArrayBuffer: boolean;
-}
-
-export interface Progress {
-  phase: 'decode' | 'encode' | 'mux';
-  segmentIndex: number;
-  segmentCount: number;
-  ratio: number;
-  estimatedRemainingMs?: number;
-}
-
-export interface OutputFile {
-  file: File;
-  index: number;
-  totalSegments: number;
-  durationSec: number;
-  sizeBytes: number;
-}
-

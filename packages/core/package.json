@@ -13,10 +13,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@whatmedia/config": "workspace:*"
+    "@whatmedia/config": "workspace:*",
+    "mediabunny": "^1.65.2",
+    "mp4box": "^2.5.0"
   },
   "devDependencies": {
     "vitest": "^3.0.0"
   }
 }
-

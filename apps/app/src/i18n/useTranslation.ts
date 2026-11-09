@@ -1,20 +1,29 @@
 import { useMediaStore } from '../store/useMediaStore';
-import { translations, type Language, type AppTranslations } from './translations';
+import { fr, en } from './translations';
+import { setStoredLanguage, type Language } from '../utils/storage';
 
-export function useTranslation(): {
-  t: AppTranslations;
-  lang: Language;
-  setLanguage: (lang: Language) => void;
-  toggleLanguage: () => void;
-} {
-  const lang = useMediaStore((s) => s.language);
-  const setLanguage = useMediaStore((s) => s.setLanguage);
-  const toggleLanguage = useMediaStore((s) => s.toggleLanguage);
+export type { Language };
+
+export function useTranslation() {
+  const { language, setLanguage } = useMediaStore();
+
+  const toggleLanguage = () => {
+    const nextLang: Language = language === 'fr' ? 'en' : 'fr';
+    setStoredLanguage(nextLang);
+    setLanguage(nextLang);
+  };
+
+  const currentTranslations = language === 'en' ? en : fr;
+
+  const t = (key: keyof typeof fr): string => {
+    const val = currentTranslations[key] ?? fr[key];
+    if (typeof val === 'string') return val;
+    return '';
+  };
 
   return {
-    t: translations[lang] || translations.fr,
-    lang,
-    setLanguage,
+    language,
     toggleLanguage,
+    t,
   };
 }
