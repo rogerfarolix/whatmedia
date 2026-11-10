@@ -32,7 +32,7 @@ export const BatchResultsScreen: React.FC<Props> = ({ items, stopped, onRetryAlo
       className="flex flex-col gap-5 p-5 bg-[var(--wm-surface)] rounded-[var(--wm-radius-card)] border border-[var(--wm-border)]"
     >
       <div className="text-center">
-        <h2 id="batch-results-title" ref={headingRef} tabIndex={-1} className="text-xl font-bold font-heading text-[var(--wm-ink)] outline-none">
+        <h2 id="batch-results-title" ref={headingRef} tabIndex={-1} className="text-xl font-semibold text-[var(--wm-ink)] outline-none">
           {done.length > 0 ? t('readyToPost') : t('errorTitle')}
         </h2>
         <p className="text-xs text-[var(--wm-muted)] mt-1 m-0">

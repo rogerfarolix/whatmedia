@@ -14,13 +14,19 @@ export const Header: React.FC = () => {
       </a>
       <div className="max-w-xl mx-auto px-4 h-14 flex items-center justify-between">
         <a href="/app/" className="flex items-center gap-2.5 rounded-md">
-          <span
-            aria-hidden="true"
-            className="w-8 h-8 rounded-lg bg-[var(--wm-signal)] flex items-center justify-center text-[var(--wm-on-signal)] font-bold text-sm shadow-sm"
-          >
-            WM
-          </span>
-          <span className="font-bold font-heading text-lg text-[var(--wm-ink)] tracking-tight">WhatMedia</span>
+          <svg viewBox="0 0 64 64" className="w-8 h-8" aria-hidden="true" focusable="false">
+            <rect width="64" height="64" rx="14" fill="#FF5A1F" />
+            <path
+              d="M18 26V18H26M46 26V18H38M18 38V46H26M46 38V46H38"
+              stroke="#0B0F1A"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            />
+            <circle cx="32" cy="32" r="3.5" fill="#0B0F1A" />
+          </svg>
+          <span className="font-semibold text-lg text-[var(--wm-ink)] tracking-tight">WhatMedia</span>
         </a>
 
         <button

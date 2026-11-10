@@ -72,7 +72,7 @@ export const AnalysisScreen: React.FC<Props> = ({
           aria-hidden="true"
           className="w-10 h-10 border-4 border-[var(--wm-signal)] border-t-transparent rounded-full motion-safe:animate-spin mb-4"
         />
-        <h2 className="text-lg font-bold font-heading text-[var(--wm-ink)] mb-1" role="status">
+        <h2 className="text-lg font-semibold text-[var(--wm-ink)] mb-1" role="status">
           {t('analyzingMedia')}
         </h2>
         <p className="text-sm text-[var(--wm-muted)] break-all">{file.name}</p>
@@ -117,7 +117,7 @@ export const AnalysisScreen: React.FC<Props> = ({
             </span>
           )}
         </div>
-        <h2 id="analysis-title" className="text-xl font-bold font-heading text-[var(--wm-ink)] mt-0.5 truncate">
+        <h2 id="analysis-title" className="text-xl font-semibold text-[var(--wm-ink)] mt-0.5 truncate">
           {file.name}
         </h2>
       </div>

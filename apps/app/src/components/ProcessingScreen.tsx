@@ -11,10 +11,12 @@ interface Props {
   etaMs?: number;
   /** Multi-file selection: "File 2 of 5 · name" */
   fileLabel?: string;
+  /** A part overshot 16 MB and is being re-encoded smaller */
+  adjusting?: boolean;
   onCancel: () => void;
 }
 
-export const ProcessingScreen: React.FC<Props> = ({ ratio, segmentIndex, segmentCount, lane, etaMs, fileLabel, onCancel }) => {
+export const ProcessingScreen: React.FC<Props> = ({ ratio, segmentIndex, segmentCount, lane, etaMs, fileLabel, adjusting = false, onCancel }) => {
   const { t, language } = useTranslation();
   const percentage = Math.round(Math.min(Math.max(ratio, 0), 1) * 100);
 
@@ -51,7 +53,7 @@ export const ProcessingScreen: React.FC<Props> = ({ ratio, segmentIndex, segment
         </div>
       </div>
 
-      <h2 id="processing-title" className="text-xl font-bold font-heading text-[var(--wm-ink)] mb-1">
+      <h2 id="processing-title" className="text-xl font-semibold text-[var(--wm-ink)] mb-1">
         {t('optimizing')}
       </h2>
 
@@ -64,7 +66,7 @@ export const ProcessingScreen: React.FC<Props> = ({ ratio, segmentIndex, segment
         {segmentCount > 1 ? t('processingPart', { i: segmentIndex, n: segmentCount }) : t('processingMedia')}
       </p>
       <p className="text-xs text-[var(--wm-muted)] mb-4 min-h-4">
-        {etaMs !== undefined ? t('remaining', { time: formatEta(etaMs, language) }) : ' '}
+        {adjusting ? t('adjustingSize') : etaMs !== undefined ? t('remaining', { time: formatEta(etaMs, language) }) : ' '}
       </p>
 
       <div

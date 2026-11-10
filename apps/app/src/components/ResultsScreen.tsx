@@ -35,7 +35,7 @@ export const ResultsScreen: React.FC<Props> = ({ outputs, partial = false, onRes
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </span>
-        <h2 id="results-title" ref={headingRef} tabIndex={-1} className="text-xl font-bold font-heading text-[var(--wm-ink)] outline-none">
+        <h2 id="results-title" ref={headingRef} tabIndex={-1} className="text-xl font-semibold text-[var(--wm-ink)] outline-none">
           {t('readyToPost')}
         </h2>
         <p className="text-xs text-[var(--wm-muted)] mt-1">

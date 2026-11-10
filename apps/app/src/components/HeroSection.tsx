@@ -6,7 +6,7 @@ export const HeroSection: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center text-center gap-3 pt-2">
-      <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-[var(--wm-ink)] tracking-tight">
+      <h1 className="text-[2.15rem] leading-[1.08] sm:text-5xl font-[380] text-[var(--wm-ink)]">
         {t('heroTitle')}
       </h1>
       <p className="text-sm text-[var(--wm-muted)] max-w-sm">

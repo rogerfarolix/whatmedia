@@ -36,7 +36,7 @@ export const ConsentModal: React.FC<Props> = ({ isOpen, reason, onConfirm, onCan
       className="w-[calc(100%-2rem)] max-w-md p-0 m-auto rounded-[var(--wm-radius-card)] border border-[var(--wm-border)] bg-[var(--wm-surface)] text-[var(--wm-ink)] shadow-xl backdrop:bg-black/60"
     >
       <div className="p-6 flex flex-col gap-4">
-        <h2 id="consent-title" className="text-lg font-bold font-heading">
+        <h2 id="consent-title" className="text-lg font-semibold">
           {t('consentTitle')}
         </h2>
 

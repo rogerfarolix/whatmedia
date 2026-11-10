@@ -45,7 +45,7 @@ export const BatchScreen: React.FC<Props> = ({
     >
       <div>
         <span className="text-xs font-bold tracking-wide text-[var(--wm-signal-text)] uppercase">{t('batchKicker')}</span>
-        <h2 id="batch-title" className="text-xl font-bold font-heading text-[var(--wm-ink)] mt-0.5">
+        <h2 id="batch-title" className="text-xl font-semibold text-[var(--wm-ink)] mt-0.5">
           {t('batchTitle', { n: items.length })}
         </h2>
         <p className="text-sm text-[var(--wm-muted)] m-0 mt-1">{t('batchSummary', { v: videos, p: photos })}</p>

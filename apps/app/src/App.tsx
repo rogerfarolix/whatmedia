@@ -551,6 +551,7 @@ export const App: React.FC = () => {
             lane={lane}
             etaMs={etaMs}
             fileLabel={batchFile ? t('batchFileProgress', batchFile) : undefined}
+            adjusting={(progress?.retry ?? 0) > 0}
             onCancel={handleCancelProcessing}
           />
         )}
