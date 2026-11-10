@@ -2,130 +2,157 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import '../styles/global.css';
+import { SITE_URL, REPO_URL, absolute, ui, type Alternates, type Lang } from '../i18n/site';
 
-interface Props {
-  title?: string;
-  description?: string;
-  lang?: 'fr' | 'en';
-  currentPath?: string;
+interface Crumb {
+  name: string;
+  path: string;
 }
 
-const {
-  title = 'WhatMedia — Statuts WhatsApp nets, gratuit et open source',
-  description = "WhatMedia prépare tes vidéos et photos pour qu'elles survivent à la compression de WhatsApp. Directement sur ton téléphone. Rien n'est envoyé.",
-  lang = 'fr',
-  currentPath = '/',
-} = Astro.props;
+interface Props {
+  lang: Lang;
+  /** Page title shown in the browser tab, without the brand (added automatically) */
+  title: string;
+  /** Meta description: 120 to 160 characters, unique per page */
+  description: string;
+  /** Path of this page in each language (canonical + hreflang + language switch) */
+  alternates: Alternates;
+  /** Extra JSON-LD objects for this page */
+  jsonLd?: Record<string, unknown>[];
+  breadcrumbs?: Crumb[];
+  noindex?: boolean;
+  /** Full title override (home page) */
+  fullTitle?: boolean;
+}
 
-const isFr = lang === 'fr';
-const siteUrl = 'https://whatmedia.nealix.org';
-const canonicalUrl = new URL(currentPath, siteUrl).href;
+const { lang, title, description, alternates, jsonLd = [], breadcrumbs, noindex = false, fullTitle = false } = Astro.props;
+const t = ui[lang];
+const pageTitle = fullTitle ? title : `${title} | WhatMedia`;
+const canonical = absolute(alternates[lang]);
+const ogImage = `${SITE_URL}/og-image.png`;
+const gscToken = import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION as string | undefined;
 
-const frPath = (() => {
-  if (isFr) return currentPath;
-  if (currentPath === '/en' || currentPath === '/en/') return '/';
-  if (currentPath.startsWith('/en/how-it-works')) return '/comment-ca-marche';
-  if (currentPath.startsWith('/en/measurements')) return '/mesures';
-  if (currentPath.startsWith('/en/privacy')) return '/confidentialite';
-  if (currentPath.startsWith('/en/legal')) return '/mentions';
-  return '/';
-})();
-
-const enPath = (() => {
-  if (!isFr) return currentPath;
-  if (currentPath === '/') return '/en/';
-  if (currentPath.startsWith('/comment-ca-marche')) return '/en/how-it-works';
-  if (currentPath.startsWith('/mesures')) return '/en/measurements';
-  if (currentPath.startsWith('/confidentialite')) return '/en/privacy';
-  if (currentPath.startsWith('/mentions')) return '/en/legal';
-  return '/en/';
-})();
-
-const frUrl = new URL(frPath, siteUrl).href;
-const enUrl = new URL(enPath, siteUrl).href;
-
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'WhatMedia',
-  applicationCategory: 'MultimediaApplication',
-  operatingSystem: 'iOS, Android, Web',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'EUR',
-  },
-  description: isFr
-    ? 'Outil open-source et gratuit pour optimiser la qualité des vidéos et photos pour les statuts WhatsApp. Traitement 100% local.'
-    : 'Free and open-source tool to optimize video and photo quality for WhatsApp statuses. 100% local in-browser processing.',
-  url: siteUrl,
-  author: {
-    '@type': 'Organization',
-    name: 'Nealix',
-    url: 'https://github.com/rogerfarolix',
-  },
+const organization = {
+  '@type': 'Organization',
+  '@id': `${SITE_URL}/#organization`,
+  name: 'Nealix',
+  url: 'https://www.nealix.org',
+  sameAs: [REPO_URL],
 };
+
+const graph: Record<string, unknown>[] = [
+  organization,
+  {
+    '@type': 'WebSite',
+    '@id': `${SITE_URL}/#website`,
+    url: SITE_URL,
+    name: 'WhatMedia',
+    inLanguage: ['fr', 'en'],
+    publisher: { '@id': `${SITE_URL}/#organization` },
+  },
+  ...(breadcrumbs && breadcrumbs.length > 0
+    ? [
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [{ name: t.breadcrumbHome, path: lang === 'fr' ? '/' : '/en/' }, ...breadcrumbs].map(
+            (c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: absolute(c.path) }),
+          ),
+        },
+      ]
+    : []),
+  ...jsonLd,
+];
 ---
 
 <!doctype html>
-<html lang={lang} dir="ltr" class="bg-wm-paper text-wm-ink antialiased">
+<html lang={lang} dir="ltr">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    {gscToken && <meta name="google-site-verification" content={gscToken} />}
 
-    <!-- Canonical & Alternate Links -->
-    <link rel="canonical" href={canonicalUrl} />
-    <link rel="alternate" hreflang="fr" href={frUrl} />
-    <link rel="alternate" hreflang="en" href={enUrl} />
-    <link rel="alternate" hreflang="x-default" href={new URL('/', siteUrl).href} />
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {
+      !noindex && (
+        <>
+          <link rel="alternate" hreflang="fr" href={absolute(alternates.fr)} />
+          <link rel="alternate" hreflang="en" href={absolute(alternates.en)} />
+          <link rel="alternate" hreflang="x-default" href={absolute(alternates.fr)} />
+        </>
+      )
+    }
 
-    <!-- Self-Hosted Fonts Preload -->
     <link rel="preload" href="/fonts/space-grotesk.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Favicon & Touch Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
-    <meta name="theme-color" content="#FF5A1F" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0B0F1A" />
 
-    <!-- Open Graph / Facebook -->
+    <!-- Link previews (WhatsApp, Facebook, LinkedIn, X): PNG, 1200×630 -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:title" content={title} />
+    <meta property="og:site_name" content="WhatMedia" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={`${siteUrl}/og-image.svg`} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content={isFr ? 'fr_FR' : 'en_US'} />
-    <meta property="og:site_name" content="WhatMedia" />
-
-    <!-- Twitter Card -->
+    <meta property="og:image:alt" content={lang === 'fr' ? 'WhatMedia : prépare tes statuts WhatsApp' : 'WhatMedia: prepare your WhatsApp statuses'} />
+    <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'fr' ? 'en_US' : 'fr_FR'} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={canonicalUrl} />
-    <meta name="twitter:title" content={title} />
+    <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content={`${siteUrl}/og-image.svg`} />
+    <meta name="twitter:image" content={ogImage} />
 
-    <!-- Schema.org SoftwareApplication JSON-LD -->
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })} />
   </head>
-  <body class="flex min-h-screen flex-col bg-wm-paper text-wm-ink">
-    <!-- Accessible Skip to Content Link -->
+  <body class="flex min-h-screen flex-col bg-wm-paper text-wm-ink antialiased">
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-wm-button focus:bg-wm-signal focus:px-4 focus:py-2 focus:text-white focus:shadow-lg focus:outline-none"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-wm-button focus:bg-wm-surface focus:px-4 focus:py-2 focus:text-wm-ink focus:shadow-lg"
     >
-      {isFr ? 'Passer au contenu principal' : 'Skip to main content'}
+      {t.skip}
     </a>
 
-    <Header lang={lang} currentPath={currentPath} />
+    <Header lang={lang} alternates={alternates} />
 
     <main id="main-content" class="flex-1">
+      {
+        breadcrumbs && breadcrumbs.length > 0 && (
+          <nav aria-label={lang === 'fr' ? 'Fil d’Ariane' : 'Breadcrumb'} class="mx-auto max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
+            <ol class="flex flex-wrap items-center gap-1.5 text-xs text-wm-muted">
+              <li>
+                <a href={lang === 'fr' ? '/' : '/en/'} class="inline-flex min-h-6 items-center hover:text-wm-ink underline-offset-2 hover:underline">
+                  {t.breadcrumbHome}
+                </a>
+              </li>
+              {breadcrumbs.map((c, i) => (
+                <li class="flex items-center gap-1.5">
+                  <span aria-hidden="true">/</span>
+                  {i === breadcrumbs.length - 1 ? (
+                    <span aria-current="page" class="text-wm-ink">
+                      {c.name}
+                    </span>
+                  ) : (
+                    <a href={c.path} class="inline-flex min-h-6 items-center hover:text-wm-ink underline-offset-2 hover:underline">
+                      {c.name}
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
       <slot />
     </main>
 
-    <Footer lang={lang} currentPath={currentPath} />
+    <Footer lang={lang} />
   </body>
 </html>

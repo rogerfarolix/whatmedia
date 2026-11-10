@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { routes, ui, REPO_URL, type Lang } from '../i18n/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'Comment ça marche' : 'How it works';
+const description = fr
+  ? 'Analyse, découpage, calcul du débit sous 16 Mo, encodage H.264 sur ton téléphone et conversion HDR : le fonctionnement détaillé de WhatMedia.'
+  : 'Analysis, splitting, bitrate under 16 MB, H.264 encoding on your phone and HDR conversion: how WhatMedia works in detail.';
+---
+
+<BaseLayout lang={lang} title={title} description={description} alternates={routes.howItWorks} breadcrumbs={[{ name: ui[lang].nav.howItWorks, path: routes.howItWorks[lang] }]}>
+  <PageHero
+    title={title}
+    lead={fr
+      ? 'WhatsApp réencode toujours ce que tu publies, et son algorithme n’est pas documenté. WhatMedia ne peut pas l’éviter ; il s’assure que le fichier de départ respecte les limites connues, avec le meilleur débit possible.'
+      : 'WhatsApp always re-encodes what you post, and its algorithm is not documented. WhatMedia cannot avoid that; it makes sure the starting file respects the known limits, with the best possible bitrate.'}
+  />
+  <article class="prose-wm mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
+    {
+      fr ? (
+        <>
+          <h2>1. Analyse du fichier</h2>
+          <p>Quand tu choisis un fichier, WhatMedia lit ses informations sans le modifier : durée, résolution, orientation, images par seconde, codecs, débit audio et présence de HDR (HLG, PQ ou Dolby Vision). Rien n’est envoyé pour cela.</p>
+
+          <h2>2. Le plan : découpage et débit</h2>
+          <p>Un fichier envoyé dans WhatsApp est limité à 16 Mo. WhatMedia garde une marge et vise 15,5 Mo par fichier. Le débit vidéo disponible dépend donc de la durée de chaque partie :</p>
+          <p><code>débit vidéo = 15,5 Mo × 8 ÷ durée de la partie − débit audio − 0,1 Mbit/s de marge</code></p>
+          <ul>
+            <li>Avec des parties de 30 s, une vidéo peut garder environ 3,9 Mbit/s ; avec 60 s, environ 1,8 Mbit/s.</li>
+            <li>Si le débit tombe sous le minimum prévu pour la 1080p, WhatMedia passe en 720p et te l’indique.</li>
+            <li>Une dernière partie de moins de 5 secondes est évitée en répartissant la durée en parties égales.</li>
+            <li>L’image n’est jamais agrandie et la cadence ne dépasse jamais 30 images par seconde ni celle de la source.</li>
+          </ul>
+          <p>Toutes ces valeurs viennent de fichiers de configuration publics (<a href={`${REPO_URL}/tree/main/packages/config/src`}>presets et limites</a>), pas du code.</p>
+
+          <h2>3. L’encodage sur ton téléphone</h2>
+          <p>WhatMedia utilise WebCodecs, l’accès du navigateur à l’encodeur vidéo matériel du téléphone. Chaque partie est encodée en H.264 avec l’audio en AAC, dans un MP4 dont l’index est placé au début pour une lecture immédiate. Le travail se fait dans un processus séparé (Web Worker) pour que l’interface reste fluide.</p>
+          <p>Après l’encodage, la taille réelle de chaque partie est vérifiée. Si elle dépasse 16 Mo, la partie est réencodée à un débit réduit dans la proportion du dépassement.</p>
+
+          <h2>4. Les couleurs HDR</h2>
+          <p>Les iPhone récents filment en HDR. Ces vidéos sont souvent affichées délavées une fois publiées. WhatMedia détecte le HDR et convertit les images en couleurs standard (SDR, BT.709) avant l’encodage. Sur le serveur de secours, la conversion utilise la courbe de référence d’ffmpeg (tone-mapping Hable).</p>
+
+          <h2>5. Les photos</h2>
+          <p>La photo est décodée avec son orientation, réduite en plusieurs paliers sans déformation (côté long jusqu’à 2560 px), puis réenregistrée en JPEG sRGB. Ce réenregistrement supprime toutes les métadonnées, y compris la position GPS.</p>
+
+          <h2>6. Le serveur de secours</h2>
+          <p>Si ton navigateur ne peut pas lire ou encoder le fichier, WhatMedia te propose de le traiter sur son serveur. Une fenêtre t’explique ce qui sera envoyé ; rien ne part sans ton accord. Le serveur applique exactement le même plan, puis supprime le fichier d’origine dès la fin du traitement, et les résultats dès que tu les as récupérés (au plus tard 15 minutes après).</p>
+
+          <h2>7. Le partage</h2>
+          <p>Le bouton Partager ouvre la feuille de partage de ton téléphone avec le fichier seul, d’où tu choisis WhatsApp puis ton statut. Publie les parties une par une, dans l’ordre. Si l’option HD apparaît dans WhatsApp, active-la.</p>
+        </>
+      ) : (
+        <>
+          <h2>1. File analysis</h2>
+          <p>When you pick a file, WhatMedia reads its information without changing it: duration, resolution, orientation, frame rate, codecs, audio bitrate and HDR (HLG, PQ or Dolby Vision). Nothing is uploaded for this.</p>
+
+          <h2>2. The plan: splitting and bitrate</h2>
+          <p>A file sent through WhatsApp is limited to 16 MB. WhatMedia keeps a margin and aims for 15.5 MB per file. The available video bitrate therefore depends on the length of each part:</p>
+          <p><code>video bitrate = 15.5 MB × 8 ÷ part length − audio bitrate − 0.1 Mbit/s margin</code></p>
+          <ul>
+            <li>With 30 s parts, a video can keep about 3.9 Mbit/s; with 60 s, about 1.8 Mbit/s.</li>
+            <li>If the bitrate falls below the minimum set for 1080p, WhatMedia switches to 720p and tells you.</li>
+            <li>A last part shorter than 5 seconds is avoided by splitting into equal parts.</li>
+            <li>The picture is never upscaled and the frame rate never exceeds 30 fps or the source.</li>
+          </ul>
+          <p>All these values come from public configuration files (<a href={`${REPO_URL}/tree/main/packages/config/src`}>presets and limits</a>), not from the code.</p>
+
+          <h2>3. Encoding on your phone</h2>
+          <p>WhatMedia uses WebCodecs, the browser’s access to the phone’s hardware video encoder. Each part is encoded as H.264 with AAC audio, in an MP4 whose index is placed at the start for instant playback. The work runs in a separate thread (Web Worker) so the interface stays smooth.</p>
+          <p>After encoding, the actual size of every part is checked. If it is over 16 MB, the part is re-encoded with the bitrate reduced in proportion to the excess.</p>
+
+          <h2>4. HDR colours</h2>
+          <p>Recent iPhones record in HDR. Such videos often look washed out once posted. WhatMedia detects HDR and converts the frames to standard colours (SDR, BT.709) before encoding. On the fallback server, the conversion uses ffmpeg’s reference curve (Hable tone mapping).</p>
+
+          <h2>5. Photos</h2>
+          <p>The photo is decoded with its orientation, downscaled in several steps without distortion (long side up to 2560 px), then saved again as an sRGB JPEG. Saving it again removes all metadata, GPS location included.</p>
+
+          <h2>6. The fallback server</h2>
+          <p>If your browser cannot read or encode the file, WhatMedia offers to process it on its server. A window explains what will be sent; nothing leaves without your consent. The server applies exactly the same plan, deletes the original as soon as processing ends, and the results as soon as you retrieve them (within 15 minutes at the latest).</p>
+
+          <h2>7. Sharing</h2>
+          <p>The Share button opens your phone’s share sheet with the file alone, where you pick WhatsApp and then your status. Post the parts one by one, in order. If the HD option appears in WhatsApp, turn it on.</p>
+        </>
+      )
+    }
+  </article>
+  <CtaBand lang={lang} />
+</BaseLayout>

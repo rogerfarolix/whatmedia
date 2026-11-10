@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { routes, ui, SITE_URL, absolute, type Lang } from '../i18n/site';
+import { features, featurePath, type Feature } from '../content/features';
+
+interface Props {
+  lang: Lang;
+  feature: Feature;
+}
+const { lang, feature } = Astro.props;
+const f = feature[lang];
+const labels = {
+  fr: { what: 'Ce que fait WhatMedia', how: 'Comment l’utiliser', limits: 'À savoir', others: 'Les autres outils', kicker: 'Fonctionnalité' },
+  en: { what: 'What WhatMedia does', how: 'How to use it', limits: 'Good to know', others: 'Other tools', kicker: 'Feature' },
+}[lang];
+
+const howTo = {
+  '@type': 'HowTo',
+  name: f.metaTitle,
+  description: f.metaDescription,
+  inLanguage: lang,
+  tool: [{ '@type': 'HowToTool', name: 'WhatMedia', url: `${SITE_URL}/app/` }],
+  step: f.steps.map((s, i) => ({ '@type': 'HowToStep', position: i + 1, text: s })),
+  url: absolute(featurePath(feature, lang)),
+};
+const others = features.filter((x) => x.id !== feature.id);
+---
+
+<BaseLayout
+  lang={lang}
+  title={f.metaTitle}
+  description={f.metaDescription}
+  alternates={{ fr: featurePath(feature, 'fr'), en: featurePath(feature, 'en') }}
+  breadcrumbs={[
+    { name: ui[lang].nav.features, path: routes.features[lang] },
+    { name: f.title, path: featurePath(feature, lang) },
+  ]}
+  jsonLd={[howTo]}
+>
+  <PageHero kicker={labels.kicker} title={f.title} lead={f.summary}>
+    <p class="mt-3 text-sm text-wm-ink">{f.forWho}</p>
+  </PageHero>
+
+  <section class="pb-14">
+    <div class="mx-auto grid max-w-4xl grid-cols-1 gap-6 px-4 sm:px-6 lg:px-8">
+      <div class="rounded-wm-card border border-wm-border bg-wm-surface p-6">
+        <h2 class="font-heading text-xl font-bold">{labels.what}</h2>
+        <ul class="mt-4 space-y-2.5 text-sm leading-relaxed">
+          {f.what.map((x) => <li class="flex gap-2"><Icon name="check" class="mt-0.5 h-4 w-4 shrink-0 text-wm-ok" /><span>{x}</span></li>)}
+        </ul>
+      </div>
+      <div class="rounded-wm-card border border-wm-border bg-wm-surface p-6">
+        <h2 class="font-heading text-xl font-bold">{labels.how}</h2>
+        <ol class="mt-4 space-y-3 text-sm leading-relaxed">
+          {
+            f.steps.map((x, i) => (
+              <li class="flex gap-3">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-wm-signal text-xs font-bold text-wm-on-signal">{i + 1}</span>
+                <span class="pt-0.5">{x}</span>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+      <div class="rounded-wm-card border border-wm-warn bg-wm-warn-light p-6">
+        <h2 class="font-heading text-xl font-bold">{labels.limits}</h2>
+        <ul class="mt-4 space-y-2 text-sm leading-relaxed">
+          {f.limits.map((x) => <li class="flex gap-2"><Icon name="info" class="mt-0.5 h-4 w-4 shrink-0" /><span>{x}</span></li>)}
+        </ul>
+      </div>
+      <nav aria-labelledby="others-title">
+        <h2 id="others-title" class="font-heading text-lg font-bold">{labels.others}</h2>
+        <ul class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {
+            others.map((o) => (
+              <li>
+                <a href={featurePath(o, lang)} class="flex min-h-11 items-center gap-2 rounded-wm-card border border-wm-border bg-wm-surface p-4 text-sm font-semibold hover:border-wm-ink">
+                  <Icon name={o.icon} class="h-5 w-5 text-wm-signal-text" />
+                  {o[lang].title}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </section>
+  <CtaBand lang={lang} />
+</BaseLayout>

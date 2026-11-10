@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { measurements } from '@whatmedia/config';
+import { routes, ui, REPO_URL, type Lang } from '../i18n/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'Mesures de qualité' : 'Quality measurements';
+const description = fr
+  ? 'Mesures VMAF et SSIM des statuts WhatsApp préparés avec WhatMedia : protocole, état de la campagne et résultats publiés.'
+  : 'VMAF and SSIM measurements of WhatsApp statuses prepared with WhatMedia: protocol, campaign status and published results.';
+const published = measurements.status === 'published' && measurements.results.length > 0;
+const fmt = (n: number) => n.toLocaleString(fr ? 'fr-FR' : 'en-US', { maximumFractionDigits: 1 });
+---
+
+<BaseLayout lang={lang} title={title} description={description} alternates={routes.measurements} breadcrumbs={[{ name: ui[lang].footer.measurements, path: routes.measurements[lang] }]}>
+  <PageHero title={title} lead={fr ? 'Nous ne publions que des chiffres mesurés sur des fichiers réellement passés par WhatsApp.' : 'We only publish figures measured on files that actually went through WhatsApp.'} />
+
+  <section class="mx-auto max-w-3xl px-4 pb-8 sm:px-6 lg:px-8">
+    {
+      published ? (
+        <div class="overflow-x-auto rounded-wm-card border border-wm-border bg-wm-surface">
+          <table class="w-full min-w-[34rem] text-left text-sm">
+            <caption class="px-4 pt-4 text-left text-xs text-wm-muted">
+              {fr ? 'Mesuré le' : 'Measured on'} {measurements.timestamp}, WhatsApp {measurements.whatsappVersion}
+            </caption>
+            <thead class="border-b border-wm-border text-wm-muted">
+              <tr>
+                <th scope="col" class="px-4 py-3">{fr ? 'Clip' : 'Clip'}</th>
+                <th scope="col" class="px-4 py-3">VMAF {fr ? 'envoi direct' : 'direct upload'}</th>
+                <th scope="col" class="px-4 py-3">VMAF WhatMedia</th>
+              </tr>
+            </thead>
+            <tbody>
+              {measurements.results.map((r) => (
+                <tr class="border-b border-wm-border last:border-0">
+                  <th scope="row" class="px-4 py-3 font-semibold">{r.type}</th>
+                  <td class="px-4 py-3 font-mono">{fmt(r.metrics.directUpload.vmaf)}</td>
+                  <td class="px-4 py-3 font-mono">{fmt(r.metrics.whatmedia.vmaf)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div role="status" class="rounded-wm-card border border-wm-focus bg-wm-focus-light p-6">
+          <p class="font-heading text-2xl font-bold">{fr ? 'Mesures en cours' : 'Measurements in progress'}</p>
+          <p class="mt-2 text-sm leading-relaxed">
+            {fr
+              ? 'La première campagne sur de vrais statuts WhatsApp n’est pas encore terminée. Aucun chiffre de qualité n’est publié d’ici là.'
+              : 'The first campaign on real WhatsApp statuses is not finished yet. No quality figure is published until then.'}
+          </p>
+        </div>
+      )
+    }
+  </section>
+
+  <article class="prose-wm mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
+    <h2>{fr ? 'Le protocole' : 'The protocol'}</h2>
+    <ol>
+      {
+        (fr
+          ? [
+              'Un corpus de clips variés : HDR d’iPhone, visages, paysages, mouvements rapides, scènes sombres.',
+              'Chaque clip est publié deux fois en statut : tel quel, puis préparé par WhatMedia.',
+              'Les deux versions sont récupérées telles que WhatsApp les diffuse, depuis un second compte de test.',
+              'Chaque version est comparée à la source avec VMAF (Netflix) et SSIM, à résolution égale.',
+              'Les résultats sont publiés ici avec la date et la version de WhatsApp, y compris les cas où WhatMedia n’apporte rien.',
+            ]
+          : [
+              'A corpus of varied clips: iPhone HDR, faces, landscapes, fast motion, dark scenes.',
+              'Each clip is posted twice as a status: as is, then prepared by WhatMedia.',
+              'Both versions are retrieved as WhatsApp delivers them, from a second test account.',
+              'Each version is compared with the source using VMAF (Netflix) and SSIM, at equal resolution.',
+              'Results are published here with the date and WhatsApp version, including cases where WhatMedia brings nothing.',
+            ]
+        ).map((s) => <li>{s}</li>)
+      }
+    </ol>
+    <p>
+      {fr ? 'Le protocole complet est public : ' : 'The full protocol is public: '}
+      <a href={`${REPO_URL}/blob/main/docs/08-TESTS-QUALITE.md`}>docs/08-TESTS-QUALITE.md</a>.
+    </p>
+    <h2>{fr ? 'Pourquoi pas de chiffres simulés' : 'Why no simulated figures'}</h2>
+    <p>
+      {fr
+        ? 'Simuler la compression de WhatsApp avec nos propres réglages reviendrait à choisir le résultat à l’avance. Les seuls chiffres utiles sont ceux des fichiers réellement diffusés par WhatsApp.'
+        : 'Simulating WhatsApp compression with our own settings would mean choosing the result in advance. The only useful figures are those of files actually delivered by WhatsApp.'}
+    </p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,40 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { routes } from '../i18n/site';
+import { features, featurePath } from '../content/features';
+---
+
+<BaseLayout
+  lang="fr"
+  title="Page introuvable (404)"
+  description="Cette page n’existe pas ou a été déplacée. Retrouve l’accueil, les fonctionnalités ou l’application WhatMedia."
+  alternates={{ fr: '/404.html', en: '/404.html' }}
+  noindex
+>
+  <section class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 lg:px-8">
+    <p class="font-mono text-sm font-semibold text-wm-signal-text">Erreur 404</p>
+    <h1 class="mt-2 font-heading text-4xl font-extrabold tracking-tight sm:text-5xl">Cette page est introuvable</h1>
+    <p class="mt-4 text-lg text-wm-muted">Elle n’existe pas ou a été déplacée. Voici où aller :</p>
+    <p class="mt-1 text-sm text-wm-muted" lang="en">This page could not be found. Here is where you can go:</p>
+
+    <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+      <a href="/app/" class="inline-flex min-h-12 w-full sm:w-auto items-center justify-center rounded-wm-button bg-wm-signal px-7 font-semibold text-wm-on-signal hover:bg-wm-signal-hover">
+        Ouvrir WhatMedia
+      </a>
+      <a href={routes.home.fr} class="inline-flex min-h-12 w-full sm:w-auto items-center justify-center rounded-wm-button border border-wm-border bg-wm-surface px-6 font-semibold hover:border-wm-ink">
+        Accueil
+      </a>
+      <a href={routes.home.en} lang="en" class="inline-flex min-h-12 w-full sm:w-auto items-center justify-center rounded-wm-button border border-wm-border bg-wm-surface px-6 font-semibold hover:border-wm-ink">
+        English home
+      </a>
+    </div>
+
+    <nav aria-label="Pages utiles" class="mt-10">
+      <ul class="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
+        {features.map((f) => <li><a href={featurePath(f, 'fr')} class="inline-flex min-h-11 items-center text-wm-signal-text underline underline-offset-4">{f.fr.title}</a></li>)}
+        <li><a href={routes.faq.fr} class="inline-flex min-h-11 items-center text-wm-signal-text underline underline-offset-4">FAQ</a></li>
+        <li><a href={routes.contact.fr} class="inline-flex min-h-11 items-center text-wm-signal-text underline underline-offset-4">Contact</a></li>
+      </ul>
+    </nav>
+  </section>
+</BaseLayout>
