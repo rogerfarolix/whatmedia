@@ -37,9 +37,9 @@
   --wm-radius-input: 10px;
 
   /* Typography scale */
-  --wm-font-heading: 'Space Grotesk', system-ui, sans-serif;
-  --wm-font-body: 'Inter', system-ui, sans-serif;
-  --wm-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --wm-font-heading: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --wm-font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --wm-font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   /* Spacing */
   --wm-space-xs: 0.25rem;

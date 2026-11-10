@@ -2,22 +2,6 @@
 @import '@whatmedia/config/tokens.css';
 
 @font-face {
-  font-family: 'Newsreader';
-  font-style: normal;
-  font-weight: 200 800;
-  font-display: swap;
-  src: url('/fonts/newsreader.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'Newsreader';
-  font-style: italic;
-  font-weight: 200 800;
-  font-display: swap;
-  src: url('/fonts/newsreader-italic.woff2') format('woff2');
-}
-
-@font-face {
   font-family: 'Inter';
   font-style: normal;
   font-weight: 100 900;
@@ -45,9 +29,10 @@
   --color-wm-border: var(--wm-border);
   --color-wm-border-subtle: var(--wm-border-subtle);
 
-  --font-heading: 'Newsreader', Georgia, 'Times New Roman', serif;
-  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
-  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Apple system fonts (SF Pro) on Apple devices, self-hosted Inter elsewhere */
+  --font-heading: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
   --radius-wm-card: 20px;
@@ -61,8 +46,7 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  font-feature-settings: 'cv11', 'ss01';
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: var(--wm-paper);
   color: var(--wm-ink);
   line-height: 1.5;
@@ -72,10 +56,9 @@ body {
 
 h1,
 h2 {
-  font-family: 'Newsreader', Georgia, serif;
-  font-weight: 350;
-  letter-spacing: -0.025em;
-  font-optical-sizing: auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.028em;
   text-wrap: balance;
 }
 
@@ -83,8 +66,8 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Inter', system-ui, sans-serif;
-  letter-spacing: -0.01em;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  letter-spacing: -0.012em;
   text-wrap: balance;
 }
 
@@ -145,8 +128,8 @@ kbd {
 /* Long-form legal and documentation pages */
 .prose-wm h2 {
   margin-top: 2.5rem;
-  font-size: 1.75rem;
-  font-weight: 400;
+  font-size: 1.6rem;
+  font-weight: 600;
   color: var(--wm-ink);
 }
 .prose-wm h3 {

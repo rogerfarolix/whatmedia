@@ -154,8 +154,8 @@ const kicker = 'text-[13px] font-semibold uppercase tracking-[0.14em] text-wm-si
         <span class="h-1.5 w-1.5 rounded-full bg-wm-signal" aria-hidden="true"></span>
         {c.badge}
       </p>
-      <h1 class="mx-auto mt-6 max-w-4xl text-[2.75rem] leading-[1.02] font-[330] text-wm-ink sm:text-6xl md:text-7xl lg:text-[5.5rem]">
-        {c.h1a} <em class="font-[380] italic text-wm-signal-text">{c.h1em}</em> {c.h1b}
+      <h1 class="mx-auto mt-6 max-w-4xl text-[2.6rem] leading-[1.04] text-wm-ink sm:text-6xl md:text-7xl lg:text-[5.25rem]">
+        {c.h1a} <span class="text-wm-signal-text">{c.h1em}</span> {c.h1b}
       </h1>
       <p class="mx-auto mt-6 max-w-2xl text-[17px] leading-relaxed text-wm-muted sm:text-xl">{c.lead}</p>
       <div class="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
@@ -224,7 +224,7 @@ const kicker = 'text-[13px] font-semibold uppercase tracking-[0.14em] text-wm-si
                 <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-wm-signal-light text-wm-signal-text">
                   <Icon name={f.icon} />
                 </span>
-                <span class="font-display text-4xl font-[300] text-wm-border" aria-hidden="true">0{i + 1}</span>
+                <span class="text-4xl font-semibold tracking-tight text-wm-border" aria-hidden="true">0{i + 1}</span>
               </div>
               <h3 class="mt-6 text-xl font-semibold">{f[lang].title}</h3>
               <p class="mt-2 flex-1 text-[15px] leading-relaxed text-wm-muted">{f[lang].summary}</p>

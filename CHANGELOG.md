@@ -5,8 +5,9 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) · Versions : 
 ## [Unreleased]
 
 ### Design
-- Nouveau design du site, mobile d’abord : titres serif (Newsreader auto-hébergée), vraies captures de l’app en WebP dans des cadres de téléphone, carrousel horizontal sur mobile, sections sombres, boutons pilule, apparitions au défilement en CSS seul (désactivées si l’utilisateur limite les animations).
+- Nouveau design du site, mobile d’abord : typographie système Apple (SF Pro sur iPhone, iPad et Mac, Inter ailleurs), sans italique, vraies captures de l’app en WebP dans des cadres de téléphone, carrousel horizontal sur mobile, sections sombres, boutons pilule, apparitions au défilement en CSS seul (désactivées si l’utilisateur limite les animations).
 - Application harmonisée avec le site (logo, polices).
+- **Installation** : bouton « Installer » toujours visible dans l’en-tête de l’app. Il ouvre la fenêtre native du navigateur (Chrome, Edge, Android) ou explique la marche à suivre (Safari iPhone, autres navigateurs, navigateurs intégrés de WhatsApp ou Instagram avec copie du lien). Le signal d’installation du navigateur est désormais capté dès le chargement (il était souvent perdu). Captures ajoutées au manifeste.
 
 ### Fiabilité
 - Vidéos très détaillées (eau, confettis, grain) : l’encodeur du navigateur peut ignorer le débit demandé. Le moteur réessaie avec un débit plus bas, puis une image plus petite, et en dernier recours redécoupe la partie en parties plus courtes, toujours sous 16 Mo. La barre de progression ne recule plus et un message explique l’ajustement.

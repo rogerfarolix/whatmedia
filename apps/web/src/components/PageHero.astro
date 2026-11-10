@@ -10,7 +10,7 @@ const { kicker, title, lead } = Astro.props;
 <section class="pt-8 pb-10 md:pt-14 md:pb-14">
   <div class="mx-auto max-w-4xl px-5 sm:px-8">
     {kicker && <p class="text-[13px] font-semibold uppercase tracking-[0.14em] text-wm-signal-text">{kicker}</p>}
-    <h1 class="mt-3 text-[2.6rem] leading-[1.05] font-[330] sm:text-6xl">{title}</h1>
+    <h1 class="mt-3 text-[2.6rem] leading-[1.05] sm:text-6xl">{title}</h1>
     {lead && <p class="mt-5 max-w-2xl text-[17px] sm:text-xl leading-relaxed text-wm-muted">{lead}</p>}
     <slot />
   </div>
