@@ -51,5 +51,23 @@ describe('buildFfmpegArgs', () => {
     expect(args[vfIndex + 1]).toContain('tonemap=hable');
     expect(args[vfIndex + 1]).toContain('zscale=p=bt709');
   });
+
+  it('includes crop when fit is cover', () => {
+    const args = buildFfmpegArgs({
+      inputPath: '/data/jobs/job3/input.mp4',
+      outputPath: '/data/jobs/job3/output_01.mp4',
+      startSec: 0,
+      durationSec: 15,
+      width: 1080,
+      height: 1920,
+      fps: 30,
+      videoBitrateBps: 4_000_000,
+      audioBitrateBps: 128_000,
+      fit: 'cover',
+    });
+
+    const vfIndex = args.indexOf('-vf');
+    expect(args[vfIndex + 1]).toContain('crop=1080:1920');
+  });
 });
 

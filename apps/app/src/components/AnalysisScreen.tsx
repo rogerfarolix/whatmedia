@@ -8,6 +8,8 @@ interface Props {
   info: MediaInfo | null;
   plan: Plan | null;
   isAnalyzing: boolean;
+  crop916?: boolean;
+  onToggleCrop916?: (val: boolean) => void;
   queueIndex?: number;
   queueTotal?: number;
   onOptimize: () => void;
@@ -20,6 +22,8 @@ export const AnalysisScreen: React.FC<Props> = ({
   info,
   plan,
   isAnalyzing,
+  crop916 = false,
+  onToggleCrop916,
   queueIndex,
   queueTotal,
   onOptimize,
@@ -96,6 +100,25 @@ export const AnalysisScreen: React.FC<Props> = ({
         <div className="p-3 rounded-lg bg-[var(--wm-signal-light)] border border-[var(--wm-signal)] text-xs text-[var(--wm-ink)]">
           <strong>HDR Détecté ({info.hdr.toUpperCase()}) :</strong> WhatMedia corrigera automatiquement la palette pour éviter l'effet délavé sur WhatsApp.
         </div>
+      )}
+
+      {info?.width && info?.height && info.width > info.height && info.kind === 'video' && (
+        <label className="flex items-start gap-3 p-3 rounded-lg bg-[var(--wm-paper)] border border-[var(--wm-border)] cursor-pointer hover:border-[var(--wm-signal)] transition-colors">
+          <input
+            type="checkbox"
+            checked={crop916}
+            onChange={(e) => onToggleCrop916?.(e.target.checked)}
+            className="mt-0.5 accent-[var(--wm-signal)] w-4 h-4 rounded cursor-pointer"
+          />
+          <div className="flex flex-col text-xs">
+            <span className="font-semibold text-[var(--wm-ink)]">
+              {t('cropVerticalLabel')}
+            </span>
+            <span className="text-[11px] text-[var(--wm-muted)]">
+              {t('cropVerticalHint')}
+            </span>
+          </div>
+        </label>
       )}
 
       <div className="flex gap-3 pt-2">

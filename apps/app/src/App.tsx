@@ -10,6 +10,7 @@ import { ResultsScreen } from './components/ResultsScreen';
 import { ConsentModal } from './components/ConsentModal';
 import { Footer } from './components/Footer';
 import { useMediaStore } from './store/useMediaStore';
+import type { PresetId } from '@whatmedia/config';
 import { probe, plan, run, detectCapabilities, type OutputFile } from '@whatmedia/core';
 import { runServerJob } from './utils/serverClient';
 
@@ -40,6 +41,23 @@ export const App: React.FC = () => {
 
   const abortControllerRef = React.useRef<AbortController | null>(null);
   const [showConsentModal, setShowConsentModal] = React.useState(false);
+  const [crop916, setCrop916] = React.useState(false);
+
+  const handleSelectPreset = async (presetId: PresetId) => {
+    setCurrentPresetId(presetId);
+    if (mediaInfo) {
+      const caps = await detectCapabilities();
+      setPlan(plan(mediaInfo, presetId, caps, { crop916 }));
+    }
+  };
+
+  const handleToggleCrop916 = async (checked: boolean) => {
+    setCrop916(checked);
+    if (mediaInfo) {
+      const caps = await detectCapabilities();
+      setPlan(plan(mediaInfo, currentPresetId, caps, { crop916: checked }));
+    }
+  };
 
   const analyzeFile = async (file: File) => {
     setSelectedFile(file);
@@ -61,7 +79,7 @@ export const App: React.FC = () => {
       const info = await probe(file);
       setMediaInfo(info);
 
-      const generatedPlan = plan(info, targetPreset, caps);
+      const generatedPlan = plan(info, targetPreset, caps, { crop916 });
       setPlan(generatedPlan);
     } catch (err) {
       console.error('Probe failed:', err);
@@ -173,7 +191,7 @@ export const App: React.FC = () => {
             <div className="pt-2">
               <PresetSelector
                 selectedPresetId={currentPresetId}
-                onSelectPreset={setCurrentPresetId}
+                onSelectPreset={handleSelectPreset}
               />
             </div>
           </>
@@ -185,6 +203,8 @@ export const App: React.FC = () => {
             info={mediaInfo}
             plan={currentPlan}
             isAnalyzing={isAnalyzing}
+            crop916={crop916}
+            onToggleCrop916={handleToggleCrop916}
             queueIndex={currentFileIndex}
             queueTotal={fileQueue.length}
             onOptimize={handleOptimize}

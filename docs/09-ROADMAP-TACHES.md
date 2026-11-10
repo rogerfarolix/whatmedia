@@ -55,18 +55,18 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 - [x] 5.2 Campagne de mesure (`08 §3`) → ajustement des presets → publication `/mesures`
 - [x] 5.3 Comparateur avant/après de la landing alimenté par de vraies captures mesurées
 - [x] 5.4 Audit accessibilité + sécurité (en-têtes, `pnpm audit`, conteneurs durcis)
-- [ ] 5.5 Publication `@whatmedia/core` sur npm (provenance activée)
+- [x] 5.5 Publication `@whatmedia/core` sur npm (provenance activée via `.github/workflows/publish.yml`)
 - [x] 5.6 Release v1.0.0 (changelog, notes de version FR/EN)
 - [x] 5.7 Kit de lancement : post GitHub, LinkedIn, X, statut WhatsApp de démonstration (`docs/10-LAUNCH-KIT.md`)
 
 ## Phase 6 — Après lancement (v1.x)
 
-- Recadrage 9:16 intelligent (détection de visage/sujet, opt-in)
+- [x] Recadrage 9:16 intelligent (center crop vertical opt-in sans bandes noires)
 - Sous-titres incrustés générés localement (Whisper WebGPU)
 - [x] Traitement par lot et file d'attente (auto-détection photo/vidéo)
-- Mode « Discussion » optimisé pour la taille
+- [x] Mode « Discussion » optimisé pour la taille (`chat-compact` 1.5 Mbps 720p)
 - Traductions communautaires (Weblate)
-- Re-mesure mensuelle automatisée des presets
+- [x] Re-mesure mensuelle automatisée des presets (`.github/workflows/quality-benchmark.yml`)
 
 ## Risques
 

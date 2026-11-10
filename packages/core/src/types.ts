@@ -29,6 +29,7 @@ export interface Plan {
     bitrate: number;
     codec: string;
     toneMap: boolean;
+    fit?: 'cover' | 'contain' | 'fill';
   };
   audio?: {
     mode: 'passthrough' | 'encode';

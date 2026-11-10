@@ -143,5 +143,46 @@ describe('plan() pure decision engine', () => {
     const pServer = plan(info, 'status-hd', noWasmCaps);
     expect(pServer.engine).toBe('server');
   });
+
+  it('handles chat-compact preset with single segment and reduced bitrate', () => {
+    const info: MediaInfo = {
+      kind: 'video',
+      container: 'mp4',
+      durationSec: 120, // 2 minutes
+      width: 1920,
+      height: 1080,
+      rotation: 0,
+      fps: 30,
+      videoCodec: 'avc1',
+      hdr: 'none',
+      sizeBytes: 50_000_000,
+    };
+
+    const p = plan(info, 'chat-compact', mockCaps);
+    expect(p.preset).toBe('chat-compact');
+    expect(p.segments).toHaveLength(1);
+    expect(p.segments[0]?.durationSec ?? (p.segments[0]!.endSec - p.segments[0]!.startSec)).toBe(120);
+    expect(p.video?.width).toBeLessThanOrEqual(720);
+  });
+
+  it('applies crop916 option with fit: cover to full-screen 9:16 vertical target', () => {
+    const info: MediaInfo = {
+      kind: 'video',
+      container: 'mp4',
+      durationSec: 20,
+      width: 1920,
+      height: 1080, // Landscape
+      rotation: 0,
+      fps: 30,
+      videoCodec: 'avc1',
+      hdr: 'none',
+      sizeBytes: 15_000_000,
+    };
+
+    const p = plan(info, 'status-hd', mockCaps, { crop916: true });
+    expect(p.video?.fit).toBe('cover');
+    expect(p.video?.width).toBe(1080);
+    expect(p.video?.height).toBe(1920);
+  });
 });
 

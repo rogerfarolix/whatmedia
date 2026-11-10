@@ -98,6 +98,39 @@
     },
     "segmentSec": null
   },
+  "chat-compact": {
+    "id": "chat-compact",
+    "label": { "fr": "Discussion compacte", "en": "Chat Compact" },
+    "description": {
+      "fr": "Ultra-léger pour envoi rapide en 3G/4G",
+      "en": "Ultra-light for fast sending on mobile data"
+    },
+    "kind": "video",
+    "default": false,
+    "video": {
+      "width": 720,
+      "height": 1280,
+      "fps": 30,
+      "codec": "avc1.64001f",
+      "profile": "main",
+      "level": "3.1",
+      "targetBps": 1500000,
+      "minBps": 600000,
+      "keyframeIntervalSec": 2
+    },
+    "audio": {
+      "bitrate": 96000,
+      "sampleRate": 44100,
+      "channels": 2
+    },
+    "color": {
+      "primaries": "bt709",
+      "transfer": "bt709",
+      "matrix": "bt709",
+      "range": "limited"
+    },
+    "segmentSec": null
+  },
   "status-photo": {
     "id": "status-photo",
     "label": { "fr": "Photo statut", "en": "Status Photo" },

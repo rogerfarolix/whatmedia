@@ -9,6 +9,7 @@ export interface FfmpegSegmentArgs {
   videoBitrateBps: number;
   audioBitrateBps: number;
   needsToneMap?: boolean;
+  fit?: 'cover' | 'contain';
 }
 
 /**
@@ -27,11 +28,17 @@ export function buildFfmpegArgs(args: FfmpegSegmentArgs): string[] {
     videoBitrateBps,
     audioBitrateBps,
     needsToneMap,
+    fit,
   } = args;
 
+  const scaleExpr =
+    fit === 'cover'
+      ? `scale=${width}:${height}:force_original_aspect_ratio=increase,crop=${width}:${height}`
+      : `scale='min(${width},iw)':'min(${height},ih)':force_original_aspect_ratio=decrease:force_divisible_by=2`;
+
   const videoFilter = needsToneMap
-    ? `scale='min(${width},iw)':'min(${height},ih)':force_original_aspect_ratio=decrease:force_divisible_by=2,zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p,fps=${fps}`
-    : `scale='min(${width},iw)':'min(${height},ih)':force_original_aspect_ratio=decrease:force_divisible_by=2,fps=${fps},format=yuv420p`;
+    ? `${scaleExpr},zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p,fps=${fps}`
+    : `${scaleExpr},fps=${fps},format=yuv420p`;
 
   const videoKbp = Math.round(videoBitrateBps / 1000);
   const audioKbp = Math.round(audioBitrateBps / 1000);

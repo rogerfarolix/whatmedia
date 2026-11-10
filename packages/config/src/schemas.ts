@@ -83,7 +83,7 @@ export type VideoPreset = z.infer<typeof videoPresetSchema>;
 export type ImagePreset = z.infer<typeof imagePresetSchema>;
 export type Preset = z.infer<typeof presetSchema>;
 export type PresetsMap = z.infer<typeof presetsMapSchema>;
-export type PresetId = 'status-hd' | 'status-light' | 'chat-hd' | 'status-photo';
+export type PresetId = 'status-hd' | 'status-light' | 'chat-hd' | 'chat-compact' | 'status-photo';
 
 export const measurementItemSchema = z.object({
   id: z.string(),
