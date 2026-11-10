@@ -6,11 +6,13 @@ Chaque tâche est autonome, a un critère de fin vérifiable, et se termine par 
 
 Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, décision.
 
-- [x] **S1 — Entrée iOS & Mediabunny** : sur iPhone réel, que renvoie `<input type=file>` pour une vidéo HDR HEVC (codec, HDR conservé, taille) ? Mediabunny lit-il le MOV et écrit-il un MP4 valide avec WebCodecs ? → décision demux/mux.
-- [x] **S2 — Tone-mapping HDR local** : options A (canvas) et B (WebGL2) vs référence ffmpeg, ΔE2000 sur 10 clips → décision.
-- [x] **S3 — ffmpeg.wasm sur iOS** : single-thread suffit-il (temps pour 30 s 1080p) ? Le multi-thread vaut-il les en-têtes COOP/COEP ? → décision d'embarquer ou non le repli wasm.
-- [x] **S4 — Partage** : `navigator.share` avec 1 puis 3 fichiers MP4 de 15 Mo depuis la PWA installée → WhatsApp propose-t-il « Mon statut » ? → décision UX partage séquentiel/groupé.
-- [x] **S5 — Mémoire** : vidéo 4K de 3 min traitée de bout en bout sur iPhone 12/13 sans que l'onglet soit tué ; mesurer le pic.
+> 10/11/2026 : les cinq spikes sont rouverts. Leurs résultats n'avaient pas été mesurés sur iPhone (le moteur local ne fonctionnait pas). Chaque fiche contient maintenant le protocole à exécuter.
+
+- [ ] **S1 — Entrée iOS & Mediabunny** : sur iPhone réel, que renvoie `<input type=file>` pour une vidéo HDR HEVC (codec, HDR conservé, taille) ? Mediabunny lit-il le MOV et écrit-il un MP4 valide avec WebCodecs ? → décision demux/mux.
+- [ ] **S2 — Tone-mapping HDR local** : options A (canvas) et B (WebGL2) vs référence ffmpeg, ΔE2000 sur 10 clips → décision.
+- [ ] **S3 — ffmpeg.wasm sur iOS** : single-thread suffit-il (temps pour 30 s 1080p) ? Le multi-thread vaut-il les en-têtes COOP/COEP ? → décision d'embarquer ou non le repli wasm.
+- [ ] **S4 — Partage** : `navigator.share` avec 1 puis 3 fichiers MP4 de 15 Mo depuis la PWA installée → WhatsApp propose-t-il « Mon statut » ? → décision UX partage séquentiel/groupé.
+- [ ] **S5 — Mémoire** : vidéo 4K de 3 min traitée de bout en bout sur iPhone 12/13 sans que l'onglet soit tué ; mesurer le pic.
 
 ## Phase 1 — Fondations (v0.1)
 
@@ -52,8 +54,8 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 ## Phase 5 — Mesure & lancement (v1.0)
 
 - [x] 5.1 `tools/quality` : scripts VMAF/SSIM, génération de `measurements.json`
-- [x] 5.2 Campagne de mesure (`08 §3`) → ajustement des presets → publication `/mesures`
-- [x] 5.3 Comparateur avant/après de la landing alimenté par de vraies captures mesurées
+- [ ] 5.2 Campagne de mesure (`08 §3`) → ajustement des presets → publication `/mesures` *(rouvert le 10/11/2026 : les chiffres publiés étaient simulés, `/mesures` affiche « Mesures en cours »)*
+- [ ] 5.3 Comparateur avant/après de la landing alimenté par de vraies captures mesurées *(comparateur simulé retiré le 10/11/2026)*
 - [x] 5.4 Audit accessibilité + sécurité (en-têtes, `pnpm audit`, conteneurs durcis)
 - [x] 5.5 Publication `@whatmedia/core` sur npm (provenance activée via `.github/workflows/publish.yml`)
 - [x] 5.6 Release v1.0.0 (changelog, notes de version FR/EN)
@@ -67,6 +69,15 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 - [x] Mode « Discussion » optimisé pour la taille (`chat-compact` 1.5 Mbps 720p)
 - Traductions communautaires (Weblate)
 - [x] Re-mesure mensuelle automatisée des presets (`.github/workflows/quality-benchmark.yml`)
+
+## Audit du 10/11/2026
+
+- [x] Moteur local réparé (`fit`), budget 16 Mo vérifié après encodage, worker vidéo (US-04)
+- [x] Serveur de secours réécrit (ffprobe + `plan()`, HDR, photos, jeton, file bornée) et routé via le conteneur web
+- [x] UI : durée des parties, erreurs, i18n complète, accessibilité AA, moteur chargé à la demande
+- [x] Landing : contenus factuels, pages fonctionnalités, FAQ, à propos, contact, conditions, 404, sitemap généré
+- [ ] Tests sur iPhone réel (spikes S1–S5, checklist `08 §4`)
+- [ ] Campagne de mesure WhatsApp réelle (`08 §3`)
 
 ## Risques
 

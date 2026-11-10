@@ -45,3 +45,6 @@ pnpm-debug.log*
 # OPFS / temp
 .opfs/
 
+
+# Simulated encoder benchmarks (never published)
+tools/quality/out/

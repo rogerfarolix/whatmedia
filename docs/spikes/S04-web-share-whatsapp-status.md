@@ -1,5 +1,7 @@
 # Spike S4 : Partage via Web Share API (`navigator.share`) & Statut WhatsApp
 
+> **Statut (10 novembre 2026) : à valider sur appareil réel.** Ce spike n'a pas encore été exécuté sur iPhone. Le moteur local ne fonctionnait pas avant le correctif du 10/11/2026 (`plan()` sans `fit`), donc aucune mesure locale antérieure n'est possible. Les chiffres qui figuraient ici ont été retirés ; seules les décisions de conception restent, comme hypothèses.
+
 ## Objectif
 Tester si `navigator.share({ files })` depuis une PWA autonome sous iOS et Android propose directement l'option « Mon statut » dans WhatsApp.
 
@@ -12,3 +14,7 @@ Tester si `navigator.share({ files })` depuis une PWA autonome sous iOS et Andro
 - Concevoir l'UX de l'écran des résultats avec **un bouton de partage dédié par segment** (`Partager vers WhatsApp`), permettant à l'utilisateur de publier ses segments de 30s/45s l'un après l'autre directement dans ses statuts.
 - Fournir un bouton « Télécharger tous les fichiers » comme alternative pratique pour la sauvegarde locale.
 
+
+
+## Protocole à exécuter
+Depuis la PWA installée sur iPhone et sur Android : partager 1 fichier puis 3 fichiers, noter si WhatsApp propose « Mon statut » dans chaque cas.
