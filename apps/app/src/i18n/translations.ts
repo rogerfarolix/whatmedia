@@ -53,8 +53,8 @@ export const fr = {
   processingPart: 'Partie {i} sur {n}',
   processingMedia: 'Traitement du fichier…',
   remaining: 'Environ {time} restant',
-  laneLocal: 'Sur ton téléphone — tes fichiers ne le quittent pas.',
-  laneServer: 'Sur le serveur WhatMedia — fichier supprimé au plus tard 15 min après.',
+  laneLocal: 'Sur ton téléphone : tes fichiers ne le quittent pas.',
+  laneServer: 'Sur le serveur WhatMedia : fichier supprimé au plus tard 15 min après.',
   keepScreenOn: 'Garde l’écran allumé et l’app au premier plan pendant le traitement.',
   cancel: 'Annuler',
 
@@ -171,8 +171,8 @@ export const en: Translations = {
   processingPart: 'Part {i} of {n}',
   processingMedia: 'Processing file…',
   remaining: 'About {time} left',
-  laneLocal: 'On your phone — your files never leave it.',
-  laneServer: 'On the WhatMedia server — file deleted within 15 minutes.',
+  laneLocal: 'On your phone: your files never leave it.',
+  laneServer: 'On the WhatMedia server: file deleted within 15 minutes.',
   keepScreenOn: 'Keep the screen on and the app in the foreground while processing.',
   cancel: 'Cancel',
 

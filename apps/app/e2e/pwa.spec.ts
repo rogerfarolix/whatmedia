@@ -79,7 +79,7 @@ test.describe('WhatMedia PWA App Flow & Privacy', () => {
 
     await expect(page.getByRole('heading', { name: /Prêt pour ton statut/ })).toBeVisible({ timeout: 20_000 });
     await expect(page.getByText('whatmedia-photo-test.jpg')).toBeVisible();
-    await expect(page.getByRole('button', { name: /(Partager|Enregistrer) — whatmedia-photo-test\.jpg/ }).first()).toBeVisible();
+    await expect(page.getByRole('button', { name: /(Partager|Enregistrer), whatmedia-photo-test\.jpg/ }).first()).toBeVisible();
   });
 });
 

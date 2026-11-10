@@ -15,6 +15,7 @@ import type { PresetId } from '@whatmedia/config';
 import { whatsappLimits } from '@whatmedia/config';
 import type { Capabilities, MediaError, MediaInfo, OutputFile } from '@whatmedia/core';
 import { loadEngine } from './utils/loadEngine';
+import { runPipeline } from './utils/workerRunner';
 import { runServerJob, checkServerAvailable, ServerError } from './utils/serverClient';
 import { normalizeMediaFile, MAX_LOCAL_BYTES, formatBytes } from './utils/format';
 import { useTranslation, type TranslationKey } from './i18n/useTranslation';
@@ -262,8 +263,9 @@ export const App: React.FC = () => {
     const partials: OutputFile[] = [];
 
     try {
-      const { run } = await loadEngine();
-      const outputs = await run(selectedFile, currentPlan, {
+      const outputs = await runPipeline({
+        file: selectedFile,
+        plan: currentPlan,
         signal,
         onProgress: setProgress,
         onSegmentComplete: (item) => partials.push(item),
