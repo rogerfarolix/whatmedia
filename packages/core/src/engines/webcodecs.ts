@@ -20,10 +20,21 @@ export interface RunOptions {
   fileNameBase?: string;
 }
 
-/** Re-encode attempts when a segment overshoots the WhatsApp size limit */
-const MAX_SIZE_RETRIES = 2;
+/**
+ * Re-encode schedule when a part overshoots the WhatsApp size limit. Browser encoders can ignore
+ * the requested bitrate on very detailed footage (water, confetti, night grain): lowering the
+ * bitrate alone is then not enough, so later attempts also reduce the picture size.
+ */
+const SIZE_ATTEMPTS: { scale: number }[] = [{ scale: 1 }, { scale: 1 }, { scale: 2 / 3 }, { scale: 1 / 2 }];
 /** Extra safety factor applied on top of the measured overshoot when retrying */
 const RETRY_SAFETY = 0.92;
+/** Share of a part's progress bar given to each attempt, so the bar never goes backwards */
+const ATTEMPT_PROGRESS = [0, 0.7, 0.85, 0.95, 1];
+
+function even(n: number): number {
+  const r = Math.floor(n);
+  return Math.max(2, r - (r % 2));
+}
 
 type Canvas2D = OffscreenCanvasRenderingContext2D;
 
@@ -54,6 +65,7 @@ async function encodeSegment(
   plan: Plan,
   seg: Plan['segments'][number],
   videoBitrate: number,
+  scale: number,
   signal: AbortSignal | undefined,
   onRatio: (r: number) => void,
 ): Promise<ArrayBuffer> {
@@ -62,8 +74,8 @@ async function encodeSegment(
   const output = new Output({ format: new Mp4OutputFormat({ fastStart: 'in-memory' }), target });
 
   const v = plan.video;
-  const width = v?.width ?? 1080;
-  const height = v?.height ?? 1920;
+  const width = even((v?.width ?? 1080) * scale);
+  const height = even((v?.height ?? 1920) * scale);
   const toneMapper = v?.toneMap ? createToneMapper(width, height) : undefined;
 
   try {
@@ -118,11 +130,29 @@ async function encodeSegment(
   return target.buffer;
 }
 
+/** A part shorter than this is never split further (it would make unusable statuses). */
+const MIN_SPLIT_SEC = 6;
+
+interface Job {
+  seg: Plan['segments'][number];
+  /** Index in SIZE_ATTEMPTS to start from (sub-parts of an oversized part start small) */
+  firstAttempt: number;
+  bitrate: number;
+}
+
+function wrapError(err: unknown, signal: AbortSignal | undefined, partials: OutputFile[]): MediaError {
+  if (signal?.aborted) return abortError(partials);
+  const e = err instanceof MediaError ? err : new MediaError('E_UNKNOWN', err instanceof Error ? err.message : String(err));
+  e.partialOutputs = partials;
+  return e;
+}
+
 /**
  * Executes the WebCodecs media conversion pipeline:
  * 1. Read input through Mediabunny
  * 2. Transcode / split per segment defined in Plan (H.264 + AAC, MP4 fast start)
- * 3. Verify each part fits the WhatsApp size limit, re-encoding at a lower bitrate if needed
+ * 3. Verify each part fits the WhatsApp size limit: re-encode with a lower bitrate, then a smaller
+ *    picture, and as a last resort split the part into shorter ones
  * 4. Yield resulting OutputFile array
  */
 export async function runWebCodecs(
@@ -133,75 +163,101 @@ export async function runWebCodecs(
   const { signal, onProgress } = options ?? {};
   const outputFiles: OutputFile[] = [];
   const base = options?.fileNameBase ?? outputBaseName('name' in file ? file.name : undefined);
-  const segmentCount = plan.segments.length;
+  const totalDuration = Math.max(
+    0.001,
+    plan.segments.reduce((sum, s) => sum + Math.max(0, s.endSec - s.startSec), 0),
+  );
+  const queue: Job[] = plan.segments.map((seg) => ({ seg, firstAttempt: 0, bitrate: plan.video?.bitrate ?? 5_000_000 }));
 
-  for (let i = 0; i < segmentCount; i++) {
+  let doneDuration = 0;
+  let globalReported = 0;
+  const report = (segDuration: number, segRatio: number, retry: number) => {
+    // Overall progress is measured in seconds of video, and never goes backwards.
+    globalReported = Math.max(globalReported, Math.min(1, (doneDuration + segDuration * segRatio) / totalDuration));
+    onProgress?.({
+      phase: 'encode',
+      segmentIndex: outputFiles.length + 1,
+      segmentCount: outputFiles.length + queue.length + 1,
+      ratio: globalReported,
+      ...(retry > 0 ? { retry } : {}),
+    });
+  };
+
+  while (queue.length > 0) {
     if (signal?.aborted) throw abortError(outputFiles);
-
-    const seg = plan.segments[i];
-    if (!seg) continue;
-
-    const report = (r: number) =>
-      onProgress?.({
-        phase: 'encode',
-        segmentIndex: i + 1,
-        segmentCount,
-        ratio: Math.min(1, (i + r) / segmentCount),
-      });
-    report(0);
-
-    let bitrate = plan.video?.bitrate ?? 5_000_000;
+    const job = queue.shift()!;
+    const { seg } = job;
+    const segDuration = Math.max(0, seg.endSec - seg.startSec);
+    let bitrate = job.bitrate;
     let buffer: ArrayBuffer | undefined;
+    let segRatio = 0;
+    report(segDuration, 0, job.firstAttempt);
 
-    for (let attempt = 0; attempt <= MAX_SIZE_RETRIES; attempt++) {
+    for (let attempt = job.firstAttempt; attempt < SIZE_ATTEMPTS.length; attempt++) {
+      const from = ATTEMPT_PROGRESS[attempt] ?? 0.95;
+      const to = ATTEMPT_PROGRESS[attempt + 1] ?? 1;
+      const { scale } = SIZE_ATTEMPTS[attempt] ?? { scale: 1 / 2 };
+      const lower = attempt === job.firstAttempt ? 0 : from;
       try {
-        buffer = await encodeSegment(file, plan, seg, bitrate, signal, report);
+        buffer = await encodeSegment(file, plan, seg, bitrate, scale, signal, (r) => {
+          segRatio = Math.max(segRatio, lower + (to - lower) * r);
+          report(segDuration, segRatio, attempt);
+        });
       } catch (err: unknown) {
-        if (signal?.aborted) throw abortError(outputFiles);
-        if (err instanceof MediaError) {
-          err.partialOutputs = outputFiles;
-          throw err;
-        }
-        const wrapped = new MediaError('E_UNKNOWN', err instanceof Error ? err.message : String(err));
-        wrapped.partialOutputs = outputFiles;
-        throw wrapped;
+        throw wrapError(err, signal, outputFiles);
       }
-
       if (buffer.byteLength <= whatsappLimits.maxMediaBytes) break;
+      // Scale the bitrate down by the measured excess (the next attempt may also shrink the picture).
+      bitrate = Math.max(150_000, Math.floor(bitrate * (seg.targetBytes / buffer.byteLength) * RETRY_SAFETY));
+      report(segDuration, segRatio, attempt + 1);
+    }
 
-      if (attempt === MAX_SIZE_RETRIES) {
-        const err = new MediaError(
-          'E_TOO_LARGE',
-          `segment ${i + 1} is ${buffer.byteLength} bytes after ${attempt + 1} attempts`,
-        );
+    if (!buffer) throw new MediaError('E_MUX', 'part produced no data');
+
+    if (buffer.byteLength > whatsappLimits.maxMediaBytes) {
+      // Last resort: the encoder ignores the bitrate on this footage. Size follows duration, so
+      // shorter parts fit. Sub-parts start directly at the smallest settings that were tried.
+      const pieces = Math.min(6, Math.ceil((buffer.byteLength / seg.targetBytes) * 1.15));
+      if (segDuration / pieces < MIN_SPLIT_SEC) {
+        const err = new MediaError('E_TOO_LARGE', `part of ${segDuration}s is ${buffer.byteLength} bytes`);
         err.partialOutputs = outputFiles;
         throw err;
       }
-      // Hardware encoders can overshoot the requested bitrate: scale down by the measured excess.
-      bitrate = Math.floor(bitrate * (seg.targetBytes / buffer.byteLength) * RETRY_SAFETY);
-      report(0);
+      const step = segDuration / pieces;
+      const subJobs: Job[] = Array.from({ length: pieces }, (_, k) => ({
+        seg: {
+          startSec: Math.round((seg.startSec + k * step) * 1000) / 1000,
+          endSec: k === pieces - 1 ? seg.endSec : Math.round((seg.startSec + (k + 1) * step) * 1000) / 1000,
+          targetBytes: seg.targetBytes,
+        },
+        firstAttempt: SIZE_ATTEMPTS.length - 1,
+        bitrate,
+      }));
+      queue.unshift(...subJobs);
+      continue;
     }
 
-    if (!buffer) throw new MediaError('E_MUX', `segment ${i + 1} produced no data`);
-
-    const durationSec = Math.round((seg.endSec - seg.startSec) * 10) / 10;
-    const name =
-      segmentCount > 1 ? `${base}-${i + 1}of${segmentCount}.mp4` : `${base}.mp4`;
-    const outFile = new File([buffer], name, { type: 'video/mp4' });
-
+    doneDuration += segDuration;
     const item: OutputFile = {
-      file: outFile,
-      index: i + 1,
-      totalSegments: segmentCount,
-      durationSec,
-      sizeBytes: outFile.size,
+      file: new File([buffer], `${base}.mp4`, { type: 'video/mp4' }),
+      index: outputFiles.length + 1,
+      totalSegments: outputFiles.length + queue.length + 1,
+      durationSec: Math.round(segDuration * 10) / 10,
+      sizeBytes: buffer.byteLength,
     };
-
     outputFiles.push(item);
-    options?.onSegmentComplete?.(item, i + 1);
+    options?.onSegmentComplete?.(item, item.index);
   }
 
-  onProgress?.({ phase: 'mux', segmentIndex: segmentCount, segmentCount, ratio: 1 });
+  // Final names and numbering, now that the number of parts is known.
+  const total = outputFiles.length;
+  const named = outputFiles.map((o, k) => ({
+    ...o,
+    index: k + 1,
+    totalSegments: total,
+    file: new File([o.file], total > 1 ? `${base}-${k + 1}of${total}.mp4` : `${base}.mp4`, { type: 'video/mp4' }),
+  }));
 
-  return outputFiles;
+  onProgress?.({ phase: 'mux', segmentIndex: total, segmentCount: total, ratio: 1 });
+  return named;
 }

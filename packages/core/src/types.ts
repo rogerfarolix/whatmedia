@@ -82,6 +82,8 @@ export interface Progress {
   segmentCount: number;
   ratio: number;
   estimatedRemainingMs?: number;
+  /** Size retry in progress (1 = second attempt): the part is being re-encoded smaller */
+  retry?: number;
 }
 
 export interface OutputFile {
