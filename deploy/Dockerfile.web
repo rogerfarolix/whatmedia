@@ -33,25 +33,7 @@ FROM caddy:2-alpine
 
 COPY --from=builder /app/apps/web/dist /srv
 
-# Default Caddyfile for static serving with proper security headers
-RUN printf ':8080 {\n\
-    root * /srv\n\
-    file_server\n\
-    encode zstd gzip\n\
-\n\
-    header {\n\
-        X-Content-Type-Options nosniff\n\
-        X-Frame-Options DENY\n\
-        Referrer-Policy strict-origin-when-cross-origin\n\
-        Strict-Transport-Security "max-age=31536000; includeSubDomains"\n\
-        -Server\n\
-    }\n\
-\n\
-    @pwa path /app/*\n\
-    handle @pwa {\n\
-        try_files {path} /app/index.html\n\
-    }\n\
-}\n' > /etc/caddy/Caddyfile
+COPY deploy/Caddyfile.web /etc/caddy/Caddyfile
 
 EXPOSE 8080
 

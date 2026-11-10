@@ -1,3 +1,6 @@
+# WhatMedia on the shared Nealix VPS (host nginx in front, see whatmedia.nealix.org.conf).
+#   docker compose -f deploy/docker-compose.server.yml up -d --build
+# nginx proxies everything to `web` (127.0.0.1:8096); `web` forwards /api/v1/* to `api`.
 name: whatmedia
 
 services:
@@ -6,11 +9,18 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile.web
     restart: unless-stopped
+    read_only: true
+    tmpfs: [/tmp, /config, /data]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    environment:
+      API_UPSTREAM: api:3000
     ports:
       - "127.0.0.1:8096:8080"
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:8080/ || exit 1"]
-      interval: 15s
+      interval: 30s
       timeout: 5s
       retries: 3
 
@@ -19,20 +29,37 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile.api
     restart: unless-stopped
-    ports:
-      - "127.0.0.1:8097:3000"
+    read_only: true
+    tmpfs: [/tmp]
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    pids_limit: 256
     volumes:
       - jobs_data:/data/jobs
+    ports:
+      - "127.0.0.1:8097:3000"
     environment:
       NODE_ENV: production
       PORT: 3000
       HOST: 0.0.0.0
       DATA_DIR: /data/jobs
-      MAX_UPLOAD_BYTES: 1073741824
+      MAX_UPLOAD_BYTES: 524288000 # 500 MB: matches client_max_body_size of the host nginx
+      MAX_DURATION_SEC: 600
       RETENTION_MINUTES: 15
+      FFMPEG_TIMEOUT_SEC: 900
+      CONCURRENCY: 2
+      QUEUE_MAX: 20
+      RATE_LIMIT_PER_HOUR: 10
+      TRUST_PROXY_HOPS: 2 # nginx → web (caddy) → api
+      LOG_LEVEL: info
+    deploy:
+      resources:
+        limits:
+          cpus: "3"
+          memory: 3g
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000/health || exit 1"]
-      interval: 15s
+      interval: 30s
       timeout: 5s
       retries: 3
 

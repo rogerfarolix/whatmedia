@@ -59,6 +59,23 @@ sudo certbot --nginx -d whatmedia.nealix.org
 sudo nginx -t && sudo systemctl reload nginx
 ```
 
+### Mode B' — Serveur Nealix actuel (nginx hôte + `docker-compose.server.yml`)
+Configuration réellement en production sur `nealix-vps` :
+- nginx (hôte) ne contient **qu'un seul** `location /` vers `127.0.0.1:8096` (`deploy/whatmedia.nealix.org.conf`). Aucune modification nginx n'est nécessaire pour l'API.
+- Le conteneur `web` (Caddy, `deploy/Caddyfile.web`) sert la landing et `/app`, et relaie `/api/v1/*` vers le conteneur `api` du même réseau Compose.
+- L'API écoute ses routes à la racine **et** sous `/api/v1`, donc les deux styles de proxy (avec ou sans retrait du préfixe) fonctionnent.
+- IP client pour la limite de débit : nginx → Caddy (`trusted_proxies private_ranges`) → API avec `TRUST_PROXY_HOPS=2`.
+- La taille d'envoi est bornée par `client_max_body_size 500m` de nginx ; `MAX_UPLOAD_BYTES` est aligné à 500 Mo.
+
+Déploiement (utilisateur `deploy`, sans sudo) :
+```bash
+cd /var/www/Projets/nealix/whatmedia && git pull
+docker tag whatmedia-web whatmedia-web:rollback; docker tag whatmedia-api whatmedia-api:rollback
+docker compose -f deploy/docker-compose.server.yml up -d --build
+curl -fsS https://whatmedia.nealix.org/api/v1/health
+```
+Retour arrière : `docker tag whatmedia-web:rollback whatmedia-web && docker tag whatmedia-api:rollback whatmedia-api && docker compose -f deploy/docker-compose.server.yml up -d --no-build`.
+
 ## 4. Images Docker
 
 | Image | Contenu |
