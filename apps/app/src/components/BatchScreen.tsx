@@ -5,6 +5,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import { formatBytes, formatDuration } from '../utils/format';
 import type { BatchItem } from '../store/useMediaStore';
 import { PresetSelector } from './PresetSelector';
+import { Icon } from './Icon';
 
 interface Props {
   items: BatchItem[];
@@ -70,9 +71,9 @@ export const BatchScreen: React.FC<Props> = ({
             <li key={item.id} className="flex items-center gap-3 p-3 rounded-xl bg-[var(--wm-paper)] border border-[var(--wm-border)]">
               <span
                 aria-hidden="true"
-                className="w-10 h-10 shrink-0 rounded-lg flex items-center justify-center bg-[var(--wm-signal-light)] text-[var(--wm-signal-text)] text-xs font-bold"
+                className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center bg-[var(--wm-signal-light)] text-[var(--wm-signal-text)]"
               >
-                {img ? 'IMG' : 'VID'}
+                <Icon name={img ? 'photo' : 'video'} className="w-5 h-5" />
               </span>
               <div className="flex flex-col min-w-0 flex-1">
                 <span className="text-sm font-semibold text-[var(--wm-ink)] truncate">{item.file.name}</span>

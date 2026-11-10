@@ -3,6 +3,7 @@ import type { OutputFile } from '@whatmedia/core';
 import { useTranslation } from '../i18n/useTranslation';
 import { formatBytes, formatDuration } from '../utils/format';
 import { canShareFiles, downloadFile, shareFiles } from '../utils/share';
+import { Icon } from './Icon';
 
 const Preview: React.FC<{ output: OutputFile }> = ({ output }) => {
   const [url, setUrl] = React.useState<string | null>(null);
@@ -60,7 +61,12 @@ export const OutputRow: React.FC<Props> = ({ output, title, shared, onShared }) 
           {output.durationSec > 0 ? `${formatDuration(output.durationSec)} · ` : ''}
           {formatBytes(output.sizeBytes, language)}
         </span>
-        {shared && <span className="text-xs font-semibold text-[var(--wm-ok)]">✓ {t('shared')}</span>}
+        {shared && (
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--wm-ok)]">
+            <Icon name="check" className="w-3.5 h-3.5" strokeWidth={2.5} />
+            {t('shared')}
+          </span>
+        )}
       </div>
       <div className="flex flex-col gap-1.5 shrink-0">
         <button
