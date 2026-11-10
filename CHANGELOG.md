@@ -2,6 +2,34 @@
 
 Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) · Versions : [SemVer](https://semver.org/lang/fr/)
 
+## [Unreleased]
+
+### Corrigé
+- **Moteur vidéo local inutilisable** : `plan()` fournissait largeur *et* hauteur sans `fit`, ce que Mediabunny refuse (`TypeError`) — toute vidéo basculait vers le serveur. Dimensions désormais calculées en conservant le ratio (vidéos horizontales comprises), sans agrandissement, avec `fit` toujours défini.
+- **Limite de 16 Mo** : le débit audio réel (passthrough) est budgété, chaque partie est vérifiée après encodage et réencodée à débit réduit si elle dépasse la limite ; les vidéos « Discussion » trop longues sont découpées.
+- **Serveur de secours** : le téléchargement ouvrait le fichier résultat en *écriture* (fichier vidé) et n'exigeait pas le jeton ; seules les 60 premières secondes étaient traitées, sans découpage ni respect des 16 Mo ; les photos et le HDR n'étaient pas gérés. L'API utilise maintenant `ffprobe` + le même `plan()` que le client, tone-mapping HDR de référence, pipeline photo (HEIC, transparence), file d'attente bornée, vérification de signature binaire (415), comparaison du jeton à temps constant, progression réelle, suppression de la source dès la fin du traitement.
+- **API inaccessible en production** (`/api/v1/*` → 404) : le conteneur `web` relaie désormais `/api/v1` vers l'API.
+- La langue anglaise n'était jamais choisie automatiquement ; le bouton de langue n'avait pas de nom accessible.
+- Liens GitHub morts sur la landing (`github.com/nealix/…` → `github.com/rogerfarolix/…`).
+- Les fichiers de sortie portaient tous le même nom (collisions en lot) ; ils reprennent le nom de la source.
+- Photos PNG/WebP transparentes : fond blanc au lieu de noir.
+
+### Ajouté
+- Choix de la durée des parties (30 / 60 / 90 s) et changement de preset sur l'écran d'analyse ; résumé de la sortie prévue (résolution, i/s, débit) et explications (720p imposé, découpage, « 30 s = plus net »).
+- Messages d'erreur clairs (fichier non pris en charge, trop gros, format illisible) au lieu d'`alert()` ; serveur de secours proposé seulement s'il répond.
+- Écran de traitement : voie réelle (téléphone ou serveur), temps restant estimé, maintien de l'écran allumé (Screen Wake Lock), avertissement avant de quitter la page.
+- Résultats : aperçus, bouton « Enregistrer » par partie, marque « Partagée », partage du fichier seul (sans texte), « Tout enregistrer » espacé.
+- Bandeau d'installation : bouton « Installer » natif (Android/desktop), masqué une fois l'app installée.
+- Moteur chargé à la demande : JS initial de `/app` ramené de 261 Ko à 100 Ko gzip.
+
+### Sécurité / exploitation
+- CSP stricte sur `/app`, CSP sur la landing, `Cache-Control: no-cache` pour le service worker, suppression du doublon contradictoire `X-Frame-Options`.
+- Conteneurs `web` et `api` en lecture seule, capacités retirées, `no-new-privileges`, limites CPU/mémoire/PID.
+- Vraie IP client pour la limite de débit (10 tâches/heure/IP), CORS fermé par défaut, purge des tâches orphelines au démarrage.
+
+### Accessibilité
+- Contrastes AA (texte sur orange, gris en mode sombre), cibles tactiles ≥ 44 px, sélecteurs en groupes radio, zone de dépôt utilisable au clavier, modale `<dialog>` native, lien d'évitement, barre de progression annoncée.
+
 ## [1.0.0] - 2026-11-09
 
 ### Ajouté
