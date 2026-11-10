@@ -111,21 +111,48 @@ export const measurementItemSchema = z.object({
   }),
 });
 
-export const measurementsSchema = z.object({
-  timestamp: z.string(),
-  environment: z.object({
-    ffmpegVersion: z.string(),
-    platform: z.string(),
-    protocol: z.string(),
-  }),
-  summary: z.object({
-    medianVmafDirect: z.number(),
-    medianVmafWhatMedia: z.number(),
-    medianGainPercent: z.number(),
-    p95GainPercent: z.number(),
-  }),
-  results: z.array(measurementItemSchema),
-});
+/**
+ * Published quality measurements. Only real measurements are allowed here: files actually sent
+ * through WhatsApp and downloaded back (docs/08 §3). While none exist, status is "pending" and the
+ * site shows "Mesures en cours" (CLAUDE.md: never invent quality numbers).
+ */
+export const measurementsSchema = z
+  .object({
+    status: z.enum(['pending', 'published']),
+    /** How the "direct" and "WhatMedia" files were obtained */
+    method: z.literal('whatsapp-roundtrip').nullable(),
+    timestamp: z.string().nullable(),
+    whatsappVersion: z.string().nullable(),
+    environment: z
+      .object({
+        ffmpegVersion: z.string(),
+        platform: z.string(),
+        protocol: z.string(),
+      })
+      .nullable(),
+    summary: z
+      .object({
+        medianVmafDirect: z.number(),
+        medianVmafWhatMedia: z.number(),
+        medianGainPercent: z.number(),
+        p95GainPercent: z.number(),
+      })
+      .nullable(),
+    results: z.array(measurementItemSchema),
+  })
+  .superRefine((m, ctx) => {
+    if (m.status === 'published') {
+      const missing = (['method', 'timestamp', 'whatsappVersion', 'environment', 'summary'] as const).filter(
+        (k) => m[k] === null,
+      );
+      if (missing.length > 0 || m.results.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: `published measurements need ${missing.join(', ') || 'results'}`,
+        });
+      }
+    }
+  });
 
 export type MeasurementItem = z.infer<typeof measurementItemSchema>;
 export type Measurements = z.infer<typeof measurementsSchema>;

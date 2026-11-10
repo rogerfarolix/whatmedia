@@ -12,7 +12,10 @@ import { existsSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
 const WORK_DIR = join(process.cwd(), 'tools', 'quality', '.tmp');
-const OUTPUT_JSON = join(process.cwd(), 'packages', 'config', 'src', 'measurements.json');
+// SIMULATION ONLY: neither file goes through WhatsApp, and the "direct upload" side is degraded
+// with arbitrary filters. Never copy this output into packages/config/src/measurements.json, which
+// is reserved for real WhatsApp round-trip measurements (docs/08 §3).
+const OUTPUT_JSON = join(process.cwd(), 'tools', 'quality', 'out', 'simulation.json');
 
 if (!existsSync(WORK_DIR)) {
   mkdirSync(WORK_DIR, { recursive: true });
@@ -201,7 +204,8 @@ const measurementsData = {
   results,
 };
 
-writeFileSync(OUTPUT_JSON, JSON.stringify(measurementsData, null, 2), 'utf-8');
+mkdirSync(join(process.cwd(), 'tools', 'quality', 'out'), { recursive: true });
+writeFileSync(OUTPUT_JSON, JSON.stringify({ simulated: true, ...measurementsData }, null, 2), 'utf-8');
 console.log(`\n🎉 Benchmarking complete! Results saved to ${OUTPUT_JSON}`);
 console.log(
   `📊 Median Direct: ${measurementsData.summary.medianVmafDirect} | Median WhatMedia: ${measurementsData.summary.medianVmafWhatMedia} | Gain: +${medianGain}%\n`,

@@ -187,6 +187,21 @@ describe('plan() pure decision engine', () => {
   });
 });
 
+describe('landing page example (apps/web HomePage)', () => {
+  // The home page shows this table; keep it in sync with plan().
+  const iphone = video({ durationSec: 150, width: 2160, height: 3840, hdr: 'hlg' });
+  it.each([
+    [30, 5, 1080, 3.9],
+    [60, 3, 1080, 1.8],
+    [90, 2, 720, 1.1],
+  ])('%i s parts -> %i parts, %ip wide, %f Mbit/s', (seg, parts, width, mbps) => {
+    const p = plan(iphone, 'status-hd', mockCaps, { segmentDurationSec: seg });
+    expect(p.segments).toHaveLength(parts);
+    expect(p.video?.width).toBe(width);
+    expect(Math.floor((p.video!.bitrate / 1e6) * 10) / 10).toBe(mbps);
+  });
+});
+
 describe('outputBaseName()', () => {
   it('derives a safe name from the source', () => {
     expect(outputBaseName('IMG_1234.MOV')).toBe('whatmedia-IMG_1234');

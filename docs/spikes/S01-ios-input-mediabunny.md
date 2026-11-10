@@ -1,5 +1,7 @@
 # Spike S1 : Entrée iOS `<input type="file">` & Mediabunny
 
+> **Statut (10 novembre 2026) : à valider sur appareil réel.** Ce spike n'a pas encore été exécuté sur iPhone. Le moteur local ne fonctionnait pas avant le correctif du 10/11/2026 (`plan()` sans `fit`), donc aucune mesure locale antérieure n'est possible. Les chiffres qui figuraient ici ont été retirés ; seules les décisions de conception restent, comme hypothèses.
+
 ## Objectif
 Valider le comportement d'un iPhone réel (iOS 17+) lors de la sélection d'une vidéo HEVC / HDR via `<input type="file" accept="video/*,image/*">` et vérifier si la bibliothèque **Mediabunny** parvient à demuxer le conteneur QuickTime MOV / MP4 sans perte de flux.
 
@@ -18,3 +20,9 @@ Valider le comportement d'un iPhone réel (iOS 17+) lors de la sélection d'une 
 - Conserver Mediabunny comme demuxer et muxer MP4 officiel pour le pipeline client.
 - Détecter la rotation native et appliquer l'orientation correcte lors de la phase de planification.
 
+
+
+## Protocole à exécuter
+1. Sur iPhone (iOS 17+), ouvrir https://whatmedia.nealix.org/app/ et choisir une vidéo HDR filmée par l'appareil photo.
+2. Noter ce qu'affiche l'écran d'analyse : résolution, durée, badge HDR (HLG / PQ / Dolby Vision), taille.
+3. Lancer « Statut HD », partager le résultat vers WhatsApp, vérifier lecture et couleurs.

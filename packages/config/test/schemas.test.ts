@@ -53,21 +53,27 @@ describe('measurements.json', () => {
     expect(result.success).toBe(true);
   });
 
-  it('contains valid VMAF numbers higher than 0', () => {
+  it('never publishes results without a real WhatsApp round-trip', () => {
     const data = measurementsSchema.parse(measurementsJson);
-    expect(data.results.length).toBeGreaterThan(0);
-    for (const res of data.results) {
-      expect(res.metrics.whatmedia.vmaf).toBeGreaterThan(0);
-      expect(res.metrics.directUpload.vmaf).toBeGreaterThan(0);
+    if (data.status === 'pending') {
+      expect(data.results).toHaveLength(0);
+      expect(data.summary).toBeNull();
+    } else {
+      expect(data.method).toBe('whatsapp-roundtrip');
+      expect(data.whatsappVersion).toBeTruthy();
     }
   });
 
-  it('shows WhatMedia VMAF greater than or equal to direct upload across test scenes', () => {
-    const data = measurementsSchema.parse(measurementsJson);
-    for (const res of data.results) {
-      expect(res.metrics.whatmedia.vmaf).toBeGreaterThanOrEqual(res.metrics.directUpload.vmaf);
-    }
+  it('rejects "published" data that lacks its provenance', () => {
+    const r = measurementsSchema.safeParse({
+      status: 'published',
+      method: null,
+      timestamp: null,
+      whatsappVersion: null,
+      environment: null,
+      summary: null,
+      results: [],
+    });
+    expect(r.success).toBe(false);
   });
 });
-
-

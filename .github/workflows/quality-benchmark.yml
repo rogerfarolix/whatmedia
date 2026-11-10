@@ -1,4 +1,4 @@
-name: Monthly Quality Benchmark
+name: Monthly encoder self-check (simulation)
 
 on:
   schedule:
@@ -7,8 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   benchmark:
@@ -33,12 +32,9 @@ jobs:
       - name: Run Quality Measurements
         run: node tools/quality/measure.mjs
 
-      - name: Create Pull Request with updated measurements if drifted
-        uses: peter-evans/create-pull-request@v6
+      # Simulated numbers are NOT published on the site (CLAUDE.md: never invent quality numbers).
+      # Real measurements need files sent through WhatsApp, see docs/08-TESTS-QUALITE.md §3.
+      - uses: actions/upload-artifact@v4
         with:
-          commit-message: 'chore(benchmarks): update monthly VMAF/SSIM measurements'
-          title: 'Monthly VMAF/SSIM Benchmark Calibration'
-          body: 'Automated monthly run of ITU-R BT.500 / Netflix libvmaf and SSIM quality benchmarks against WhatsApp compression profiles.'
-          branch: 'benchmarks/monthly-calibration'
-          delete-branch: true
-
+          name: encoder-simulation
+          path: tools/quality/out/simulation.json
