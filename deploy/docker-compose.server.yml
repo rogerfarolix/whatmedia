@@ -33,7 +33,6 @@ services:
     tmpfs: [/tmp]
     security_opt: [no-new-privileges:true]
     cap_drop: [ALL]
-    pids_limit: 256
     volumes:
       - jobs_data:/data/jobs
     ports:
@@ -57,6 +56,7 @@ services:
         limits:
           cpus: "3"
           memory: 3g
+          pids: 256
     healthcheck:
       test: ["CMD-SHELL", "wget -q --spider http://127.0.0.1:3000/health || exit 1"]
       interval: 30s
