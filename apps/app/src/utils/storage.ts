@@ -1,4 +1,5 @@
 import type { PresetId } from '@whatmedia/config';
+import { presets } from '@whatmedia/config';
 
 export type Language = 'fr' | 'en';
 
@@ -12,8 +13,21 @@ export function getStoredLanguage(): Language {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.LANGUAGE);
     if (stored === 'fr' || stored === 'en') return stored;
-    if (typeof navigator !== 'undefined' && navigator.language?.startsWith('fr')) {
-      return 'fr';
+  } catch {
+    // Storage blocked (private mode): fall through to the browser language
+  }
+  return detectBrowserLanguage();
+}
+
+/** FR by default; EN when the browser prefers English (PRD US-08) */
+export function detectBrowserLanguage(): Language {
+  try {
+    const langs =
+      typeof navigator !== 'undefined' ? (navigator.languages?.length ? navigator.languages : [navigator.language]) : [];
+    for (const l of langs) {
+      const code = l?.toLowerCase() ?? '';
+      if (code.startsWith('fr')) return 'fr';
+      if (code.startsWith('en')) return 'en';
     }
     return 'fr';
   } catch {
@@ -32,8 +46,8 @@ export function setStoredLanguage(lang: Language): void {
 export function getStoredPreset(): PresetId {
   try {
     const stored = localStorage.getItem(STORAGE_KEYS.LAST_PRESET);
-    if (stored === 'status-hd' || stored === 'status-light' || stored === 'chat-hd' || stored === 'status-photo') {
-      return stored;
+    if (stored && stored in presets && presets[stored]?.kind === 'video') {
+      return stored as PresetId;
     }
     return 'status-hd';
   } catch {

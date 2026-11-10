@@ -3,53 +3,73 @@ import { useTranslation } from '../i18n/useTranslation';
 
 interface Props {
   isOpen: boolean;
+  /** Already-translated sentence explaining why the server is proposed */
+  reason?: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
 
-export const ConsentModal: React.FC<Props> = ({ isOpen, onConfirm, onCancel }) => {
+/**
+ * Explicit, per-file consent before anything leaves the device (PRD US-04).
+ * Uses the native <dialog> for focus trapping, Escape handling and inert background.
+ */
+export const ConsentModal: React.FC<Props> = ({ isOpen, reason, onConfirm, onCancel }) => {
   const { t } = useTranslation();
+  const ref = React.useRef<HTMLDialogElement>(null);
 
-  if (!isOpen) return null;
+  React.useEffect(() => {
+    const dialog = ref.current;
+    if (!dialog) return;
+    if (isOpen && !dialog.open) dialog.showModal();
+    if (!isOpen && dialog.open) dialog.close();
+  }, [isOpen]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="w-full max-w-md p-6 bg-[var(--wm-surface)] rounded-[var(--wm-radius-card)] border border-[var(--wm-border)] shadow-xl flex flex-col gap-4">
-        <div className="flex items-center gap-3">
-          <span className="text-2xl">☁️</span>
-          <h3 className="text-lg font-bold font-heading text-[var(--wm-ink)]">
-            Traitement via notre serveur sécurisé
-          </h3>
-        </div>
+    <dialog
+      ref={ref}
+      aria-labelledby="consent-title"
+      aria-describedby="consent-body"
+      onCancel={(e) => {
+        e.preventDefault();
+        onCancel();
+      }}
+      className="w-[calc(100%-2rem)] max-w-md p-0 m-auto rounded-[var(--wm-radius-card)] border border-[var(--wm-border)] bg-[var(--wm-surface)] text-[var(--wm-ink)] shadow-xl backdrop:bg-black/60"
+    >
+      <div className="p-6 flex flex-col gap-4">
+        <h2 id="consent-title" className="text-lg font-bold font-heading">
+          {t('consentTitle')}
+        </h2>
 
-        <p className="text-xs text-[var(--wm-muted)] leading-relaxed">
-          Ton navigateur ne supporte pas le traitement direct par WebCodecs. Nous pouvons traiter ta vidéo sur notre serveur open source dédié (Node 22 + ffmpeg).
+        {reason && <p className="text-sm m-0">{reason}</p>}
+
+        <p id="consent-body" className="text-xs text-[var(--wm-muted)] leading-relaxed m-0">
+          {t('consentBody')}
         </p>
 
-        <div className="p-3 bg-[var(--wm-paper)] border border-[var(--wm-border)] rounded-lg text-xs flex flex-col gap-1.5 text-[var(--wm-ink)]">
-          <div>🔒 <strong>Chiffrement HTTPS :</strong> Transfert direct chiffré de bout en bout.</div>
-          <div>⏱️ <strong>Suppression automatique :</strong> Fichier détruit sous 15 minutes max.</div>
-          <div>🚫 <strong>Aucune conservation :</strong> Aucun compte, aucun traçage.</div>
-        </div>
+        <ul className="p-3 bg-[var(--wm-paper)] border border-[var(--wm-border)] rounded-lg text-xs flex flex-col gap-1.5 list-disc pl-7 m-0">
+          <li>{t('consentPoint1')}</li>
+          <li>{t('consentPoint2')}</li>
+          <li>{t('consentPoint3')}</li>
+        </ul>
 
         <div className="flex gap-3 pt-2">
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 py-2.5 rounded-[var(--wm-radius-button)] text-xs font-semibold text-[var(--wm-muted)] border border-[var(--wm-border)] hover:bg-[var(--wm-paper)] transition-colors"
+            autoFocus
+            className="flex-1 min-h-11 rounded-[var(--wm-radius-button)] text-sm font-semibold text-[var(--wm-ink)] border border-[var(--wm-border)] hover:bg-[var(--wm-paper)] transition-colors"
           >
             {t('cancel')}
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="flex-1 py-2.5 rounded-[var(--wm-radius-button)] text-xs font-semibold bg-[var(--wm-signal)] text-white hover:bg-[var(--wm-signal-hover)] transition-all shadow-sm"
+            className="flex-1 min-h-11 rounded-[var(--wm-radius-button)] text-sm font-semibold bg-[var(--wm-signal)] text-[var(--wm-on-signal)] hover:bg-[var(--wm-signal-hover)] transition-all shadow-sm"
           >
-            J'accepte et je continue
+            {t('consentAccept')}
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 };
-
