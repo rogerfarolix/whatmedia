@@ -150,7 +150,7 @@ export const ResultsScreen: React.FC<Props> = ({
                   type="button"
                   onClick={() => handleShare(out)}
                   disabled={sharingIndex === out.index}
-                  aria-label={`${shareSupported ? t('shareToStatus') : t('download')} — ${title}`}
+                  aria-label={`${shareSupported ? t('shareToStatus') : t('download')}, ${title}`}
                   className="min-h-11 px-4 rounded-[var(--wm-radius-button)] font-semibold text-xs bg-[var(--wm-signal)] text-[var(--wm-on-signal)] hover:bg-[var(--wm-signal-hover)] transition-all shadow-sm whitespace-nowrap disabled:opacity-60"
                 >
                   {sharingIndex === out.index ? t('sharing') : shareSupported ? t('shareToStatus') : t('download')}
@@ -159,7 +159,7 @@ export const ResultsScreen: React.FC<Props> = ({
                   <button
                     type="button"
                     onClick={() => downloadFile(out.file)}
-                    aria-label={`${t('download')} — ${title}`}
+                    aria-label={`${t('download')}, ${title}`}
                     className="min-h-11 px-4 rounded-[var(--wm-radius-button)] text-xs text-[var(--wm-ink)] border border-[var(--wm-border)] hover:bg-[var(--wm-surface)] whitespace-nowrap"
                   >
                     {t('download')}

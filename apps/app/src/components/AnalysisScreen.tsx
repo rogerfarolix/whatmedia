@@ -99,7 +99,7 @@ export const AnalysisScreen: React.FC<Props> = ({
         })
       : plan?.image
         ? t('outputSummaryImage', { w: plan.image.width, h: plan.image.height })
-        : '—';
+        : '-';
 
   return (
     <section
@@ -125,7 +125,7 @@ export const AnalysisScreen: React.FC<Props> = ({
       {info && (
         <dl className="grid grid-cols-2 gap-3 text-sm m-0">
           {isVideo && <Stat label={t('duration')} value={formatDuration(info.durationSec ?? 0)} />}
-          <Stat label={t('resolution')} value={info.width > 0 ? `${info.width} × ${info.height}` : '—'} />
+          <Stat label={t('resolution')} value={info.width > 0 ? `${info.width} × ${info.height}` : '-'} />
           <Stat label={t('fileSize')} value={formatBytes(info.sizeBytes, language)} />
           {isVideo ? (
             <Stat
