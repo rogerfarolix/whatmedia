@@ -92,12 +92,16 @@ export const App: React.FC = () => {
 
     setScreen('processing');
     abortControllerRef.current = new AbortController();
+    const partials: OutputFile[] = [];
 
     try {
       const outputs = await run(selectedFile, currentPlan, {
         signal: abortControllerRef.current.signal,
         onProgress: (p) => {
           setProgress(p);
+        },
+        onSegmentComplete: (item) => {
+          partials.push(item);
         },
       });
 
@@ -110,6 +114,12 @@ export const App: React.FC = () => {
         (err as { message?: string })?.message?.includes('aborted');
 
       if (isAbort) {
+        const partialOutputs = (err as { partialOutputs?: OutputFile[] })?.partialOutputs || partials;
+        if (partialOutputs.length > 0) {
+          setOutputFiles(partialOutputs);
+          setScreen('results');
+          return;
+        }
         setScreen('analysis');
         return;
       }
