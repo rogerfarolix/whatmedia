@@ -5,6 +5,8 @@
     "rootDir": "src",
     "composite": true
   },
-  "include": ["src/**/*", "src/**/*.json"]
+  "include": [
+    "src/**/*",
+    "src/**/*.json"
+  ]
 }
-

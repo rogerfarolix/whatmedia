@@ -8,6 +8,8 @@ interface Props {
   info: MediaInfo | null;
   plan: Plan | null;
   isAnalyzing: boolean;
+  queueIndex?: number;
+  queueTotal?: number;
   onOptimize: () => void;
   onServerFallback?: () => void;
   onCancel: () => void;
@@ -18,6 +20,8 @@ export const AnalysisScreen: React.FC<Props> = ({
   info,
   plan,
   isAnalyzing,
+  queueIndex,
+  queueTotal,
   onOptimize,
   onServerFallback,
   onCancel,
@@ -41,9 +45,16 @@ export const AnalysisScreen: React.FC<Props> = ({
   return (
     <div className="flex flex-col gap-5 p-5 bg-[var(--wm-surface)] rounded-[var(--wm-radius-card)] border border-[var(--wm-border)]">
       <div>
-        <span className="text-xs font-bold tracking-wide text-[var(--wm-signal)] uppercase">
-          {t('analysisResult')}
-        </span>
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-bold tracking-wide text-[var(--wm-signal)] uppercase">
+            {t('analysisResult')}
+          </span>
+          {queueTotal && queueTotal > 1 && (
+            <span className="text-[11px] px-2 py-0.5 rounded-full bg-[var(--wm-paper)] border border-[var(--wm-border)] font-mono text-[var(--wm-muted)]">
+              File d'attente : {(queueIndex ?? 0) + 1} / {queueTotal}
+            </span>
+          )}
+        </div>
         <h2 className="text-xl font-bold font-heading text-[var(--wm-ink)] mt-0.5 truncate">
           {file.name}
         </h2>

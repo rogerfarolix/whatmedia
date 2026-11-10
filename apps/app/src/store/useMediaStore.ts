@@ -8,6 +8,8 @@ export type AppScreen = 'home' | 'analysis' | 'processing' | 'results';
 interface MediaState {
   screen: AppScreen;
   selectedFile: File | null;
+  fileQueue: File[];
+  currentFileIndex: number;
   mediaInfo: MediaInfo | null;
   plan: Plan | null;
   currentPresetId: PresetId;
@@ -19,6 +21,8 @@ interface MediaState {
 
   setScreen: (screen: AppScreen) => void;
   setSelectedFile: (file: File | null) => void;
+  setFileQueue: (files: File[]) => void;
+  setCurrentFileIndex: (index: number) => void;
   setMediaInfo: (info: MediaInfo | null) => void;
   setPlan: (plan: Plan | null) => void;
   setCurrentPresetId: (presetId: PresetId) => void;
@@ -33,6 +37,8 @@ interface MediaState {
 export const useMediaStore = create<MediaState>((set) => ({
   screen: 'home',
   selectedFile: null,
+  fileQueue: [],
+  currentFileIndex: 0,
   mediaInfo: null,
   plan: null,
   currentPresetId: getStoredPreset(),
@@ -44,6 +50,8 @@ export const useMediaStore = create<MediaState>((set) => ({
 
   setScreen: (screen) => set({ screen }),
   setSelectedFile: (file) => set({ selectedFile: file }),
+  setFileQueue: (fileQueue) => set({ fileQueue }),
+  setCurrentFileIndex: (currentFileIndex) => set({ currentFileIndex }),
   setMediaInfo: (info) => set({ mediaInfo: info }),
   setPlan: (plan) => set({ plan }),
   setCurrentPresetId: (presetId) => {
@@ -59,6 +67,8 @@ export const useMediaStore = create<MediaState>((set) => ({
     set({
       screen: 'home',
       selectedFile: null,
+      fileQueue: [],
+      currentFileIndex: 0,
       mediaInfo: null,
       plan: null,
       progress: null,
