@@ -1,248 +1,89 @@
 ---
+import Logo from './Logo.astro';
+import { routes, ui, REPO_URL, type Lang } from '../i18n/site';
+import { features, featurePath } from '../content/features';
+
 interface Props {
-  lang?: 'fr' | 'en';
-  currentPath?: string;
+  lang: Lang;
 }
 
-const { lang = 'fr', currentPath = '/' } = Astro.props;
-const isFr = lang === 'fr';
+const { lang } = Astro.props;
+const t = ui[lang];
+const f = t.footer;
 
-const switchPath = (() => {
-  if (isFr) {
-    if (currentPath === '/') return '/en/';
-    if (currentPath.startsWith('/comment-ca-marche')) return '/en/how-it-works';
-    if (currentPath.startsWith('/mesures')) return '/en/measurements';
-    if (currentPath.startsWith('/confidentialite')) return '/en/privacy';
-    if (currentPath.startsWith('/mentions')) return '/en/legal';
-    return '/en/';
-  } else {
-    if (currentPath === '/en' || currentPath === '/en/') return '/';
-    if (currentPath.startsWith('/en/how-it-works')) return '/comment-ca-marche';
-    if (currentPath.startsWith('/en/measurements')) return '/mesures';
-    if (currentPath.startsWith('/en/privacy')) return '/confidentialite';
-    if (currentPath.startsWith('/en/legal')) return '/mentions';
-    return '/';
-  }
-})();
+const columns = [
+  {
+    title: f.product,
+    links: [
+      ...features.map((x) => ({ href: featurePath(x, lang), label: x[lang].title })),
+      { href: routes.howItWorks[lang], label: t.nav.howItWorks },
+      { href: routes.measurements[lang], label: f.measurements },
+    ],
+  },
+  {
+    title: f.project,
+    links: [
+      { href: routes.about[lang], label: t.nav.about },
+      { href: routes.faq[lang], label: t.nav.faq },
+      { href: routes.contact[lang], label: t.nav.contact },
+      { href: REPO_URL, label: f.source, external: true },
+    ],
+  },
+  {
+    title: f.legalCol,
+    links: [
+      { href: routes.privacy[lang], label: f.privacy },
+      { href: routes.terms[lang], label: f.terms },
+      { href: routes.legal[lang], label: f.legal },
+    ],
+  },
+];
 ---
 
-<footer class="border-t border-wm-border bg-wm-surface py-12 transition-colors">
+<footer class="border-t border-wm-border bg-wm-surface py-12">
   <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-4 lg:grid-cols-5">
-      <!-- Col 1: Brand & Credits -->
+    <div class="grid grid-cols-1 gap-10 md:grid-cols-5">
       <div class="md:col-span-2 space-y-4">
-        <a href={isFr ? '/' : '/en/'} class="inline-flex items-center gap-2.5">
-          <div
-            class="flex h-8 w-8 items-center justify-center rounded-[8px] bg-wm-signal text-white"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 44 44"
-              class="h-5 w-5"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M13 19V13H19"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-              <path
-                d="M31 19V13H25"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-              <path
-                d="M13 25V31H19"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-              <path
-                d="M31 25V31H25"
-                stroke="currentColor"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"></path>
-              <circle cx="22" cy="22" r="2.5" fill="currentColor"></circle>
-            </svg>
-          </div>
-          <span class="font-heading text-lg font-bold tracking-tight text-wm-ink">
-            What<span class="text-wm-signal">Media</span>
-          </span>
+        <a href={routes.home[lang]} class="inline-flex items-center gap-2.5">
+          <Logo class="h-8 w-8" />
+          <span class="font-heading text-lg font-bold tracking-tight text-wm-ink">WhatMedia</span>
         </a>
-        <p class="text-sm text-wm-muted max-w-sm">
-          {
-            isFr
-              ? 'Outil libre et gratuit pour préparer vos vidéos et photos avant envoi dans les statuts WhatsApp, directement dans votre navigateur.'
-              : 'Free and open-source tool to prepare your videos and photos before posting to WhatsApp status, directly in your browser.'
-          }
-        </p>
-        <div class="flex items-center gap-2 pt-1 text-xs text-wm-muted">
-          <span>{isFr ? 'Un projet initié par' : 'A project by'}</span>
-          <a
-            href="https://github.com/rogerfarolix"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="font-medium text-wm-ink hover:text-wm-focus underline decoration-wm-border hover:decoration-wm-focus underline-offset-4 transition-colors"
-          >
-            Roger Gnanih / Nealix
-          </a>
-        </div>
+        <p class="max-w-sm text-sm text-wm-muted">{f.tagline}</p>
+        <a
+          href="/app/"
+          class="inline-flex h-11 items-center rounded-wm-button bg-wm-signal px-5 text-sm font-semibold text-wm-on-signal hover:bg-wm-signal-hover"
+        >
+          {t.openApp}
+        </a>
       </div>
 
-      <!-- Col 2: Navigation Links -->
-      <div class="space-y-3">
-        <p class="font-heading text-xs font-semibold uppercase tracking-wider text-wm-ink">
-          {isFr ? 'Navigation' : 'Navigation'}
-        </p>
-        <ul class="space-y-2 text-sm">
-          <li>
-            <a
-              href={isFr ? '/comment-ca-marche' : '/en/how-it-works'}
-              class="text-wm-muted hover:text-wm-ink transition-colors"
-            >
-              {isFr ? 'Comment ça marche' : 'How it works'}
-            </a>
-          </li>
-          <li>
-            <a
-              href={isFr ? '/mesures' : '/en/measurements'}
-              class="text-wm-muted hover:text-wm-ink transition-colors"
-            >
-              {isFr ? 'Mesures & Benchmarks' : 'Measurements'}
-            </a>
-          </li>
-          <li>
-            <a
-              href="/app/"
-              class="text-wm-signal hover:text-wm-signal-hover font-medium transition-colors"
-            >
-              {isFr ? "Ouvrir l'application web" : 'Open Web App'}
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Col 3: Legal & Privacy -->
-      <div class="space-y-3">
-        <p class="font-heading text-xs font-semibold uppercase tracking-wider text-wm-ink">
-          {isFr ? 'Légal & Vie privée' : 'Legal & Privacy'}
-        </p>
-        <ul class="space-y-2 text-sm">
-          <li>
-            <a
-              href={isFr ? '/confidentialite' : '/en/privacy'}
-              class="text-wm-muted hover:text-wm-ink transition-colors"
-            >
-              {isFr ? 'Confidentialité' : 'Privacy policy'}
-            </a>
-          </li>
-          <li>
-            <a
-              href={isFr ? '/mentions' : '/en/legal'}
-              class="text-wm-muted hover:text-wm-ink transition-colors"
-            >
-              {isFr ? 'Mentions légales' : 'Legal notice'}
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://github.com/rogerfarolix/whatmedia/blob/main/LICENSE"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-wm-muted hover:text-wm-ink transition-colors"
-            >
-              Licence MIT
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Col 4: Community & Language -->
-      <div class="space-y-3">
-        <p class="font-heading text-xs font-semibold uppercase tracking-wider text-wm-ink">
-          {isFr ? 'Communauté' : 'Community'}
-        </p>
-        <ul class="space-y-2 text-sm">
-          <li>
-            <a
-              href="https://github.com/rogerfarolix/whatmedia"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline-flex items-center gap-1.5 text-wm-muted hover:text-wm-ink transition-colors"
-            >
-              <span>GitHub</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-3.5 w-3.5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"
-                ></path>
-                <path
-                  d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"
-                ></path>
-              </svg>
-            </a>
-          </li>
-          <li>
-            <a
-              href="https://www.npmjs.com/package/@whatmedia/core"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-wm-muted hover:text-wm-ink transition-colors"
-            >
-              npm: @whatmedia/core
-            </a>
-          </li>
-          <li class="pt-2">
-            <a
-              href={switchPath}
-              class="inline-flex items-center gap-1.5 rounded-wm-button border border-wm-border bg-wm-paper px-3 py-1 text-xs font-mono text-wm-ink hover:border-wm-focus transition-colors"
-            >
-              <span>🌐</span>
-              <span>{isFr ? 'English version' : 'Version française'}</span>
-            </a>
-          </li>
-        </ul>
-      </div>
+      {
+        columns.map((col) => (
+          <nav aria-label={col.title}>
+            <h2 class="font-heading text-sm font-bold text-wm-ink">{col.title}</h2>
+            <ul class="mt-3 space-y-1">
+              {col.links.map((l) => (
+                <li>
+                  <a
+                    href={l.href}
+                    target={'external' in l && l.external ? '_blank' : undefined}
+                    rel={'external' in l && l.external ? 'noopener noreferrer' : undefined}
+                    class="inline-flex min-h-9 items-center text-sm text-wm-muted hover:text-wm-ink hover:underline underline-offset-4"
+                  >
+                    {l.label}
+                    {'external' in l && l.external && <span class="sr-only"> {t.newTab}</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
     </div>
 
-    <!-- Mandatory Non-Affiliation Disclaimer & Version -->
-    <div class="mt-10 border-t border-wm-border pt-6 space-y-4">
-      <div
-        class="rounded-xl border border-wm-border/60 bg-wm-paper/50 p-4 text-xs leading-relaxed text-wm-muted"
-      >
-        <p class="font-semibold text-wm-ink mb-1">
-          {isFr ? 'Avertissement légal d’indépendance :' : 'Legal non-affiliation disclaimer:'}
-        </p>
-        <p>
-          {
-            isFr
-              ? "WhatMedia est un projet libre et indépendant développé par Nealix. WhatMedia n'est en aucun cas affilié, sponsorisé, certifié, associé ou autrement officiellement lié à WhatsApp LLC, Meta Platforms, Inc., ou à l'une de leurs filiales ou sociétés affiliées. Les dénominations WhatsApp ainsi que les noms, marques, emblèmes et images associés sont des marques déposées appartenant exclusivement à Meta Platforms, Inc."
-              : 'WhatMedia is an open-source, independent project developed by Nealix. WhatMedia is in no way affiliated, sponsored, certified, endorsed, or officially connected with WhatsApp LLC, Meta Platforms, Inc., or any of their subsidiaries or affiliates. The name WhatsApp as well as related names, marks, emblems, and images are registered trademarks owned exclusively by Meta Platforms, Inc.'
-          }
-        </p>
-      </div>
-
-      <div
-        class="flex flex-col sm:flex-row items-center justify-between text-xs text-wm-muted gap-2"
-      >
-        <p>
-          © {new Date().getFullYear()} Nealix / Roger Gnanih. {
-            isFr ? 'Distribué sous licence MIT.' : 'Released under the MIT License.'
-          }
-        </p>
-        <div class="flex items-center gap-3 font-mono">
-          <span class="inline-block h-2 w-2 rounded-full bg-wm-ok"></span>
-          <span>v0.1.0-alpha</span>
-        </div>
-      </div>
+    <div class="mt-10 border-t border-wm-border pt-6 text-xs text-wm-muted space-y-2">
+      <p>{f.disclaimer}</p>
+      <p>{f.credit}</p>
     </div>
   </div>
 </footer>

@@ -1,0 +1,49 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { routes, ui, type Lang } from '../i18n/site';
+import { faq } from '../content/faq';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'Questions fréquentes' : 'Frequently asked questions';
+const description = fr
+  ? 'Compression WhatsApp, gratuité, vie privée, formats acceptés, durée des parties, vidéos HDR délavées : les réponses aux questions sur WhatMedia.'
+  : 'WhatsApp compression, pricing, privacy, supported formats, part length, washed-out HDR videos: answers to common questions about WhatMedia.';
+const items = faq[lang];
+const faqLd = {
+  '@type': 'FAQPage',
+  mainEntity: items.map((i) => ({
+    '@type': 'Question',
+    name: i.q,
+    acceptedAnswer: { '@type': 'Answer', text: i.a },
+  })),
+};
+---
+
+<BaseLayout lang={lang} title={title} description={description} alternates={routes.faq} jsonLd={[faqLd]} breadcrumbs={[{ name: ui[lang].nav.faq, path: routes.faq[lang] }]}>
+  <PageHero title={title} lead={fr ? 'Une question qui n’est pas ici ? Écris-nous depuis la page Contact.' : 'A question that is not here? Write to us from the Contact page.'} />
+  <section class="mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
+    <div class="space-y-3">
+      {
+        items.map((item, i) => (
+          <details class="group rounded-wm-card border border-wm-border bg-wm-surface p-5 [&_summary::-webkit-details-marker]:hidden" open={i === 0}>
+            <summary class="flex min-h-11 cursor-pointer items-center justify-between gap-4 font-heading text-base font-bold sm:text-lg">
+              <h2 class="text-base sm:text-lg">{item.q}</h2>
+              <span aria-hidden="true" class="text-xl text-wm-muted group-open:rotate-45 motion-safe:transition-transform">+</span>
+            </summary>
+            <p class="mt-2 text-sm leading-relaxed text-wm-muted sm:text-base">{item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+    <p class="mt-8 text-sm text-wm-muted">
+      <a href={routes.contact[lang]} class="font-semibold text-wm-signal-text underline underline-offset-4">{ui[lang].nav.contact}</a>
+    </p>
+  </section>
+  <CtaBand lang={lang} />
+</BaseLayout>

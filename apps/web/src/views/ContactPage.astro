@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import Icon from '../components/Icon.astro';
+import { routes, ui, REPO_URL, CONTACT_EMAIL, SITE_URL, type Lang } from '../i18n/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'Nous contacter' : 'Contact us';
+const description = fr
+  ? 'Une question, un problème sur ton téléphone ou une faille de sécurité à signaler ? Contacte l’équipe WhatMedia par e-mail ou sur GitHub.'
+  : 'A question, a problem on your phone or a security issue to report? Contact the WhatMedia team by email or on GitHub.';
+
+const channels = fr
+  ? [
+      { icon: 'mail', title: 'Par e-mail', text: 'Pour une question, un avis ou une demande liée à tes données.', label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}?subject=WhatMedia` },
+      { icon: 'github', title: 'Signaler un problème', text: 'Un fichier qui ne passe pas, un bouton qui ne marche pas ? Indique ton téléphone, ton navigateur et le type de fichier.', label: 'Ouvrir un ticket sur GitHub', href: `${REPO_URL}/issues/new/choose` },
+      { icon: 'shield', title: 'Sécurité', text: 'Une faille de sécurité ? Ne la publie pas : suis la politique de sécurité du projet.', label: 'Politique de sécurité', href: `${REPO_URL}/security/policy` },
+    ]
+  : [
+      { icon: 'mail', title: 'By email', text: 'For a question, feedback or a request about your data.', label: CONTACT_EMAIL, href: `mailto:${CONTACT_EMAIL}?subject=WhatMedia` },
+      { icon: 'github', title: 'Report a problem', text: 'A file that fails, a button that does not work? Tell us your phone, browser and file type.', label: 'Open an issue on GitHub', href: `${REPO_URL}/issues/new/choose` },
+      { icon: 'shield', title: 'Security', text: 'Found a security issue? Do not publish it: follow the project security policy.', label: 'Security policy', href: `${REPO_URL}/security/policy` },
+    ];
+
+const contactLd = {
+  '@type': 'ContactPage',
+  url: `${SITE_URL}${routes.contact[lang]}`,
+  mainEntity: {
+    '@id': `${SITE_URL}/#organization`,
+    '@type': 'Organization',
+    email: CONTACT_EMAIL,
+    contactPoint: { '@type': 'ContactPoint', email: CONTACT_EMAIL, contactType: 'customer support', availableLanguage: ['French', 'English'] },
+  },
+};
+---
+
+<BaseLayout lang={lang} title={title} description={description} alternates={routes.contact} jsonLd={[contactLd]} breadcrumbs={[{ name: ui[lang].nav.contact, path: routes.contact[lang] }]}>
+  <PageHero
+    title={title}
+    lead={fr
+      ? 'WhatMedia est maintenu par une petite équipe : nous lisons tous les messages et répondons dès que possible.'
+      : 'WhatMedia is maintained by a small team: we read every message and reply as soon as we can.'}
+  />
+  <section class="mx-auto max-w-4xl px-4 pb-14 sm:px-6 lg:px-8">
+    <ul class="grid grid-cols-1 gap-5 md:grid-cols-3">
+      {
+        channels.map((ch) => (
+          <li class="flex flex-col rounded-wm-card border border-wm-border bg-wm-surface p-6">
+            <Icon name={ch.icon as 'mail'} class="h-7 w-7 text-wm-signal-text" />
+            <h2 class="mt-3 font-heading text-lg font-bold">{ch.title}</h2>
+            <p class="mt-2 flex-1 text-sm leading-relaxed text-wm-muted">{ch.text}</p>
+            <a href={ch.href} class="mt-4 inline-flex min-h-11 items-center break-all text-sm font-semibold text-wm-signal-text underline underline-offset-4">
+              {ch.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-8 text-sm text-wm-muted">
+      {fr ? 'Avant d’écrire, la réponse est peut-être dans la ' : 'Before writing, the answer may be in the '}
+      <a href={routes.faq[lang]} class="font-semibold text-wm-signal-text underline underline-offset-4">FAQ</a>.
+    </p>
+  </section>
+</BaseLayout>

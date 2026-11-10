@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+# Fallback processing API: no content to index
+Disallow: /api/
 
 Sitemap: https://whatmedia.nealix.org/sitemap.xml

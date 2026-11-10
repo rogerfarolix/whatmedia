@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { routes, ui, CONTACT_EMAIL, REPO_URL, type Lang } from '../i18n/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'Mentions légales' : 'Legal notice';
+const description = fr
+  ? 'Éditeur, directeur de la publication, hébergeur, licence du code et marques : les mentions légales du site et de l’application WhatMedia.'
+  : 'Publisher, publication director, host, code license and trademarks: the legal notice of the WhatMedia website and app.';
+---
+
+<BaseLayout lang={lang} title={title} description={description} alternates={routes.legal} breadcrumbs={[{ name: ui[lang].footer.legal, path: routes.legal[lang] }]}>
+  <PageHero title={title} />
+  <article class="prose-wm mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
+    <h2>{fr ? 'Éditeur' : 'Publisher'}</h2>
+    <p>
+      {fr ? 'Le site et l’application WhatMedia (whatmedia.nealix.org) sont édités par Roger Gnanih, pour le projet open source ' : 'The WhatMedia website and app (whatmedia.nealix.org) are published by Roger Gnanih, for the open source project '}
+      <a href="https://www.nealix.org">Nealix</a>{fr ? ', Cotonou, Bénin.' : ', Cotonou, Benin.'}
+    </p>
+    <p>{fr ? 'Directeur de la publication' : 'Publication director'} : Roger Gnanih.</p>
+    <p>Contact : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a></p>
+
+    <h2>{fr ? 'Hébergeur' : 'Host'}</h2>
+    <p>Contabo GmbH, Aschauer Straße 32a, 81549 {fr ? 'Munich, Allemagne' : 'Munich, Germany'}. <a href="https://contabo.com">contabo.com</a></p>
+
+    <h2>{fr ? 'Code source et licence' : 'Source code and license'}</h2>
+    <p>
+      {fr ? 'Le code de WhatMedia (application, site, moteur et outils) est publié sous licence MIT : ' : 'The WhatMedia code (app, website, engine and tools) is published under the MIT license: '}
+      <a href={REPO_URL}>{REPO_URL.replace('https://', '')}</a>.
+    </p>
+
+    <h2>{fr ? 'Marques' : 'Trademarks'}</h2>
+    <p>
+      {fr
+        ? 'WhatMedia est un projet indépendant. Il n’est ni affilié, ni sponsorisé, ni validé par WhatsApp LLC ou Meta Platforms, Inc. « WhatsApp » est une marque de Meta Platforms, Inc. ; ce nom est utilisé uniquement pour décrire la destination des fichiers préparés.'
+        : 'WhatMedia is an independent project. It is not affiliated with, sponsored or endorsed by WhatsApp LLC or Meta Platforms, Inc. “WhatsApp” is a trademark of Meta Platforms, Inc.; the name is used only to describe where the prepared files are meant to be posted.'}
+    </p>
+
+    <h2>{fr ? 'Données personnelles' : 'Personal data'}</h2>
+    <p>
+      {fr ? 'Voir la ' : 'See the '}
+      <a href={routes.privacy[lang]}>{ui[lang].footer.privacy.toLowerCase()}</a>
+      {fr ? ' et les ' : ' and the '}
+      <a href={routes.terms[lang]}>{ui[lang].footer.terms.toLowerCase()}</a>.
+    </p>
+  </article>
+</BaseLayout>

@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { routes, ui, REPO_URL, SITE_URL, type Lang } from '../i18n/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'À propos du projet' : 'About the project';
+const description = fr
+  ? 'Pourquoi WhatMedia existe, qui le développe et selon quels principes : traitement sur le téléphone, code ouvert et aucune promesse impossible.'
+  : 'Why WhatMedia exists, who builds it and on which principles: processing on the phone, open code and no impossible promises.';
+const aboutLd = {
+  '@type': 'AboutPage',
+  name: title,
+  url: `${SITE_URL}${routes.about[lang]}`,
+  about: { '@id': `${SITE_URL}/#organization` },
+  inLanguage: lang,
+};
+---
+
+<BaseLayout lang={lang} title={title} description={description} alternates={routes.about} jsonLd={[aboutLd]} breadcrumbs={[{ name: ui[lang].nav.about, path: routes.about[lang] }]}>
+  <PageHero title={title} />
+  <article class="prose-wm mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
+    {
+      fr ? (
+        <>
+          <p>Une vidéo filmée avec un bon téléphone arrive souvent floue ou délavée dans les statuts WhatsApp. Les causes sont connues : fichiers trop lourds, vidéos trop longues, couleurs HDR mal converties. Les outils qui corrigent cela demandent en général d’envoyer ses vidéos personnelles sur un serveur inconnu, ou d’installer une application.</p>
+          <p>WhatMedia fait ce travail dans le navigateur, sur le téléphone, gratuitement et sans compte.</p>
+
+          <h2>Qui le développe</h2>
+          <p>WhatMedia est un projet open source de <a href="https://www.nealix.org">Nealix</a>, collectif tech basé à Cotonou (Bénin), conçu et maintenu par Roger Gnanih. Le code est public sur <a href={REPO_URL}>GitHub</a> sous licence MIT : chacun peut le lire, le vérifier et l’améliorer.</p>
+
+          <h2>Nos principes</h2>
+          <ul>
+            <li><strong>Sur ton téléphone d’abord.</strong> Le traitement se fait localement. Le serveur de secours n’intervient qu’avec ton accord, fichier par fichier.</li>
+            <li><strong>Pas de promesse impossible.</strong> Personne ne peut désactiver la compression de WhatsApp. WhatMedia prépare le meilleur fichier de départ possible, rien de plus.</li>
+            <li><strong>Pas de chiffres inventés.</strong> Aucune mesure de qualité n’est publiée tant qu’elle n’a pas été faite sur de vrais statuts WhatsApp.</li>
+            <li><strong>Accessible à tous.</strong> Gratuit, sans publicité, en français et en anglais, utilisable au clavier et avec un lecteur d’écran.</li>
+          </ul>
+
+          <h2>Où en est le projet</h2>
+          <p>WhatMedia est jeune. Le moteur est testé automatiquement sur ordinateur (Chrome, Safari/WebKit) ; les essais sur iPhone et la première campagne de mesure sur WhatsApp sont en cours. Le <a href={`${REPO_URL}/blob/main/CHANGELOG.md`}>journal des versions</a> liste chaque changement.</p>
+
+          <h2>Indépendance</h2>
+          <p>WhatMedia n’est ni affilié, ni sponsorisé, ni validé par WhatsApp LLC ou Meta Platforms, Inc.</p>
+        </>
+      ) : (
+        <>
+          <p>A video shot on a good phone often ends up blurry or washed out in WhatsApp statuses. The causes are known: files too heavy, videos too long, HDR colours badly converted. Tools that fix this usually ask you to upload your personal videos to an unknown server, or to install an app.</p>
+          <p>WhatMedia does this work in the browser, on the phone, for free and without an account.</p>
+
+          <h2>Who builds it</h2>
+          <p>WhatMedia is an open source project by <a href="https://www.nealix.org">Nealix</a>, a tech collective based in Cotonou (Benin), designed and maintained by Roger Gnanih. The code is public on <a href={REPO_URL}>GitHub</a> under the MIT license: anyone can read it, check it and improve it.</p>
+
+          <h2>Our principles</h2>
+          <ul>
+            <li><strong>Your phone first.</strong> Processing happens locally. The fallback server only steps in with your consent, file by file.</li>
+            <li><strong>No impossible promise.</strong> Nobody can turn off WhatsApp compression. WhatMedia prepares the best possible starting file, nothing more.</li>
+            <li><strong>No invented figures.</strong> No quality measurement is published until it has been done on real WhatsApp statuses.</li>
+            <li><strong>For everyone.</strong> Free, no ads, in French and English, usable with a keyboard and a screen reader.</li>
+          </ul>
+
+          <h2>Project status</h2>
+          <p>WhatMedia is young. The engine is tested automatically on desktop (Chrome, Safari/WebKit); iPhone testing and the first measurement campaign on WhatsApp are in progress. The <a href={`${REPO_URL}/blob/main/CHANGELOG.md`}>changelog</a> lists every change.</p>
+
+          <h2>Independence</h2>
+          <p>WhatMedia is not affiliated with, sponsored or endorsed by WhatsApp LLC or Meta Platforms, Inc.</p>
+        </>
+      )
+    }
+  </article>
+  <CtaBand lang={lang} />
+</BaseLayout>

@@ -1,217 +1,112 @@
 ---
+import Logo from './Logo.astro';
+import { routes, ui, type Alternates, type Lang } from '../i18n/site';
+
 interface Props {
-  lang?: 'fr' | 'en';
-  currentPath?: string;
+  lang: Lang;
+  alternates: Alternates;
 }
 
-const { lang = 'fr', currentPath = '/' } = Astro.props;
+const { lang, alternates } = Astro.props;
+const t = ui[lang];
+const other: Lang = lang === 'fr' ? 'en' : 'fr';
 
-const isFr = lang === 'fr';
-
-const links = isFr
-  ? [
-      { href: '/comment-ca-marche', label: 'Comment ça marche' },
-      { href: '/mesures', label: 'Mesures' },
-      { href: 'https://github.com/rogerfarolix/whatmedia', label: 'GitHub', external: true },
-    ]
-  : [
-      { href: '/en/how-it-works', label: 'How it works' },
-      { href: '/en/measurements', label: 'Measurements' },
-      { href: 'https://github.com/rogerfarolix/whatmedia', label: 'GitHub', external: true },
-    ];
-
-const switchPath = (() => {
-  if (isFr) {
-    if (currentPath === '/') return '/en/';
-    if (currentPath.startsWith('/comment-ca-marche')) return '/en/how-it-works';
-    if (currentPath.startsWith('/mesures')) return '/en/measurements';
-    if (currentPath.startsWith('/confidentialite')) return '/en/privacy';
-    if (currentPath.startsWith('/mentions')) return '/en/legal';
-    return '/en/';
-  } else {
-    if (currentPath === '/en' || currentPath === '/en/') return '/';
-    if (currentPath.startsWith('/en/how-it-works')) return '/comment-ca-marche';
-    if (currentPath.startsWith('/en/measurements')) return '/mesures';
-    if (currentPath.startsWith('/en/privacy')) return '/confidentialite';
-    if (currentPath.startsWith('/en/legal')) return '/mentions';
-    return '/';
-  }
-})();
-
-const switchLabel = isFr ? 'EN' : 'FR';
-const switchAria = isFr ? 'Passer en anglais' : 'Switch to French';
-const ctaLabel = isFr ? "Ouvrir l'app" : 'Open app';
-const homeHref = isFr ? '/' : '/en/';
+const links = [
+  { href: routes.features[lang], label: t.nav.features },
+  { href: routes.howItWorks[lang], label: t.nav.howItWorks },
+  { href: routes.faq[lang], label: t.nav.faq },
+  { href: routes.about[lang], label: t.nav.about },
+  { href: routes.contact[lang], label: t.nav.contact },
+];
+const current = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const isCurrent = (href: string) => current === href || (href !== routes.home[lang] && current.startsWith(href));
 ---
 
-<header
-  class="sticky top-0 z-40 w-full border-b border-wm-border bg-wm-paper/85 backdrop-blur-md transition-colors"
->
-  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-    <!-- Brand Logo -->
-    <a
-      href={homeHref}
-      class="flex items-center gap-2.5 group focus:outline-none focus-visible:ring-2 focus-visible:ring-wm-focus rounded-lg py-1 px-1.5"
-      aria-label="WhatMedia"
-    >
-      <div
-        class="flex h-9 w-9 items-center justify-center rounded-[10px] bg-wm-signal text-white shadow-sm transition-transform group-hover:scale-105"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 44 44"
-          class="h-6 w-6"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M13 19V13H19"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-          <path
-            d="M31 19V13H25"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-          <path
-            d="M13 25V31H19"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-          <path
-            d="M31 25V31H25"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"></path>
-          <circle cx="22" cy="22" r="2.5" fill="currentColor"></circle>
-        </svg>
-      </div>
-      <span class="font-heading text-xl font-bold tracking-tight text-wm-ink">
-        What<span class="text-wm-signal">Media</span>
-      </span>
+<header class="sticky top-0 z-40 w-full border-b border-wm-border bg-wm-paper/95 backdrop-blur">
+  <div class="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+    <a href={routes.home[lang]} class="flex items-center gap-2.5 rounded-lg py-1" aria-label="WhatMedia">
+      <Logo class="h-9 w-9" />
+      <span class="font-heading text-xl font-bold tracking-tight text-wm-ink">WhatMedia</span>
     </a>
 
-    <!-- Desktop Navigation -->
-    <nav class="hidden md:flex md:items-center md:gap-7" aria-label="Navigation principale">
+    <nav class="hidden lg:flex lg:items-center lg:gap-6" aria-label={t.navLabel}>
       {
-        links.map((link) => (
+        links.map((l) => (
           <a
-            href={link.href}
-            target={link.external ? '_blank' : undefined}
-            rel={link.external ? 'noopener noreferrer' : undefined}
-            class="text-sm font-medium text-wm-muted hover:text-wm-ink transition-colors"
+            href={l.href}
+            aria-current={isCurrent(l.href) ? 'page' : undefined}
+            class="inline-flex min-h-11 items-center text-sm font-medium text-wm-muted hover:text-wm-ink aria-[current=page]:text-wm-ink aria-[current=page]:underline underline-offset-8 decoration-2 decoration-wm-signal"
           >
-            {link.label}
-            {link.external && <span class="sr-only"> (s'ouvre dans un nouvel onglet)</span>}
+            {l.label}
           </a>
         ))
       }
     </nav>
 
-    <!-- Right Controls -->
-    <div class="flex items-center gap-3">
-      <!-- Language Switch -->
+    <div class="flex items-center gap-2">
       <a
-        href={switchPath}
-        class="inline-flex h-9 items-center justify-center rounded-wm-button border border-wm-border px-3 text-xs font-mono font-semibold uppercase tracking-wider text-wm-muted hover:border-wm-ink hover:text-wm-ink transition-all"
-        aria-label={switchAria}
+        href={alternates[other]}
+        hreflang={other}
+        lang={other}
+        aria-label={t.switchTo}
+        class="hidden sm:inline-flex h-11 min-w-11 items-center justify-center rounded-wm-button border border-wm-border px-3 text-xs font-semibold uppercase text-wm-ink hover:border-wm-ink"
       >
-        {switchLabel}
+        {other}
       </a>
-
-      <!-- App CTA Button -->
       <a
         href="/app/"
-        class="hidden sm:inline-flex items-center justify-center rounded-wm-button bg-wm-signal px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-wm-signal-hover transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-wm-signal"
+        class="inline-flex h-11 items-center justify-center whitespace-nowrap rounded-wm-button bg-wm-signal px-4 sm:px-5 text-sm font-semibold text-wm-on-signal hover:bg-wm-signal-hover"
       >
-        {ctaLabel}
+        {t.openApp}
       </a>
-
-      <!-- Mobile Menu Toggle Button -->
-      <button
-        type="button"
-        id="mobile-menu-btn"
-        class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-wm-border p-2 text-wm-ink hover:bg-wm-surface md:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-wm-focus"
-        aria-controls="mobile-menu"
-        aria-expanded="false"
-        aria-label="Ouvrir le menu"
-      >
-        <svg
-          id="menu-icon-open"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+      <details class="relative lg:hidden">
+        <summary
+          class="flex h-11 w-11 cursor-pointer list-none items-center justify-center rounded-lg border border-wm-border text-wm-ink [&::-webkit-details-marker]:hidden"
+          aria-label={t.menuOpen}
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"></path>
-        </svg>
-        <svg
-          id="menu-icon-close"
-          class="hidden h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </summary>
+        <nav
+          aria-label={t.navLabel}
+          class="absolute right-0 mt-2 w-64 rounded-wm-card border border-wm-border bg-wm-surface p-3 shadow-lg"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Mobile Menu Dropdown -->
-  <div
-    id="mobile-menu"
-    class="hidden border-b border-wm-border bg-wm-surface px-4 pt-3 pb-5 md:hidden"
-  >
-    <div class="flex flex-col space-y-3">
-      {
-        links.map((link) => (
-          <a
-            href={link.href}
-            target={link.external ? '_blank' : undefined}
-            rel={link.external ? 'noopener noreferrer' : undefined}
-            class="text-base font-medium text-wm-ink hover:text-wm-signal py-1 transition-colors"
-          >
-            {link.label}
-          </a>
-        ))
-      }
-      <a
-        href="/app/"
-        class="mt-2 inline-flex w-full items-center justify-center rounded-wm-button bg-wm-signal py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-wm-signal-hover transition-colors"
-      >
-        {ctaLabel}
-      </a>
+          <ul class="flex flex-col">
+            {
+              links.map((l) => (
+                <li>
+                  <a
+                    href={l.href}
+                    aria-current={isCurrent(l.href) ? 'page' : undefined}
+                    class="flex min-h-11 items-center rounded-lg px-3 text-base font-medium text-wm-ink hover:bg-wm-paper aria-[current=page]:text-wm-signal-text"
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))
+            }
+            <li class="sm:hidden">
+              <a
+                href={alternates[other]}
+                hreflang={other}
+                lang={other}
+                class="flex min-h-11 items-center rounded-lg px-3 text-base font-medium text-wm-ink hover:bg-wm-paper"
+              >
+                {t.switchTo}
+              </a>
+            </li>
+            <li class="mt-2">
+              <a
+                href="/app/"
+                class="flex min-h-11 items-center justify-center rounded-wm-button bg-wm-signal px-4 text-sm font-semibold text-wm-on-signal"
+              >
+                {t.openApp}
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </details>
     </div>
   </div>
 </header>
-
-<script>
-  const menuBtn = document.getElementById('mobile-menu-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const openIcon = document.getElementById('menu-icon-open');
-  const closeIcon = document.getElementById('menu-icon-close');
-
-  if (menuBtn && mobileMenu && openIcon && closeIcon) {
-    menuBtn.addEventListener('click', () => {
-      const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
-      menuBtn.setAttribute('aria-expanded', String(!isExpanded));
-      mobileMenu.classList.toggle('hidden');
-      openIcon.classList.toggle('hidden');
-      closeIcon.classList.toggle('hidden');
-    });
-  }
-</script>

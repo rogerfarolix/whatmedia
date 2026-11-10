@@ -1,0 +1,105 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { routes, ui, CONTACT_EMAIL, type Lang } from '../i18n/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const updated = fr ? 'Dernière mise à jour : 10 novembre 2026' : 'Last updated: 10 November 2026';
+const title = fr ? 'Politique de confidentialité' : 'Privacy policy';
+const description = fr
+  ? 'Quelles données WhatMedia traite, où, et combien de temps : traitement sur le téléphone, serveur de secours avec accord, aucun cookie, aucun traceur.'
+  : 'Which data WhatMedia processes, where and for how long: processing on the phone, fallback server with consent, no cookies, no trackers.';
+---
+
+<BaseLayout lang={lang} title={title} description={description} alternates={routes.privacy} breadcrumbs={[{ name: ui[lang].footer.privacy, path: routes.privacy[lang] }]}>
+  <PageHero title={title} lead={updated} />
+  <article class="prose-wm mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
+    {
+      fr ? (
+        <>
+          <h2>En bref</h2>
+          <ul>
+            <li>Tes photos et vidéos sont traitées dans ton navigateur, sur ton appareil. Elles ne sont pas envoyées.</li>
+            <li>Exception : le serveur de secours, uniquement si tu l’acceptes pour un fichier donné. Ce fichier est supprimé au plus tard 15 minutes après le traitement.</li>
+            <li>Aucun compte, aucun cookie, aucune mesure d’audience, aucun traceur publicitaire.</li>
+          </ul>
+
+          <h2>1. Responsable du traitement</h2>
+          <p>Roger Gnanih, pour le projet Nealix. Contact : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+
+          <h2>2. Traitement sur ton appareil</h2>
+          <p>L’analyse, le découpage et l’encodage de tes fichiers se font dans la mémoire de ton navigateur. Les résultats restent sur ton appareil jusqu’à ce que tu les partages ou les enregistres. WhatMedia ne les voit pas.</p>
+
+          <h2>3. Serveur de secours</h2>
+          <p>Si ton appareil ne peut pas traiter un fichier, l’application te propose de l’envoyer au serveur WhatMedia. Une fenêtre te demande ton accord avant chaque envoi.</p>
+          <ul>
+            <li><strong>Données envoyées :</strong> le fichier choisi et les réglages (format, durée des parties). Le nom du fichier n’est pas conservé.</li>
+            <li><strong>Finalité :</strong> produire la version optimisée et te la renvoyer. Rien d’autre : pas d’analyse du contenu, pas d’entraînement de modèle, pas de partage.</li>
+            <li><strong>Durée :</strong> le fichier d’origine est supprimé dès la fin du traitement. Les résultats sont supprimés dès que l’application les a récupérés, et au plus tard 15 minutes après la fin du traitement.</li>
+            <li><strong>Accès :</strong> chaque tâche est protégée par un jeton secret connu de ton seul navigateur.</li>
+            <li><strong>Base légale :</strong> ton consentement, que tu peux refuser sans perdre l’usage local de l’application.</li>
+          </ul>
+
+          <h2>4. Journaux techniques</h2>
+          <p>Comme tout site web, le serveur enregistre des journaux techniques : adresse IP, date, page ou adresse appelée, navigateur. Ils servent à la sécurité et à limiter les abus (10 envois au serveur de secours par heure et par adresse). Ils ne contiennent jamais le contenu ni le nom de tes fichiers. Ils sont conservés 14 jours au maximum pour le serveur web, et dans une rotation limitée à 30 Mo pour le service de traitement, puis effacés.</p>
+
+          <h2>5. Stockage local et cookies</h2>
+          <p>WhatMedia ne dépose aucun cookie. L’application enregistre seulement dans ton navigateur (stockage local) ta langue, ton dernier format choisi et le fait d’avoir masqué le bandeau d’installation, ainsi que ses propres fichiers pour fonctionner hors ligne. Tu peux tout effacer depuis les réglages de ton navigateur.</p>
+
+          <h2>6. Aucun service tiers</h2>
+          <p>Polices, scripts et images sont servis depuis whatmedia.nealix.org. Aucune requête n’est faite vers Google, un réseau publicitaire ou un outil de mesure d’audience.</p>
+
+          <h2>7. Hébergement</h2>
+          <p>Le site, l’application et le serveur de secours sont hébergés par Contabo GmbH dans l’Union européenne (voir les <a href={routes.legal.fr}>mentions légales</a>).</p>
+
+          <h2>8. Tes droits</h2>
+          <p>Conformément au RGPD et au Code du numérique du Bénin, tu peux demander l’accès, la rectification ou l’effacement de données te concernant, et t’opposer à leur traitement. Comme nous ne conservons ni compte ni fichier, il n’y a en général aucune donnée nominative à te communiquer. Écris à <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. Tu peux aussi saisir l’autorité de protection des données de ton pays (CNIL en France, APDP au Bénin).</p>
+        </>
+      ) : (
+        <>
+          <h2>In short</h2>
+          <ul>
+            <li>Your photos and videos are processed in your browser, on your device. They are not uploaded.</li>
+            <li>Exception: the fallback server, only if you accept it for a given file. That file is deleted within 15 minutes after processing at the latest.</li>
+            <li>No account, no cookies, no analytics, no ad trackers.</li>
+          </ul>
+
+          <h2>1. Data controller</h2>
+          <p>Roger Gnanih, for the Nealix project. Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+
+          <h2>2. Processing on your device</h2>
+          <p>Analysing, splitting and encoding your files happens in your browser’s memory. Results stay on your device until you share or save them. WhatMedia never sees them.</p>
+
+          <h2>3. Fallback server</h2>
+          <p>If your device cannot process a file, the app offers to send it to the WhatMedia server. A window asks for your consent before each upload.</p>
+          <ul>
+            <li><strong>Data sent:</strong> the chosen file and the settings (format, part length). The file name is not stored.</li>
+            <li><strong>Purpose:</strong> produce the optimized version and send it back to you. Nothing else: no content analysis, no model training, no sharing.</li>
+            <li><strong>Retention:</strong> the original file is deleted as soon as processing ends. Results are deleted as soon as the app has retrieved them, and within 15 minutes after processing at the latest.</li>
+            <li><strong>Access:</strong> each job is protected by a secret token known only to your browser.</li>
+            <li><strong>Legal basis:</strong> your consent, which you can refuse and still use the app locally.</li>
+          </ul>
+
+          <h2>4. Technical logs</h2>
+          <p>Like any website, the server keeps technical logs: IP address, date, page or address requested, browser. They are used for security and to limit abuse (10 fallback uploads per hour per address). They never contain the content or name of your files. They are kept for 14 days at most for the web server, and within a rotation limited to 30 MB for the processing service, then deleted.</p>
+
+          <h2>5. Local storage and cookies</h2>
+          <p>WhatMedia sets no cookies. The app only stores in your browser (local storage) your language, your last chosen format and whether you hid the install banner, plus its own files to work offline. You can clear all of it from your browser settings.</p>
+
+          <h2>6. No third-party services</h2>
+          <p>Fonts, scripts and images are served from whatmedia.nealix.org. No request is made to Google, an ad network or an analytics tool.</p>
+
+          <h2>7. Hosting</h2>
+          <p>The website, the app and the fallback server are hosted by Contabo GmbH in the European Union (see the <a href={routes.legal.en}>legal notice</a>).</p>
+
+          <h2>8. Your rights</h2>
+          <p>Under the GDPR and Benin’s Digital Code, you can request access to, correction or deletion of data about you, and object to its processing. Since we keep neither accounts nor files, there is usually no personal data to provide. Write to <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>. You can also contact the data protection authority of your country.</p>
+        </>
+      )
+    }
+  </article>
+</BaseLayout>

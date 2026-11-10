@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { routes, ui, CONTACT_EMAIL, type Lang } from '../i18n/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'Conditions d’utilisation' : 'Terms of use';
+const description = fr
+  ? 'Conditions d’utilisation de WhatMedia : service gratuit fourni tel quel, contenus autorisés, limites du serveur de secours et responsabilités.'
+  : 'WhatMedia terms of use: free service provided as is, allowed content, fallback server limits and responsibilities.';
+const updated = fr ? 'En vigueur au 10 novembre 2026' : 'Effective 10 November 2026';
+---
+
+<BaseLayout lang={lang} title={title} description={description} alternates={routes.terms} breadcrumbs={[{ name: ui[lang].footer.terms, path: routes.terms[lang] }]}>
+  <PageHero title={title} lead={updated} />
+  <article class="prose-wm mx-auto max-w-3xl px-4 pb-14 sm:px-6 lg:px-8">
+    {
+      fr ? (
+        <>
+          <h2>1. Le service</h2>
+          <p>WhatMedia est un outil gratuit qui prépare des vidéos et des photos pour WhatsApp, principalement dans ton navigateur. Utiliser le site ou l’application vaut acceptation des présentes conditions.</p>
+
+          <h2>2. Gratuité et absence de compte</h2>
+          <p>Le service est gratuit, sans publicité et sans inscription. Aucune fonction payante n’est proposée.</p>
+
+          <h2>3. Tes contenus</h2>
+          <p>Tu restes seul propriétaire de tes fichiers et seul responsable de ce que tu publies. Tu t’engages à n’utiliser WhatMedia, et en particulier le serveur de secours, qu’avec des contenus que tu as le droit de diffuser et qui respectent la loi (pas de contenu illicite, pas d’atteinte aux droits d’autrui).</p>
+
+          <h2>4. Serveur de secours</h2>
+          <p>Le serveur de secours est un service facultatif fourni dans la limite de ses capacités : 500 Mo et 10 minutes de vidéo par fichier, 10 fichiers par heure et par connexion. Il peut être indisponible, ralenti ou arrêté à tout moment. Les fichiers y sont supprimés selon la <a href={routes.privacy.fr}>politique de confidentialité</a>. Tout usage abusif (envoi automatisé massif, contournement des limites) peut être bloqué.</p>
+
+          <h2>5. Résultat attendu</h2>
+          <p>WhatMedia prépare un fichier adapté aux limites connues de WhatsApp. Il ne contrôle pas la compression appliquée par WhatsApp et ne garantit pas un niveau de qualité après publication.</p>
+
+          <h2>6. Garantie et responsabilité</h2>
+          <p>Le logiciel est fourni « tel quel », sans garantie d’aucune sorte, comme le prévoit sa licence MIT. Garde toujours une copie de tes fichiers d’origine : WhatMedia ne les modifie pas, mais l’éditeur ne peut être tenu responsable d’une perte de données, d’une indisponibilité ou d’un résultat inattendu, dans les limites permises par la loi.</p>
+
+          <h2>7. Marques</h2>
+          <p>WhatMedia n’est ni affilié, ni sponsorisé, ni validé par WhatsApp LLC ou Meta Platforms, Inc.</p>
+
+          <h2>8. Modifications et contact</h2>
+          <p>Ces conditions peuvent évoluer ; la date en haut de page indique la version en vigueur. Questions : <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+        </>
+      ) : (
+        <>
+          <h2>1. The service</h2>
+          <p>WhatMedia is a free tool that prepares videos and photos for WhatsApp, mainly in your browser. Using the website or the app means you accept these terms.</p>
+
+          <h2>2. Free, no account</h2>
+          <p>The service is free, without ads and without sign-up. No paid feature is offered.</p>
+
+          <h2>3. Your content</h2>
+          <p>You remain the sole owner of your files and solely responsible for what you post. You agree to use WhatMedia, and the fallback server in particular, only with content you have the right to share and that complies with the law (no illegal content, no infringement of others’ rights).</p>
+
+          <h2>4. Fallback server</h2>
+          <p>The fallback server is an optional service provided within its capacity: 500 MB and 10 minutes of video per file, 10 files per hour per connection. It may be unavailable, slow or stopped at any time. Files are deleted as described in the <a href={routes.privacy.en}>privacy policy</a>. Any abusive use (massive automated uploads, bypassing limits) may be blocked.</p>
+
+          <h2>5. Expected result</h2>
+          <p>WhatMedia prepares a file suited to WhatsApp’s known limits. It does not control the compression WhatsApp applies and does not guarantee any quality level after posting.</p>
+
+          <h2>6. Warranty and liability</h2>
+          <p>The software is provided “as is”, without warranty of any kind, as stated in its MIT license. Always keep a copy of your original files: WhatMedia does not modify them, but the publisher cannot be held liable for data loss, unavailability or an unexpected result, to the extent permitted by law.</p>
+
+          <h2>7. Trademarks</h2>
+          <p>WhatMedia is not affiliated with, sponsored or endorsed by WhatsApp LLC or Meta Platforms, Inc.</p>
+
+          <h2>8. Changes and contact</h2>
+          <p>These terms may change; the date at the top shows the version in force. Questions: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+        </>
+      )
+    }
+  </article>
+</BaseLayout>

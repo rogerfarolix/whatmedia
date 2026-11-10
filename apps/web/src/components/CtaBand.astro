@@ -1,0 +1,28 @@
+---
+import Icon from './Icon.astro';
+import type { Lang } from '../i18n/site';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+}
+const { lang, title } = Astro.props;
+const text = {
+  fr: { title: 'Essaie avec ton prochain statut', cta: 'Ouvrir WhatMedia', note: 'Gratuit, sans compte, dans Safari ou Chrome.' },
+  en: { title: 'Try it with your next status', cta: 'Open WhatMedia', note: 'Free, no account, in Safari or Chrome.' },
+}[lang];
+---
+
+<section class="border-t border-wm-border bg-wm-surface py-12 text-center">
+  <div class="mx-auto max-w-3xl px-4">
+    <h2 class="font-heading text-2xl font-bold sm:text-3xl">{title ?? text.title}</h2>
+    <p class="mt-2 text-wm-muted">{text.note}</p>
+    <a
+      href="/app/"
+      class="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-wm-button bg-wm-signal px-7 text-base font-semibold text-wm-on-signal hover:bg-wm-signal-hover"
+    >
+      {text.cta}
+      <Icon name="arrow" class="h-4 w-4" />
+    </a>
+  </div>
+</section>
