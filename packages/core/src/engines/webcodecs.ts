@@ -59,6 +59,7 @@ export async function runWebCodecs(
     const height = plan.video?.height ?? 1920;
     const bitrate = plan.video?.bitrate ?? 5_000_000;
     const fps = plan.video?.fps ?? 30;
+    const fit = plan.video?.fit;
 
     const conversion = await Conversion.init({
       input,
@@ -69,6 +70,7 @@ export async function runWebCodecs(
         height,
         bitrate,
         frameRate: fps,
+        ...(fit ? { fit } : {}),
       },
       trim: {
         start: seg.startSec,

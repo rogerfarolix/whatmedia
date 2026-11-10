@@ -7,6 +7,7 @@ export interface PlanOverrides {
   targetBps?: number;
   width?: number;
   height?: number;
+  crop916?: boolean;
 }
 
 /**
@@ -84,8 +85,8 @@ export function plan(
     segmentDurationSec = whatsappLimits.maxStatusVideoSec;
   }
 
-  // For chat preset (chat-hd), segmentSec is null (single full video)
-  const isSegmented = vidPreset.id !== 'chat-hd';
+  // For chat presets (chat-hd, chat-compact), video is not segmented (single full video)
+  const isSegmented = vidPreset.id !== 'chat-hd' && vidPreset.id !== 'chat-compact';
 
   const segments: Plan['segments'] = [];
   if (!isSegmented || duration <= segmentDurationSec) {
@@ -132,6 +133,15 @@ export function plan(
   let targetWidth = vidPreset.video.width;
   let targetHeight = vidPreset.video.height;
 
+  // Optional 9:16 vertical crop
+  const crop916 = overrides?.crop916 ?? false;
+  let fit: 'cover' | 'contain' | undefined;
+  if (crop916) {
+    fit = 'cover';
+    targetWidth = 1080;
+    targetHeight = 1920;
+  }
+
   // If video bitrate budget is constrained below preset minBps, fall back to 720p
   if (targetVideoBps < vidPreset.video.minBps && targetWidth > 720) {
     const lightPreset = presets['status-light'] as VideoPreset;
@@ -140,8 +150,8 @@ export function plan(
     targetVideoBps = Math.max(lightPreset.video.minBps, targetVideoBps);
   }
 
-  // Never upscale resolution beyond source
-  if (info.width > 0 && info.height > 0) {
+  // Never upscale resolution beyond source unless cropping 9:16 is requested
+  if (!crop916 && info.width > 0 && info.height > 0) {
     if (targetWidth > info.width && targetHeight > info.height) {
       targetWidth = info.width % 2 === 0 ? info.width : info.width - 1;
       targetHeight = info.height % 2 === 0 ? info.height : info.height - 1;
@@ -169,6 +179,7 @@ export function plan(
       bitrate: targetVideoBps,
       codec: vidPreset.video.codec,
       toneMap: needsToneMap,
+      fit,
     },
     audio: {
       mode: 'passthrough', // default passthrough for AAC

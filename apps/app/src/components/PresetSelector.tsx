@@ -13,7 +13,7 @@ export const PresetSelector: React.FC<Props> = ({
   onSelectPreset,
 }) => {
   const { language } = useTranslation();
-  const presetKeys: PresetId[] = ['status-hd', 'status-light', 'chat-hd', 'status-photo'];
+  const presetKeys: PresetId[] = ['status-hd', 'status-light', 'chat-hd', 'chat-compact', 'status-photo'];
 
   return (
     <div className="flex flex-col gap-2.5">

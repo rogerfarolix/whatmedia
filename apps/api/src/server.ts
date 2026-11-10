@@ -143,16 +143,23 @@ export async function buildServer() {
         const outFileName = 'whatmedia-01of01.mp4';
         const outputPath = join(jobDir, outFileName);
 
+        const fallback = presets['status-hd']!;
+        const selectedPreset = presets[presetId as keyof typeof presets] ?? fallback;
+        const isVideo = selectedPreset ? selectedPreset.kind === 'video' : true;
+        const defaultVid = fallback as { kind: 'video'; video: { width: number; height: number; fps: number; targetBps: number }; audio: { bitrate: number } };
+        const vidConfig = isVideo && selectedPreset && 'video' in selectedPreset ? selectedPreset.video : defaultVid.video;
+        const audConfig = isVideo && selectedPreset && 'audio' in selectedPreset ? selectedPreset.audio : defaultVid.audio;
+
         const args = buildFfmpegArgs({
           inputPath,
           outputPath,
           startSec: 0,
           durationSec: 60,
-          width: 1080,
-          height: 1920,
-          fps: 30,
-          videoBitrateBps: 5_000_000,
-          audioBitrateBps: 128_000,
+          width: vidConfig.width,
+          height: vidConfig.height,
+          fps: vidConfig.fps,
+          videoBitrateBps: vidConfig.targetBps,
+          audioBitrateBps: audConfig.bitrate,
           needsToneMap: false,
         });
 
