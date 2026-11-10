@@ -47,7 +47,7 @@ const outputs = await run(file, p, { onProgress: (x) => console.log(x.ratio) });
 
 ### Développer localement
 ```bash
-git clone https://github.com/<owner>/whatmedia && cd whatmedia
+git clone https://github.com/rogerfarolix/whatmedia && cd whatmedia
 pnpm i
 pnpm dev
 ```
