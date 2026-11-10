@@ -38,8 +38,8 @@ interface MediaState {
   outputFiles: OutputFile[];
   isAnalyzing: boolean;
   language: 'fr' | 'en';
-  isInstallBannerVisible: boolean;
   batch: BatchItem[];
+  installSheetOpen: boolean;
 
   setScreen: (screen: AppScreen) => void;
   setSelectedFile: (file: File | null) => void;
@@ -55,9 +55,9 @@ interface MediaState {
   setOutputFiles: (files: OutputFile[]) => void;
   setIsAnalyzing: (analyzing: boolean) => void;
   setLanguage: (lang: 'fr' | 'en') => void;
-  setInstallBannerVisible: (visible: boolean) => void;
   setBatch: (items: BatchItem[]) => void;
   updateBatchItem: (id: string, patch: Partial<BatchItem>) => void;
+  setInstallSheetOpen: (open: boolean) => void;
   resetAll: () => void;
 }
 
@@ -79,8 +79,8 @@ export const useMediaStore = create<MediaState>((set) => ({
   outputFiles: [],
   isAnalyzing: false,
   language: getStoredLanguage(),
-  isInstallBannerVisible: true,
   batch: [],
+  installSheetOpen: false,
 
   setScreen: (screen) => set({ screen }),
   setSelectedFile: (file) => set({ selectedFile: file }),
@@ -103,8 +103,8 @@ export const useMediaStore = create<MediaState>((set) => ({
   setOutputFiles: (outputFiles) => set({ outputFiles }),
   setIsAnalyzing: (isAnalyzing) => set({ isAnalyzing }),
   setLanguage: (language) => set({ language }),
-  setInstallBannerVisible: (visible) => set({ isInstallBannerVisible: visible }),
   setBatch: (batch) => set({ batch }),
+  setInstallSheetOpen: (installSheetOpen) => set({ installSheetOpen }),
   updateBatchItem: (id, patch) =>
     set((state) => ({ batch: state.batch.map((b) => (b.id === id ? { ...b, ...patch } : b)) })),
   resetAll: () =>

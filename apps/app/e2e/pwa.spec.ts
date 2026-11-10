@@ -83,6 +83,19 @@ test.describe('WhatMedia PWA App Flow & Privacy', () => {
   });
 });
 
+test.describe('Installation', () => {
+  test.use({ locale: 'fr-FR' });
+
+  test('offers an Install button that explains how to install on this device', async ({ page }) => {
+    await page.goto('/app/');
+    await page.getByRole('banner').getByRole('button', { name: 'Installer' }).click();
+    const dialog = page.getByRole('dialog', { name: 'Installer WhatMedia' });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('button', { name: 'Fermer' }).click();
+    await expect(dialog).toBeHidden();
+  });
+});
+
 test.describe('Multiple selection', () => {
   test.use({ locale: 'fr-FR' });
 

@@ -28,14 +28,7 @@
   --radius-input: var(--wm-radius-input);
 }
 
-/* Same self-hosted fonts as the website (served from this origin; system fonts offline) */
-@font-face {
-  font-family: 'Newsreader';
-  font-style: normal;
-  font-weight: 200 800;
-  font-display: swap;
-  src: url('/fonts/newsreader.woff2') format('woff2');
-}
+/* Apple system fonts (SF Pro) on Apple devices, the site's self-hosted Inter elsewhere */
 @font-face {
   font-family: 'Inter';
   font-style: normal;
@@ -50,13 +43,13 @@
 
 h1,
 h2 {
-  font-family: 'Newsreader', Georgia, serif;
-  font-weight: 400;
-  letter-spacing: -0.02em;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.025em;
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   background-color: var(--wm-paper);
   color: var(--wm-ink);
   min-height: 100vh;

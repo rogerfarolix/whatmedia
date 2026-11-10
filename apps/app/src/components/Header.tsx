@@ -1,8 +1,12 @@
 import React from 'react';
 import { useTranslation } from '../i18n/useTranslation';
+import { useMediaStore } from '../store/useMediaStore';
+import { useInstallPlatform } from '../utils/installPrompt';
 
 export const Header: React.FC = () => {
   const { language, toggleLanguage, t } = useTranslation();
+  const platform = useInstallPlatform();
+  const setInstallSheetOpen = useMediaStore((s) => s.setInstallSheetOpen);
 
   return (
     <header className="w-full border-b border-[var(--wm-border)] bg-[var(--wm-surface)]/80 backdrop-blur sticky top-0 z-40 pt-[env(safe-area-inset-top)]">
@@ -29,15 +33,29 @@ export const Header: React.FC = () => {
           <span className="font-semibold text-lg text-[var(--wm-ink)] tracking-tight">WhatMedia</span>
         </a>
 
+        <div className="flex items-center gap-2">
+        {platform !== 'installed' && (
+          <button
+            type="button"
+            onClick={() => setInstallSheetOpen(true)}
+            className="min-h-11 px-3.5 inline-flex items-center gap-1.5 rounded-full text-sm font-semibold bg-[var(--wm-ink)] text-[var(--wm-paper)]"
+          >
+            <svg aria-hidden="true" className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14" />
+            </svg>
+            {t('installButton')}
+          </button>
+        )}
         <button
           type="button"
           onClick={toggleLanguage}
           aria-label={t('switchLanguage')}
           lang={language === 'fr' ? 'en' : 'fr'}
-          className="min-w-11 min-h-11 px-2.5 text-xs font-semibold rounded-md border border-[var(--wm-border)] hover:bg-[var(--wm-paper)] text-[var(--wm-ink)] transition-colors"
+          className="min-w-11 min-h-11 px-2.5 text-xs font-semibold rounded-full border border-[var(--wm-border)] hover:bg-[var(--wm-paper)] text-[var(--wm-ink)] transition-colors"
         >
           {language === 'fr' ? 'EN' : 'FR'}
         </button>
+        </div>
       </div>
     </header>
   );

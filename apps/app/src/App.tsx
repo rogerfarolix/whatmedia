@@ -1,13 +1,13 @@
 import React from 'react';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
-import { InstallBanner } from './components/InstallBanner';
 import { FileUploader } from './components/FileUploader';
 import { PresetSelector } from './components/PresetSelector';
 import { AnalysisScreen } from './components/AnalysisScreen';
 import { ProcessingScreen } from './components/ProcessingScreen';
 import { ResultsScreen } from './components/ResultsScreen';
 import { ConsentModal } from './components/ConsentModal';
+import { InstallSheet } from './components/InstallSheet';
 import { ErrorBanner } from './components/ErrorBanner';
 import { BatchScreen } from './components/BatchScreen';
 import { BatchResultsScreen } from './components/BatchResultsScreen';
@@ -478,7 +478,6 @@ export const App: React.FC = () => {
       <Header />
 
       <main className="flex-1 w-full max-w-xl mx-auto px-4 py-6 flex flex-col gap-6" id="main">
-        {screen === 'home' && <InstallBanner />}
 
         {error && (
           <ErrorBanner
@@ -564,6 +563,8 @@ export const App: React.FC = () => {
             onBackToBatch={retryItemIdRef.current ? backToBatch : undefined}
           />
         )}
+
+        <InstallSheet isOpen={store.installSheetOpen} onClose={() => store.setInstallSheetOpen(false)} />
 
         <ConsentModal
           isOpen={consent.open}

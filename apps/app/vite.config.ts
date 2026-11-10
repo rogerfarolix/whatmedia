@@ -23,6 +23,12 @@ export default defineConfig({
         description: 'Prépare tes vidéos et tes photos pour WhatsApp sans perte inutile de netteté',
         lang: 'fr',
         id: '/app/',
+        categories: ['photo', 'utilities', 'productivity'],
+        screenshots: [
+          { src: '/shots/fr-analysis.webp', sizes: '780x1688', type: 'image/webp', form_factor: 'narrow', label: 'Analyse et découpage' },
+          { src: '/shots/fr-processing.webp', sizes: '780x1688', type: 'image/webp', form_factor: 'narrow', label: 'Optimisation sur le téléphone' },
+          { src: '/shots/fr-results.webp', sizes: '780x1688', type: 'image/webp', form_factor: 'narrow', label: 'Parties prêtes à partager' },
+        ],
         theme_color: '#0B0F1A',
         background_color: '#0B0F1A',
         display: 'standalone',

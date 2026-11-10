@@ -6,22 +6,22 @@ export const HeroSection: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center text-center gap-3 pt-2">
-      <h1 className="text-[2.15rem] leading-[1.08] sm:text-5xl font-[380] text-[var(--wm-ink)]">
+      <h1 className="text-[2.15rem] leading-[1.08] sm:text-5xl font-semibold text-[var(--wm-ink)]">
         {t('heroTitle')}
       </h1>
       <p className="text-sm text-[var(--wm-muted)] max-w-sm">
         {t('heroSubtitle')}
       </p>
 
-      <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-[11px] font-medium text-[var(--wm-muted)]">
-        <span className="px-2.5 py-1 rounded-full bg-[var(--wm-surface)] border border-[var(--wm-border)]">
-          <span aria-hidden="true">✨</span> {t('pill1')}
+      <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-xs font-medium text-[var(--wm-ink)]">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--wm-surface)] border border-[var(--wm-border)]">
+          <svg aria-hidden="true" className="w-3.5 h-3.5 text-[var(--wm-ok)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg> {t('pill1')}
         </span>
-        <span className="px-2.5 py-1 rounded-full bg-[var(--wm-surface)] border border-[var(--wm-border)]">
-          <span aria-hidden="true">🎁</span> {t('pill2')}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--wm-surface)] border border-[var(--wm-border)]">
+          <svg aria-hidden="true" className="w-3.5 h-3.5 text-[var(--wm-ok)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg> {t('pill2')}
         </span>
-        <span className="px-2.5 py-1 rounded-full bg-[var(--wm-surface)] border border-[var(--wm-border)]">
-          <span aria-hidden="true">🌱</span> {t('pill3')}
+        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--wm-surface)] border border-[var(--wm-border)]">
+          <svg aria-hidden="true" className="w-3.5 h-3.5 text-[var(--wm-ok)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg> {t('pill3')}
         </span>
       </div>
     </div>
