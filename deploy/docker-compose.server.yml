@@ -3,12 +3,22 @@
 # nginx proxies everything to `web` (127.0.0.1:8096); `web` forwards /api/v1/* to `api`.
 name: whatmedia
 
+# Bounded logs: they contain client IP addresses (see the privacy policy).
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
 services:
   web:
     build:
       context: ..
       dockerfile: deploy/Dockerfile.web
+      args:
+        PUBLIC_GOOGLE_SITE_VERIFICATION: ${GOOGLE_SITE_VERIFICATION:-}
     restart: unless-stopped
+    logging: *logging
     read_only: true
     tmpfs: [/tmp, /config, /data]
     security_opt: [no-new-privileges:true]
@@ -29,6 +39,7 @@ services:
       context: ..
       dockerfile: deploy/Dockerfile.api
     restart: unless-stopped
+    logging: *logging
     read_only: true
     tmpfs: [/tmp]
     security_opt: [no-new-privileges:true]

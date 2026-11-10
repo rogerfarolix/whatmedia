@@ -22,6 +22,10 @@ COPY packages/ ./packages/
 COPY apps/web/ ./apps/web/
 COPY apps/app/ ./apps/app/
 
+# Optional Google Search Console token (meta tag). DNS verification needs no token.
+ARG PUBLIC_GOOGLE_SITE_VERIFICATION=
+ENV PUBLIC_GOOGLE_SITE_VERIFICATION=${PUBLIC_GOOGLE_SITE_VERIFICATION}
+
 # Build core packages, web and app
 RUN pnpm build
 
