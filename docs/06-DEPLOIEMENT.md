@@ -1,118 +1,98 @@
-# 06 — Déploiement sur whatmedia.nealix.org
+# 06 — Déploiement
 
-## 0. Informations à confirmer avec Roger avant le premier déploiement
+WhatMedia se déploie avec deux conteneurs Docker construits depuis ce dépôt :
 
-Claude Code **doit demander** ces informations (et ne jamais les inventer) :
+| Service | Image | Rôle | Port local |
+|---|---|---|---|
+| `web` | `deploy/Dockerfile.web` | Caddy : site Astro (`/`), application (`/app/`), relais de `/api/v1/*` vers `api` | `127.0.0.1:8096` |
+| `api` | `deploy/Dockerfile.api` | Fastify + ffmpeg : serveur de secours | `127.0.0.1:8097` |
 
-| # | Information | Exemple |
-|---|---|---|
-| 1 | Adresse IP / nom d'hôte du serveur | `203.0.113.10` |
-| 2 | Utilisateur SSH et méthode d'accès (clé) | `deploy@…` |
-| 3 | OS du serveur | Ubuntu 24.04 |
-| 4 | Reverse proxy déjà en place ? (Nginx, Caddy, Traefik, aucun) — ports 80/443 déjà pris ? | Nginx existant pour codebox.nealix.org |
-| 5 | Docker et Docker Compose installés ? | oui / non |
-| 6 | Qui gère le DNS de `nealix.org` ? | Cloudflare / registrar |
-| 7 | Compte ou organisation GitHub pour le dépôt public | `github.com/<owner>/whatmedia` |
-| 8 | Activer le serveur de secours en v1 ? (CPU disponible) | oui / non |
-| 9 | E-mail de contact public (mentions légales, sécurité) | |
+Un reverse proxy HTTPS de l’hôte (nginx, Caddy, Traefik…) envoie tout le trafic vers `web`. Aucune règle particulière n’est nécessaire pour l’API.
 
-Si le serveur héberge déjà d'autres sites (CodeBox…), **ne jamais modifier leur configuration** : ajouter un nouveau bloc de site uniquement, et vérifier la config (`nginx -t` / `caddy validate`) avant de recharger.
+## 1. Prérequis
 
-## 1. DNS
+- Docker et Docker Compose v2.
+- Un nom de domaine pointant vers le serveur (enregistrements A/AAAA).
+- Un reverse proxy HTTPS avec certificat (Let’s Encrypt).
 
-Créer l'enregistrement :
-```
-whatmedia.nealix.org.   A      <IP_DU_SERVEUR>     TTL 300
-(whatmedia.nealix.org.  AAAA   <IPv6>              si disponible)
-```
-Si Cloudflare : proxy **désactivé** (nuage gris) au premier déploiement pour laisser Caddy obtenir le certificat ; on peut l'activer ensuite en mode SSL « Full (strict) ». Attention : le proxy Cloudflare gratuit limite la taille des uploads (100 Mo) → si le serveur de secours est actif, utiliser un sous-domaine non proxifié pour l'API ou garder le proxy désactivé.
-
-Vérification : `dig +short whatmedia.nealix.org`.
-
-## 2. Préparation du serveur (une fois)
+## 2. Premier déploiement
 
 ```bash
-# Docker (si absent)
-curl -fsSL https://get.docker.com | sh
-sudo usermod -aG docker $USER
-
-# Dossier de déploiement
-sudo mkdir -p /opt/whatmedia && sudo chown $USER: /opt/whatmedia
-cd /opt/whatmedia
-# y copier deploy/docker-compose.yml, deploy/Caddyfile, deploy/.env (depuis .env.example)
-
-# Pare-feu
-sudo ufw allow 80,443/tcp
-```
-
-## 3. Deux modes selon le serveur
-
-### Mode A — Serveur sans reverse proxy (Caddy dans Compose)
-`docker compose --profile edge --profile api up -d` (retirer `--profile api` si le serveur de secours est désactivé). Caddy écoute 80/443 et gère HTTPS automatiquement.
-
-### Mode B — Reverse proxy existant (Nginx, cas probable si CodeBox est déjà là)
-- Lancer Compose **sans** le profil `edge` : `docker compose --profile api up -d` (ou `docker compose up -d` sans API).
-- `web` expose `127.0.0.1:8081`, `api` expose `127.0.0.1:8082`.
-- Ajouter `deploy/nginx-whatmedia.conf` dans `/etc/nginx/sites-available/`, lien vers `sites-enabled/`, puis :
-```bash
-sudo certbot --nginx -d whatmedia.nealix.org
-sudo nginx -t && sudo systemctl reload nginx
-```
-
-### Mode B' — Serveur Nealix actuel (nginx hôte + `docker-compose.server.yml`)
-Configuration réellement en production sur `nealix-vps` :
-- nginx (hôte) ne contient **qu'un seul** `location /` vers `127.0.0.1:8096` (`deploy/whatmedia.nealix.org.conf`). Aucune modification nginx n'est nécessaire pour l'API.
-- Le conteneur `web` (Caddy, `deploy/Caddyfile.web`) sert la landing et `/app`, et relaie `/api/v1/*` vers le conteneur `api` du même réseau Compose.
-- L'API écoute ses routes à la racine **et** sous `/api/v1`, donc les deux styles de proxy (avec ou sans retrait du préfixe) fonctionnent.
-- IP client pour la limite de débit : nginx → Caddy (`trusted_proxies private_ranges`) → API avec `TRUST_PROXY_HOPS=2`.
-- La taille d'envoi est bornée par `client_max_body_size 500m` de nginx ; `MAX_UPLOAD_BYTES` est aligné à 500 Mo.
-
-Déploiement (utilisateur `deploy`, sans sudo) :
-```bash
-cd /var/www/Projets/nealix/whatmedia && git pull
-docker tag whatmedia-web whatmedia-web:rollback; docker tag whatmedia-api whatmedia-api:rollback
+git clone https://github.com/rogerfarolix/whatmedia.git
+cd whatmedia
+cp deploy/.env.example deploy/.env      # facultatif
 docker compose -f deploy/docker-compose.server.yml up -d --build
-curl -fsS https://whatmedia.nealix.org/api/v1/health
+curl -fsS http://127.0.0.1:8096/api/v1/health
 ```
-Retour arrière : `docker tag whatmedia-web:rollback whatmedia-web && docker tag whatmedia-api:rollback whatmedia-api && docker compose -f deploy/docker-compose.server.yml up -d --no-build`.
 
-## 4. Images Docker
+Exemple de bloc nginx (voir aussi `deploy/whatmedia.nealix.org.conf`) :
 
-| Image | Contenu |
-|---|---|
-| `ghcr.io/<owner>/whatmedia-web` | Build Astro (`/`) + build Vite (`/app`) servis par Caddy en mode fichiers statiques (`caddy file-server`) |
-| `ghcr.io/<owner>/whatmedia-api` | Node 22 slim + ffmpeg 7 (avec libzimg, libx264) + API Fastify, utilisateur non-root |
+```nginx
+server {
+    server_name whatmedia.example.org;
+    client_max_body_size 500m;          # aligné sur MAX_UPLOAD_BYTES
+    location / {
+        proxy_pass http://127.0.0.1:8096;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_request_buffering off;
+    }
+    # listen 443 ssl + certificats (certbot --nginx)
+}
+```
 
-Tags : `latest`, `vX.Y.Z`, `sha-<court>`.
+Valider puis recharger : `sudo nginx -t && sudo systemctl reload nginx`.
 
-## 5. CI/CD (GitHub Actions)
+## 3. Mise à jour
 
-- `ci.yml` (chaque PR et push) : install pnpm, lint, typecheck, tests unitaires, build, tests Playwright (Chromium + WebKit).
-- `deploy.yml` (push sur `main` ou tag `v*`) : build et push des images vers GHCR, puis SSH sur le serveur : `docker compose pull && docker compose up -d && docker image prune -f` (avec les mêmes `--profile` que ceux choisis au §3 — à mettre dans `COMPOSE_PROFILES` du `.env`), puis vérification `curl -fsS https://whatmedia.nealix.org/api/v1/health` (ou `/` si API désactivée).
+```bash
+cd /chemin/vers/whatmedia && git pull
+docker tag whatmedia-web whatmedia-web:rollback && docker tag whatmedia-api whatmedia-api:rollback
+docker compose -f deploy/docker-compose.server.yml up -d --build
+curl -fsS https://whatmedia.example.org/api/v1/health
+```
 
-Secrets GitHub à créer : `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` (clé dédiée, restreinte), `DEPLOY_PATH` (`/opt/whatmedia`).
+Retour arrière :
 
-## 6. Variables d'environnement (`deploy/.env`)
+```bash
+docker tag whatmedia-web:rollback whatmedia-web && docker tag whatmedia-api:rollback whatmedia-api
+docker compose -f deploy/docker-compose.server.yml up -d --no-build
+```
 
-Voir `deploy/.env.example`. Ne jamais committer `.env`.
+## 4. Réglages
 
-## 7. Exploitation
+Les valeurs par défaut sont dans `deploy/docker-compose.server.yml` :
 
-| Sujet | Action |
-|---|---|
-| Logs | `docker compose logs -f --tail=200 api` |
-| Mises à jour | Automatiques via `deploy.yml` ; retour arrière : `IMAGE_TAG=v1.0.1 docker compose up -d` |
-| Supervision | Uptime Kuma (ou similaire) sur `/` et `/api/v1/health` |
-| Nettoyage | Le service `api` purge `/data/jobs` toutes les minutes ; volume `tmpfs` ou disque dédié |
-| Sauvegardes | Rien à sauvegarder côté données (sans état) ; la config est dans Git |
+| Variable (service `api`) | Défaut | Rôle |
+|---|---|---|
+| `MAX_UPLOAD_BYTES` | 500 Mo | Taille maximale d’un envoi |
+| `MAX_DURATION_SEC` | 600 | Durée maximale d’une vidéo |
+| `RETENTION_MINUTES` | 15 | Suppression des résultats |
+| `FFMPEG_TIMEOUT_SEC` | 900 | Arrêt d’un traitement bloqué |
+| `CONCURRENCY` / `QUEUE_MAX` | 2 / 20 | Traitements simultanés / en attente |
+| `RATE_LIMIT_PER_HOUR` | 10 | Envois par heure et par adresse IP |
+| `TRUST_PROXY_HOPS` | 2 | Proxys devant l’API (hôte → `web` → `api`) pour lire la vraie IP |
 
-## 8. Checklist de mise en ligne
+`deploy/.env` (facultatif) : `GOOGLE_SITE_VERIFICATION` pour la balise Google Search Console. La vérification par enregistrement DNS TXT est préférable et ne demande aucune configuration.
 
-- [ ] DNS résout vers le serveur
-- [ ] `https://whatmedia.nealix.org` → landing, certificat valide, HTTP → HTTPS
-- [ ] `/app` s'installe sur iPhone (icône, nom, splash) et fonctionne hors ligne
-- [ ] En-têtes de sécurité présents (vérifier avec securityheaders.com)
-- [ ] Lighthouse ≥ 95 sur `/`
-- [ ] Test complet sur iPhone réel : vidéo HDR 4K → statut publié
-- [ ] `/api/v1/health` OK (si activé) ; upload > limite refusé avec 413
-- [ ] Les autres sites du serveur (CodeBox, etc.) fonctionnent toujours
+## 5. Sécurité des conteneurs
+
+- Système de fichiers en lecture seule, `tmpfs` pour `/tmp`, capacités Linux retirées, `no-new-privileges`.
+- `api` : utilisateur non-root, limites de 3 CPU, 3 Go de mémoire et 256 processus.
+- Journaux Docker limités à 3 × 10 Mo par conteneur (ils contiennent des adresses IP).
+- Les fichiers de travail vivent dans le volume `jobs_data`, vidé au démarrage et purgé toutes les minutes.
+
+## 6. Déploiement automatique (facultatif)
+
+`.github/workflows/deploy.yml` déploie `main` par SSH après une CI verte, avec les mêmes commandes qu’au §3. Il est désactivé tant que ces éléments ne sont pas définis dans le dépôt GitHub :
+
+- variable `DEPLOY_ENABLED=true` ;
+- secrets `DEPLOY_HOST`, `DEPLOY_USER`, `DEPLOY_SSH_KEY` (clé privée dédiée, clé publique dans `~/.ssh/authorized_keys` du serveur), `DEPLOY_PATH`.
+
+## 7. Vérifications après mise en ligne
+
+- `https://<domaine>/`, `/app/`, `/sitemap.xml`, `/robots.txt` répondent 200 ; une page inconnue répond 404.
+- `https://<domaine>/api/v1/health` renvoie `{"status":"ok"}`.
+- En-têtes : `Content-Security-Policy` présent, un seul `X-Frame-Options`, `Cache-Control: no-cache` sur `/app/sw.js`.
+- Une vidéo traitée de bout en bout sur un téléphone, partagée vers WhatsApp.

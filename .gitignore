@@ -48,3 +48,4 @@ pnpm-debug.log*
 
 # Simulated encoder benchmarks (never published)
 tools/quality/out/
+

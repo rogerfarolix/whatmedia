@@ -48,52 +48,47 @@
 | CI/CD | **GitHub Actions** → images GHCR → déploiement SSH | Standard open source |
 | Tests | Vitest, Playwright (WebKit + Chromium), scripts VMAF | Voir `08-TESTS-QUALITE.md` |
 
-> **Règle pour Claude Code** : toute bibliothèque marquée « candidat » doit être validée par un spike documenté (`docs/spikes/Sxx-*.md`) avant d'être adoptée. Si elle échoue, on documente l'alternative retenue.
+> **Règle** : toute bibliothèque marquée « candidat » doit être validée par un spike documenté (`docs/spikes/Sxx-*.md`) avant d'être adoptée. Si elle échoue, on documente l'alternative retenue.
 
 ## 3. Arborescence du dépôt
 
 ```
 whatmedia/
 ├─ apps/
-│  ├─ web/                    # Astro : landing, pages, docs publiques ; sert aussi /app
-│  │  ├─ src/pages/           # index.astro, comment-ca-marche, mesures, confidentialite, mentions, en/...
-│  │  ├─ src/components/
-│  │  └─ public/              # icônes, og-image, robots.txt
+│  ├─ web/                    # Astro : site public FR/EN (servi à /, l'app est copiée sous /app)
+│  │  ├─ src/i18n/site.ts     # table des routes FR/EN (menus, hreflang, sitemap en dérivent)
+│  │  ├─ src/content/         # fonctionnalités et FAQ (données)
+│  │  ├─ src/views/           # une vue par page, partagée entre FR et EN
+│  │  ├─ src/pages/           # pages fines + sitemap.xml.ts + 404
+│  │  └─ public/              # polices auto-hébergées, captures WebP, og-image, robots.txt
 │  ├─ app/                    # React PWA (base: /app/)
 │  │  ├─ src/
-│  │  │  ├─ screens/          # Home, Analyze, Settings, Processing, Result
-│  │  │  ├─ components/
-│  │  │  ├─ worker/           # media.worker.ts (Comlink)
-│  │  │  ├─ store/
-│  │  │  ├─ i18n/
-│  │  │  └─ lib/              # share.ts, install.ts, capabilities.ts
-│  │  └─ vite.config.ts
-│  └─ api/                    # Fastify, serveur de secours
-│     ├─ src/
-│     │  ├─ routes/jobs.ts
-│     │  ├─ ffmpeg/           # construction des commandes à partir des presets
-│     │  ├─ cleanup.ts
-│     │  └─ server.ts
-│     └─ Dockerfile
+│  │  │  ├─ components/       # écrans : accueil, analyse, lot, traitement, résultats
+│  │  │  ├─ worker/           # media.worker.ts (vidéo hors du fil principal, Comlink)
+│  │  │  ├─ store/            # état (zustand)
+│  │  │  ├─ i18n/             # textes FR/EN
+│  │  │  └─ utils/            # partage, serveur de secours, wake lock, chargement du moteur
+│  │  └─ e2e/                 # tests Playwright (Chromium + WebKit)
+│  └─ api/                    # Fastify : serveur de secours
+│     └─ src/
+│        ├─ ffmpeg/           # ffprobe + construction des commandes depuis presets.json
+│        ├─ queue.ts          # file d'attente bornée
+│        └─ server.ts
 ├─ packages/
 │  ├─ core/                   # @whatmedia/core
 │  │  ├─ src/
-│  │  │  ├─ probe.ts
-│  │  │  ├─ plan.ts           # MediaInfo + Preset → Plan (segments, débit, filtres)
-│  │  │  ├─ presets.ts        # importe config/presets.json
+│  │  │  ├─ probe.ts          # analyse (Mediabunny)
+│  │  │  ├─ plan.ts           # MediaInfo + preset → Plan (parties, débit, dimensions)
 │  │  │  ├─ engines/webcodecs.ts
-│  │  │  ├─ engines/ffmpeg-wasm.ts
-│  │  │  ├─ hdr.ts
 │  │  │  ├─ image.ts
 │  │  │  └─ index.ts
 │  │  └─ test/
-│  └─ config/                 # presets.json, whatsapp-limits.json (source unique de vérité)
+│  └─ config/                 # presets.json, whatsapp-limits.json, measurements.json, tokens.css
 ├─ tools/
 │  └─ quality/                # scripts de mesure VMAF/SSIM, corpus, rapports
-├─ deploy/                    # docker-compose.yml, Caddyfile, nginx alternative, .env.example
+├─ deploy/                    # docker-compose.server.yml, Dockerfiles, Caddyfile.web, vhost nginx, .env.example
 ├─ docs/                      # ce dossier
 ├─ .github/                   # workflows, modèles d'issues/PR
-├─ CLAUDE.md
 ├─ README.md
 └─ LICENSE
 ```

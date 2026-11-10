@@ -1,7 +1,7 @@
 # ADR 0005: Banc d'Essai Scientifique VMAF / SSIM & Transparence
 
 ## Statut
-Accepté & Implémenté
+Remplacé le 10/11/2026. Le banc `tools/quality/measure.mjs` simulait la compression de WhatsApp avec des réglages choisis par nous : ses résultats ne sont plus publiés. Seules des mesures sur des fichiers réellement passés par WhatsApp (`docs/08-TESTS-QUALITE.md` §3) peuvent alimenter `measurements.json`, ce que le schéma impose.
 
 ## Contexte
 Les éditeurs d'applications de compression affichent fréquemment des chiffres fantaisistes ou des pourcentages de gain inventés par leur service marketing. WhatMedia vise à établir un standard d'honnêteté et de rigueur scientifique.
@@ -14,5 +14,5 @@ Les éditeurs d'applications de compression affichent fréquemment des chiffres 
 
 ## Conséquences
 - Crédibilité technique maximale auprès des développeurs et créateurs de contenu.
-- Reproductibilité intégrale du banc d'essai via `tools/quality/measure.mjs` et `tools/quality/vmaf.sh`.
+- Banc de simulation conservé (`tools/quality/measure.mjs`) pour vérifier l’encodeur, sans publication.
 

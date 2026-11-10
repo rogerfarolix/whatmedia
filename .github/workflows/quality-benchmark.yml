@@ -32,7 +32,7 @@ jobs:
       - name: Run Quality Measurements
         run: node tools/quality/measure.mjs
 
-      # Simulated numbers are NOT published on the site (CLAUDE.md: never invent quality numbers).
+      # Simulated numbers are NOT published on the site (project rule: never invent quality numbers).
       # Real measurements need files sent through WhatsApp, see docs/08-TESTS-QUALITE.md §3.
       - uses: actions/upload-artifact@v4
         with:

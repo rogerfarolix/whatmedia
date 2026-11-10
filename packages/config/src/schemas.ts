@@ -114,7 +114,7 @@ export const measurementItemSchema = z.object({
 /**
  * Published quality measurements. Only real measurements are allowed here: files actually sent
  * through WhatsApp and downloaded back (docs/08 §3). While none exist, status is "pending" and the
- * site shows "Mesures en cours" (CLAUDE.md: never invent quality numbers).
+ * site shows "Mesures en cours" (project rule: never invent quality numbers).
  */
 export const measurementsSchema = z
   .object({

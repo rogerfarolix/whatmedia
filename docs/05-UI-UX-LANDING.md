@@ -13,14 +13,15 @@
 | `--wm-ok` | `#12B76A` | Succès (≠ vert WhatsApp `#25D366`) |
 | `--wm-warn` | `#F79009` | Avertissements |
 | `--wm-muted` | `#667085` | Texte secondaire |
-| Rayon | 14 px (cartes), 999 px (boutons) | |
-| Typo titres | **Space Grotesk** (auto-hébergée) | |
+| `--wm-signal-text` | `#B93D0C` (clair) / `#FF7A45` (sombre) | Texte orange, contraste AA |
+| `--wm-on-signal` | `#0B0F1A` | Texte posé sur l’orange |
+| Rayon | 20 à 40 px (cartes), 999 px (boutons pilule) | |
+| Typo titres | **Newsreader** variable, graisse 330 à 400, approche serrée (auto-hébergée) | |
 | Typo texte | **Inter** (auto-hébergée) | |
-| Mono | **JetBrains Mono** | Chiffres techniques |
 
-Mode sombre complet (`prefers-color-scheme`), contraste AA vérifié.
+Mode sombre complet (`prefers-color-scheme`), contraste AA vérifié. Pas de dégradé de couleur, pas de tiret cadratin dans les textes.
 
-**Logo** : un carré aux coins arrondis contenant une mire de mise au point (deux crochets d'angle + point central), en orange signal. Wordmark « WhatMedia » en Space Grotesk Bold. Fournir : SVG, icônes PWA 192/512, `maskable` 512, `apple-touch-icon` 180, favicon SVG + ICO.
+**Logo** : un carré aux coins arrondis contenant une mire de mise au point (deux crochets d'angle + point central), en orange signal. Wordmark « WhatMedia » en Inter Semibold. Fournir : SVG, icônes PWA 192/512, `maskable` 512, `apple-touch-icon` 180, favicon SVG + ICO.
 
 ## 2. Écrans de l'app (`/app`)
 
@@ -62,6 +63,8 @@ Carte média : vignette, durée, résolution, taille, badges (`HDR`, `4K`, `60 i
 - Les états vides et d'erreur ont toujours une action suivante.
 
 ## 3. Landing page (`/`)
+
+> Mise à jour du 10/11/2026 : la landing est construite mobile d’abord, autour de vraies captures de l’app dans des cadres de téléphone (WebP, `apps/web/public/shots`) : titre serif, bandeau sombre de trois écrans (analyse, traitement, partage), quatre cartes de fonctionnalités, mise en avant de la sélection multiple, exemple chiffré calculé par `plan()`, section sombre vie privée, FAQ, appel final. Les captures se régénèrent avec Playwright sur l’app réelle. Le texte détaillé ci-dessous est l’intention d’origine.
 
 Objectif : faire comprendre en 5 secondes, puis convertir vers `/app`. Une seule page, rapide, sans dépendance JS lourde.
 

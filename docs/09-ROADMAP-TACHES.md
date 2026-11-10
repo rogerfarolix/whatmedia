@@ -1,6 +1,6 @@
-# 09 — Roadmap et plan de tâches pour Claude Code
+# 09 — Roadmap et plan de tâches
 
-Chaque tâche est autonome, a un critère de fin vérifiable, et se termine par un commit (Conventional Commits). Claude Code coche les cases au fur et à mesure et ne passe pas à la phase suivante tant que la CI n'est pas verte.
+Chaque tâche est autonome, a un critère de fin vérifiable, et se termine par un commit (Conventional Commits). Les cases sont cochées au fur et à mesure et ne passe pas à la phase suivante tant que la CI n'est pas verte.
 
 ## Phase 0 — Spikes de validation (avant tout développement lourd)
 
@@ -59,7 +59,7 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 - [x] 5.4 Audit accessibilité + sécurité (en-têtes, `pnpm audit`, conteneurs durcis)
 - [x] 5.5 Publication `@whatmedia/core` sur npm (provenance activée via `.github/workflows/publish.yml`)
 - [x] 5.6 Release v1.0.0 (changelog, notes de version FR/EN)
-- [x] 5.7 Kit de lancement : post GitHub, LinkedIn, X, statut WhatsApp de démonstration (`docs/10-LAUNCH-KIT.md`)
+- [ ] 5.7 Kit de lancement (retiré le 10/11/2026 : il reprenait des chiffres non mesurés)
 
 ## Phase 6 — Après lancement (v1.x)
 

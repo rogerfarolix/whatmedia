@@ -4,6 +4,17 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) · Versions : 
 
 ## [Unreleased]
 
+### Design
+- Nouveau design du site, mobile d’abord : titres serif (Newsreader auto-hébergée), vraies captures de l’app en WebP dans des cadres de téléphone, carrousel horizontal sur mobile, sections sombres, boutons pilule, apparitions au défilement en CSS seul (désactivées si l’utilisateur limite les animations).
+- Application harmonisée avec le site (logo, polices).
+
+### Fiabilité
+- Vidéos très détaillées (eau, confettis, grain) : l’encodeur du navigateur peut ignorer le débit demandé. Le moteur réessaie avec un débit plus bas, puis une image plus petite, et en dernier recours redécoupe la partie en parties plus courtes, toujours sous 16 Mo. La barre de progression ne recule plus et un message explique l’ajustement.
+
+### Projet open source
+- README et CONTRIBUTING réécrits, guide de déploiement aligné sur la production, code de conduite officiel (Contributor Covenant 2.1).
+- Fichiers obsolètes retirés : kit de lancement aux chiffres non mesurés, configurations de déploiement inutilisées, polices et scripts non utilisés.
+
 ### Site public (landing)
 - Site reconstruit avec un contenu factuel FR/EN : accueil (résumé et bouton visibles sans défiler), pages Fonctionnalités et une page par service (statut vidéo, photo, discussion, serveur de secours), FAQ, À propos, Contact, Conditions d’utilisation, page 404 dédiée.
 - Corrections factuelles : hébergeur réel (Contabo, pas Cloudflare/Vercel), politique de confidentialité exacte (serveur de secours, journaux), suppression des promesses impossibles (« WhatsApp ne dégrade plus… »), exemple de code réel (l’API `createPipeline` n’existait pas), plus de commande `npm install` pour un paquet non publié.
