@@ -1,4 +1,3 @@
-# Modèle — Claude Code : épingler chaque action par SHA avant la v1.0.
 name: CI
 on:
   pull_request:
@@ -16,10 +15,13 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: pnpm }
+      # ffmpeg lets the fallback API end-to-end tests run instead of being skipped
+      - run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm build
-      - run: pnpm exec playwright install --with-deps chromium webkit
+      # Playwright is a dependency of @whatmedia/app, not of the workspace root
+      - run: pnpm --filter @whatmedia/app exec playwright install --with-deps chromium webkit
       - run: pnpm test:e2e

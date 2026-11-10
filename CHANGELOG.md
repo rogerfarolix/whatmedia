@@ -4,6 +4,23 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) · Versions : 
 
 ## [Unreleased]
 
+### Site public (landing)
+- Site reconstruit avec un contenu factuel FR/EN : accueil (résumé et bouton visibles sans défiler), pages Fonctionnalités et une page par service (statut vidéo, photo, discussion, serveur de secours), FAQ, À propos, Contact, Conditions d’utilisation, page 404 dédiée.
+- Corrections factuelles : hébergeur réel (Contabo, pas Cloudflare/Vercel), politique de confidentialité exacte (serveur de secours, journaux), suppression des promesses impossibles (« WhatsApp ne dégrade plus… »), exemple de code réel (l’API `createPipeline` n’existait pas), plus de commande `npm install` pour un paquet non publié.
+- SEO : titres et descriptions uniques, canonical et hreflang générés, sitemap XML généré depuis la table des routes, JSON-LD (WebSite, Organization, WebApplication, FAQPage, HowTo, BreadcrumbList), aperçu de lien en PNG 1200×630 (le SVG n’est pas lu par WhatsApp ni Facebook), `robots.txt` excluant `/api/`, balise Search Console optionnelle (`GOOGLE_SITE_VERIFICATION`).
+- Design : plus de dégradés ni de tirets cadratins, contrastes AA, cibles tactiles conformes, aucun script en ligne (CSP `script-src 'self'`).
+
+### Mesures
+- Les chiffres VMAF publiés étaient simulés : `measurements.json` est remis à l’état « en attente » et `/mesures` affiche « Mesures en cours ». Le schéma refuse désormais toute publication sans aller-retour réel par WhatsApp ; le banc mensuel produit un artefact de simulation, jamais publié.
+- Spikes S1 à S5 rouverts (chiffres non mesurés retirés, protocole iPhone ajouté).
+
+### Application
+- Traitement vidéo dans un Web Worker (PRD US-04), avec repli sur le fil principal si WebCodecs n’y est pas disponible.
+
+### Exploitation
+- CI réparée (Playwright lancé depuis l’app, ffmpeg installé pour les tests API de bout en bout) ; workflow de déploiement aligné sur le serveur réel, désactivé tant que `DEPLOY_ENABLED` et les secrets ne sont pas définis.
+- Rotation des journaux Docker (3 × 10 Mo), 404 réelles pour les fichiers absents sous `/app/`.
+
 ### Corrigé
 - **Moteur vidéo local inutilisable** : `plan()` fournissait largeur *et* hauteur sans `fit`, ce que Mediabunny refuse (`TypeError`) — toute vidéo basculait vers le serveur. Dimensions désormais calculées en conservant le ratio (vidéos horizontales comprises), sans agrandissement, avec `fit` toujours défini.
 - **Limite de 16 Mo** : le débit audio réel (passthrough) est budgété, chaque partie est vérifiée après encodage et réencodée à débit réduit si elle dépasse la limite ; les vidéos « Discussion » trop longues sont découpées.
