@@ -10,7 +10,7 @@ import { ResultsScreen } from './components/ResultsScreen';
 import { ConsentModal } from './components/ConsentModal';
 import { Footer } from './components/Footer';
 import { useMediaStore } from './store/useMediaStore';
-import { probe, plan, run, detectCapabilities } from '@whatmedia/core';
+import { probe, plan, run, detectCapabilities, type OutputFile } from '@whatmedia/core';
 import { runServerJob } from './utils/serverClient';
 
 export const App: React.FC = () => {
