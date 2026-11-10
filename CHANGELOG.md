@@ -15,6 +15,8 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) · Versions : 
 - Spikes S1 à S5 rouverts (chiffres non mesurés retirés, protocole iPhone ajouté).
 
 ### Application
+- **Sélection multiple automatique** : jusqu’à 20 photos et vidéos choisies d’un coup, réglées une seule fois (format vidéo, durée des parties ; les photos passent en « Photo statut »), puis traitées l’une après l’autre sans intervention. Écran de résultats groupé ; un fichier en échec n’arrête pas le lot et peut être relancé seul (avec le serveur de secours si besoin).
+- **« Tout partager »** : une seule feuille de partage avec tous les fichiers (lot ou parties d’une vidéo), en plus du partage un par un.
 - Traitement vidéo dans un Web Worker (PRD US-04), avec repli sur le fil principal si WebCodecs n’y est pas disponible.
 
 ### Exploitation

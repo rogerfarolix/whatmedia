@@ -9,10 +9,12 @@ import { ProcessingScreen } from './components/ProcessingScreen';
 import { ResultsScreen } from './components/ResultsScreen';
 import { ConsentModal } from './components/ConsentModal';
 import { ErrorBanner } from './components/ErrorBanner';
+import { BatchScreen } from './components/BatchScreen';
+import { BatchResultsScreen } from './components/BatchResultsScreen';
 import { Footer } from './components/Footer';
-import { useMediaStore, type ProcessingLane } from './store/useMediaStore';
+import { useMediaStore, type BatchItem, type ProcessingLane } from './store/useMediaStore';
 import type { PresetId } from '@whatmedia/config';
-import { whatsappLimits } from '@whatmedia/config';
+import { presets, whatsappLimits } from '@whatmedia/config';
 import type { Capabilities, MediaError, MediaInfo, OutputFile } from '@whatmedia/core';
 import { loadEngine } from './utils/loadEngine';
 import { runPipeline } from './utils/workerRunner';
@@ -50,6 +52,16 @@ function errorKeyFor(err: unknown): TranslationKey {
   return 'errorGeneric';
 }
 
+/** Above this, a selection is cut: every result stays in memory until shared (iPhone RAM). */
+export const MAX_BATCH_FILES = 20;
+
+function isUnreadable(info: MediaInfo): boolean {
+  return (
+    (info.kind === 'video' && !(info.width > 0) && !(info.durationSec && info.durationSec > 0)) ||
+    (info.kind === 'image' && !(info.width > 0))
+  );
+}
+
 function isAbort(err: unknown): boolean {
   return (
     asMediaError(err)?.code === 'E_ABORTED' ||
@@ -74,6 +86,9 @@ export const App: React.FC = () => {
     segmentSec,
     crop916,
     lane,
+    batch,
+    setBatch,
+    updateBatchItem,
     setScreen,
     setSelectedFile,
     setFileQueue,
@@ -97,6 +112,10 @@ export const App: React.FC = () => {
   const [error, setError] = React.useState<AppError | null>(null);
   const [serverAvailable, setServerAvailable] = React.useState(false);
   const [partial, setPartial] = React.useState(false);
+  const [batchFile, setBatchFile] = React.useState<{ i: number; n: number; name: string } | null>(null);
+  const [batchStopped, setBatchStopped] = React.useState(false);
+  /** Set when a file of a batch is retried alone: its result goes back into the batch */
+  const retryItemIdRef = React.useRef<string | null>(null);
 
   const processing = screen === 'processing';
   useWakeLock(processing);
@@ -178,9 +197,7 @@ export const App: React.FC = () => {
     try {
       const { probe, plan } = await loadEngine();
       const info = await probe(file);
-      const unreadable =
-        (info.kind === 'video' && !(info.width > 0) && !(info.durationSec && info.durationSec > 0)) ||
-        (info.kind === 'image' && !(info.width > 0));
+      const unreadable = isUnreadable(info);
       setMediaInfo(info);
       if (unreadable) {
         setError({
@@ -224,19 +241,136 @@ export const App: React.FC = () => {
       setError(firstRejection);
       return;
     }
+    retryItemIdRef.current = null;
+    if (accepted.length > 1) {
+      await startBatch(accepted.slice(0, MAX_BATCH_FILES));
+      if (accepted.length > MAX_BATCH_FILES) {
+        setError({ key: 'batchTooMany', vars: { max: MAX_BATCH_FILES } });
+      } else if (firstRejection) {
+        setError(firstRejection);
+      }
+      return;
+    }
+    setBatch([]);
     setFileQueue(accepted);
     setCurrentFileIndex(0);
     await analyzeFile(first);
     if (firstRejection) setError(firstRejection);
   };
 
-  const handleNextInQueue = async () => {
-    const nextIdx = currentFileIndex + 1;
-    const nextFile = fileQueue[nextIdx];
-    if (nextFile) {
-      setCurrentFileIndex(nextIdx);
-      await analyzeFile(nextFile);
+  /** Multi-file selection: analyse every file, then let the user start the whole batch at once. */
+  const startBatch = async (files: File[]) => {
+    const items: BatchItem[] = files.map((file, i) => ({
+      id: `${Date.now()}-${i}`,
+      file,
+      info: null,
+      status: 'analyzing',
+      outputs: [],
+    }));
+    setBatch(items);
+    setBatchStopped(false);
+    if (presets[currentPresetId]?.kind !== 'video') setCurrentPresetId(store.lastVideoPresetId);
+    setScreen('batch');
+
+    const { probe } = await loadEngine();
+    for (const item of items) {
+      try {
+        const info = await probe(item.file);
+        updateBatchItem(
+          item.id,
+          isUnreadable(info)
+            ? { info, status: 'error', errorKey: info.kind === 'image' ? 'errorUnsupportedImage' : 'errorUnreadable' }
+            : { info, status: 'pending' },
+        );
+      } catch {
+        updateBatchItem(item.id, { status: 'error', errorKey: 'errorUnreadable' });
+      }
     }
+  };
+
+  const handleRemoveFromBatch = (id: string) => {
+    const remaining = useMediaStore.getState().batch.filter((b) => b.id !== id);
+    if (remaining.length === 0) {
+      handleReset();
+      return;
+    }
+    setBatch(remaining);
+  };
+
+  const handleStartBatch = async () => {
+    const todo = useMediaStore.getState().batch.filter((b) => b.status === 'pending');
+    if (todo.length === 0) return;
+
+    const signal = startProcessing('local');
+    setBatchStopped(false);
+    const caps = await getCaps();
+    const { plan } = await loadEngine();
+    const videoPreset = presets[currentPresetId]?.kind === 'video' ? currentPresetId : store.lastVideoPresetId;
+
+    for (const [i, item] of todo.entries()) {
+      if (signal.aborted) {
+        updateBatchItem(item.id, { status: 'skipped' });
+        continue;
+      }
+      if (!item.info) continue;
+      setBatchFile({ i: i + 1, n: todo.length, name: item.file.name });
+      const presetId: PresetId = item.info.kind === 'image' ? 'status-photo' : videoPreset;
+      const p = plan(item.info, presetId, caps, { segmentDurationSec: segmentSec });
+      if (p.engine === 'server') {
+        updateBatchItem(item.id, { status: 'error', errorKey: 'errorUnsupportedCodec' });
+        continue;
+      }
+
+      updateBatchItem(item.id, { status: 'processing' });
+      const partials: OutputFile[] = [];
+      try {
+        const outputs = await runPipeline({
+          file: item.file,
+          plan: p,
+          signal,
+          onProgress: (pr) => setProgress({ ...pr, ratio: (i + pr.ratio) / todo.length }),
+          onSegmentComplete: (o) => partials.push(o),
+        });
+        updateBatchItem(item.id, { status: 'done', outputs });
+      } catch (err: unknown) {
+        const partialOutputs = (err as { partialOutputs?: OutputFile[] })?.partialOutputs ?? partials;
+        if (isAbort(err)) {
+          setBatchStopped(true);
+          updateBatchItem(
+            item.id,
+            partialOutputs.length > 0 ? { status: 'done', outputs: partialOutputs } : { status: 'skipped' },
+          );
+        } else {
+          console.warn('Batch item failed:', err);
+          updateBatchItem(item.id, { status: 'error', errorKey: errorKeyFor(err) });
+        }
+      }
+    }
+
+    setBatchFile(null);
+    setScreen('batchResults');
+  };
+
+  /** Retry one failed batch file in the single-file flow (where the fallback server is offered). */
+  const handleRetryAlone = async (item: BatchItem) => {
+    retryItemIdRef.current = item.id;
+    setFileQueue([item.file]);
+    setCurrentFileIndex(0);
+    await analyzeFile(item.file);
+  };
+
+  const finishSingle = (outputs: OutputFile[]) => {
+    setOutputFiles(outputs);
+    if (retryItemIdRef.current) {
+      updateBatchItem(retryItemIdRef.current, { status: 'done', outputs, errorKey: undefined });
+    }
+    setScreen('results');
+  };
+
+  const backToBatch = () => {
+    retryItemIdRef.current = null;
+    setError(null);
+    setScreen('batchResults');
   };
 
   const startProcessing = (nextLane: ProcessingLane) => {
@@ -270,8 +404,7 @@ export const App: React.FC = () => {
         onProgress: setProgress,
         onSegmentComplete: (item) => partials.push(item),
       });
-      setOutputFiles(outputs);
-      setScreen('results');
+      finishSingle(outputs);
     } catch (err: unknown) {
       const partialOutputs = (err as { partialOutputs?: OutputFile[] })?.partialOutputs ?? partials;
 
@@ -310,8 +443,7 @@ export const App: React.FC = () => {
         signal,
         onProgress: setProgress,
       });
-      setOutputFiles(outputs);
-      setScreen('results');
+      finishSingle(outputs);
     } catch (err: unknown) {
       setScreen('analysis');
       if (isAbort(err)) return;
@@ -332,6 +464,8 @@ export const App: React.FC = () => {
   const handleReset = () => {
     setError(null);
     setPartial(false);
+    setBatchStopped(false);
+    retryItemIdRef.current = null;
     resetAll();
   };
 
@@ -388,8 +522,25 @@ export const App: React.FC = () => {
             onServerFallback={
               serverAvailable ? () => setConsent({ open: true, reason: t('consentReasonManual') }) : undefined
             }
+            onCancel={retryItemIdRef.current ? backToBatch : handleReset}
+          />
+        )}
+
+        {screen === 'batch' && (
+          <BatchScreen
+            items={batch}
+            presetId={currentPresetId}
+            onSelectPreset={(id) => setCurrentPresetId(id)}
+            segmentSec={segmentSec ?? whatsappLimits.maxStatusVideoSec}
+            onSelectSegmentSec={setSegmentSec}
+            onRemove={handleRemoveFromBatch}
+            onStart={handleStartBatch}
             onCancel={handleReset}
           />
+        )}
+
+        {screen === 'batchResults' && (
+          <BatchResultsScreen items={batch} stopped={batchStopped} onRetryAlone={handleRetryAlone} onReset={handleReset} />
         )}
 
         {screen === 'processing' && (
@@ -399,6 +550,7 @@ export const App: React.FC = () => {
             segmentCount={progress?.segmentCount ?? currentPlan?.segments.length ?? 1}
             lane={lane}
             etaMs={etaMs}
+            fileLabel={batchFile ? t('batchFileProgress', batchFile) : undefined}
             onCancel={handleCancelProcessing}
           />
         )}
@@ -408,11 +560,7 @@ export const App: React.FC = () => {
             outputs={outputFiles}
             partial={partial}
             onReset={handleReset}
-            onNextInQueue={currentFileIndex < fileQueue.length - 1 ? handleNextInQueue : undefined}
-            nextFileName={
-              currentFileIndex < fileQueue.length - 1 ? fileQueue[currentFileIndex + 1]?.name : undefined
-            }
-            queueRemainingCount={fileQueue.length - 1 - currentFileIndex}
+            onBackToBatch={retryItemIdRef.current ? backToBatch : undefined}
           />
         )}
 

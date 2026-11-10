@@ -4,8 +4,21 @@ import { presets } from '@whatmedia/config';
 import type { MediaInfo, Plan, OutputFile, Progress } from '@whatmedia/core';
 import { getStoredLanguage, getStoredPreset, setStoredPreset } from '../utils/storage';
 
-export type AppScreen = 'home' | 'analysis' | 'processing' | 'results';
+export type AppScreen = 'home' | 'analysis' | 'batch' | 'processing' | 'results' | 'batchResults';
 export type ProcessingLane = 'local' | 'server';
+
+export type BatchStatus = 'analyzing' | 'pending' | 'processing' | 'done' | 'error' | 'skipped';
+
+/** One file of a multi-file selection, processed automatically one after another */
+export interface BatchItem {
+  id: string;
+  file: File;
+  info: MediaInfo | null;
+  status: BatchStatus;
+  outputs: OutputFile[];
+  /** Translation key of the error, when status is 'error' */
+  errorKey?: string;
+}
 
 interface MediaState {
   screen: AppScreen;
@@ -26,6 +39,7 @@ interface MediaState {
   isAnalyzing: boolean;
   language: 'fr' | 'en';
   isInstallBannerVisible: boolean;
+  batch: BatchItem[];
 
   setScreen: (screen: AppScreen) => void;
   setSelectedFile: (file: File | null) => void;
@@ -42,6 +56,8 @@ interface MediaState {
   setIsAnalyzing: (analyzing: boolean) => void;
   setLanguage: (lang: 'fr' | 'en') => void;
   setInstallBannerVisible: (visible: boolean) => void;
+  setBatch: (items: BatchItem[]) => void;
+  updateBatchItem: (id: string, patch: Partial<BatchItem>) => void;
   resetAll: () => void;
 }
 
@@ -64,6 +80,7 @@ export const useMediaStore = create<MediaState>((set) => ({
   isAnalyzing: false,
   language: getStoredLanguage(),
   isInstallBannerVisible: true,
+  batch: [],
 
   setScreen: (screen) => set({ screen }),
   setSelectedFile: (file) => set({ selectedFile: file }),
@@ -87,6 +104,9 @@ export const useMediaStore = create<MediaState>((set) => ({
   setIsAnalyzing: (isAnalyzing) => set({ isAnalyzing }),
   setLanguage: (language) => set({ language }),
   setInstallBannerVisible: (visible) => set({ isInstallBannerVisible: visible }),
+  setBatch: (batch) => set({ batch }),
+  updateBatchItem: (id, patch) =>
+    set((state) => ({ batch: state.batch.map((b) => (b.id === id ? { ...b, ...patch } : b)) })),
   resetAll: () =>
     set({
       screen: 'home',
@@ -99,5 +119,6 @@ export const useMediaStore = create<MediaState>((set) => ({
       outputFiles: [],
       isAnalyzing: false,
       crop916: false,
+      batch: [],
     }),
 }));
