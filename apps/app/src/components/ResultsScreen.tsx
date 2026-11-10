@@ -6,9 +6,18 @@ import { formatBytes, formatDuration } from '../utils/format';
 interface Props {
   outputs: OutputFile[];
   onReset: () => void;
+  onNextInQueue?: () => void;
+  nextFileName?: string;
+  queueRemainingCount?: number;
 }
 
-export const ResultsScreen: React.FC<Props> = ({ outputs, onReset }) => {
+export const ResultsScreen: React.FC<Props> = ({
+  outputs,
+  onReset,
+  onNextInQueue,
+  nextFileName,
+  queueRemainingCount = 0,
+}) => {
   const { t } = useTranslation();
   const [sharingIndex, setSharingIndex] = React.useState<number | null>(null);
 
@@ -109,6 +118,17 @@ export const ResultsScreen: React.FC<Props> = ({ outputs, onReset }) => {
       <div className="p-3 bg-[var(--wm-focus-light)] border border-[var(--wm-focus)] rounded-lg text-xs text-[var(--wm-ink)]">
         💡 <strong>Conseil WhatsApp :</strong> Lors de la publication du statut, active l'option <strong>HD</strong> en haut pour garantir la qualité maximale.
       </div>
+
+      {onNextInQueue && nextFileName && (
+        <button
+          type="button"
+          onClick={onNextInQueue}
+          className="py-3 px-4 rounded-[var(--wm-radius-button)] font-semibold text-sm bg-[var(--wm-signal)] text-white hover:bg-[var(--wm-signal-hover)] transition-all shadow-md active:scale-98 text-center flex items-center justify-center gap-2"
+        >
+          <span>Média suivant ({queueRemainingCount} restant{queueRemainingCount > 1 ? 's' : ''}) : <strong>{nextFileName}</strong></span>
+          <span>→</span>
+        </button>
+      )}
 
       <button
         type="button"

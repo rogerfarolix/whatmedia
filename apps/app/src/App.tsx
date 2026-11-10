@@ -17,6 +17,8 @@ export const App: React.FC = () => {
   const {
     screen,
     selectedFile,
+    fileQueue,
+    currentFileIndex,
     mediaInfo,
     plan: currentPlan,
     currentPresetId,
@@ -25,6 +27,8 @@ export const App: React.FC = () => {
     isAnalyzing,
     setScreen,
     setSelectedFile,
+    setFileQueue,
+    setCurrentFileIndex,
     setMediaInfo,
     setPlan,
     setCurrentPresetId,
@@ -37,25 +41,49 @@ export const App: React.FC = () => {
   const abortControllerRef = React.useRef<AbortController | null>(null);
   const [showConsentModal, setShowConsentModal] = React.useState(false);
 
-  const handleFilesSelected = async (files: File[]) => {
-    const file = files[0];
-    if (!file) return;
-
+  const analyzeFile = async (file: File) => {
     setSelectedFile(file);
     setIsAnalyzing(true);
     setScreen('analysis');
+
+    // Smart auto-preset: photos default to status-photo, videos to status-hd if photo was selected
+    let targetPreset = currentPresetId;
+    if (file.type.startsWith('image/')) {
+      targetPreset = 'status-photo';
+      setCurrentPresetId('status-photo');
+    } else if (file.type.startsWith('video/') && currentPresetId === 'status-photo') {
+      targetPreset = 'status-hd';
+      setCurrentPresetId('status-hd');
+    }
 
     try {
       const caps = await detectCapabilities();
       const info = await probe(file);
       setMediaInfo(info);
 
-      const generatedPlan = plan(info, currentPresetId, caps);
+      const generatedPlan = plan(info, targetPreset, caps);
       setPlan(generatedPlan);
     } catch (err) {
       console.error('Probe failed:', err);
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const handleFilesSelected = async (files: File[]) => {
+    const first = files[0];
+    if (!first) return;
+    setFileQueue(files);
+    setCurrentFileIndex(0);
+    await analyzeFile(first);
+  };
+
+  const handleNextInQueue = async () => {
+    const nextIdx = currentFileIndex + 1;
+    const nextFile = fileQueue[nextIdx];
+    if (nextFile) {
+      setCurrentFileIndex(nextIdx);
+      await analyzeFile(nextFile);
     }
   };
 
@@ -147,6 +175,8 @@ export const App: React.FC = () => {
             info={mediaInfo}
             plan={currentPlan}
             isAnalyzing={isAnalyzing}
+            queueIndex={currentFileIndex}
+            queueTotal={fileQueue.length}
             onOptimize={handleOptimize}
             onServerFallback={() => setShowConsentModal(true)}
             onCancel={resetAll}
@@ -166,6 +196,15 @@ export const App: React.FC = () => {
           <ResultsScreen
             outputs={outputFiles}
             onReset={resetAll}
+            onNextInQueue={
+              currentFileIndex < fileQueue.length - 1 ? handleNextInQueue : undefined
+            }
+            nextFileName={
+              currentFileIndex < fileQueue.length - 1
+                ? fileQueue[currentFileIndex + 1]?.name
+                : undefined
+            }
+            queueRemainingCount={fileQueue.length - 1 - currentFileIndex}
           />
         )}
 
