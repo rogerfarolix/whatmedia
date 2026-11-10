@@ -9,10 +9,12 @@ interface Props {
   segmentCount: number;
   lane: ProcessingLane;
   etaMs?: number;
+  /** Multi-file selection: "File 2 of 5 · name" */
+  fileLabel?: string;
   onCancel: () => void;
 }
 
-export const ProcessingScreen: React.FC<Props> = ({ ratio, segmentIndex, segmentCount, lane, etaMs, onCancel }) => {
+export const ProcessingScreen: React.FC<Props> = ({ ratio, segmentIndex, segmentCount, lane, etaMs, fileLabel, onCancel }) => {
   const { t, language } = useTranslation();
   const percentage = Math.round(Math.min(Math.max(ratio, 0), 1) * 100);
 
@@ -53,6 +55,11 @@ export const ProcessingScreen: React.FC<Props> = ({ ratio, segmentIndex, segment
         {t('optimizing')}
       </h2>
 
+      {fileLabel && (
+        <p className="text-sm font-semibold text-[var(--wm-ink)] mb-1 max-w-full truncate" aria-live="polite">
+          {fileLabel}
+        </p>
+      )}
       <p className="text-sm text-[var(--wm-muted)] mb-1" aria-live="polite">
         {segmentCount > 1 ? t('processingPart', { i: segmentIndex, n: segmentCount }) : t('processingMedia')}
       </p>

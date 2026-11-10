@@ -46,7 +46,7 @@ export const features: Feature[] = [
         'Option de recadrage 9:16 plein écran pour les vidéos horizontales.',
       ],
       steps: [
-        'Choisis la vidéo dans ta galerie (plusieurs fichiers possibles, traités l’un après l’autre).',
+        'Choisis la vidéo dans ta galerie. Tu peux en sélectionner plusieurs (jusqu’à 20) : elles seront toutes traitées automatiquement.',
         'Vérifie l’analyse : durée, résolution, nombre de parties et sortie prévue.',
         'Choisis la durée des parties : plus courte, chaque partie reçoit plus de débit.',
         'Lance l’optimisation, puis partage chaque partie dans ton statut, dans l’ordre.',
@@ -76,7 +76,7 @@ export const features: Feature[] = [
         'Optional full-screen 9:16 crop for landscape videos.',
       ],
       steps: [
-        'Pick the video from your gallery (several files allowed, processed one after another).',
+        'Pick the video from your gallery. You can select several (up to 20): they will all be processed automatically.',
         'Check the analysis: duration, resolution, number of parts and planned output.',
         'Choose the part length: shorter parts get more bitrate each.',
         'Start the optimization, then share each part to your status, in order.',

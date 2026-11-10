@@ -83,6 +83,30 @@ test.describe('WhatMedia PWA App Flow & Privacy', () => {
   });
 });
 
+test.describe('Multiple selection', () => {
+  test.use({ locale: 'fr-FR' });
+
+  test('processes every selected file automatically and lists all results', async ({ page }) => {
+    await page.goto('/app/');
+    const png = await makePng(page);
+    await page.locator('input[type=file]').setInputFiles([
+      { ...png, name: 'photo-a.png' },
+      { ...png, name: 'photo-b.png' },
+      { ...png, name: 'photo-c.png' },
+    ]);
+
+    await expect(page.getByRole('heading', { name: '3 fichiers sélectionnés' })).toBeVisible();
+    // Remove one file from the selection
+    await page.getByRole('button', { name: 'Retirer photo-c.png' }).click();
+    await page.getByRole('button', { name: 'Tout optimiser (2)' }).click();
+
+    await expect(page.getByText('Fichiers prêts : 2 sur 2 (2 à partager).')).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText('whatmedia-photo-a.jpg')).toBeVisible();
+    await expect(page.getByText('whatmedia-photo-b.jpg')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Tout enregistrer' })).toBeVisible();
+  });
+});
+
 test.describe('English browser', () => {
   test.use({ locale: 'en-US' });
 
