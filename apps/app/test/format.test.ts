@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatBytes, getFileCategory } from '../src/utils/format';
+import { formatBytes, getFileCategory, normalizeMediaFile } from '../src/utils/format';
 
 describe('formatBytes', () => {
   it('formats zero bytes correctly', () => {
@@ -8,13 +8,15 @@ describe('formatBytes', () => {
   });
 
   it('formats kilobytes', () => {
-    expect(formatBytes(1024, 'fr')).toBe('1 Ko');
-    expect(formatBytes(2048, 'en')).toBe('2 KB');
+    expect(formatBytes(1000, 'fr')).toBe('1 Ko');
+    expect(formatBytes(2000, 'en')).toBe('2 KB');
   });
 
   it('formats megabytes with one decimal', () => {
-    expect(formatBytes(15 * 1024 * 1024, 'fr')).toBe('15 Mo');
-    expect(formatBytes(15.4 * 1024 * 1024, 'en')).toBe('15.4 MB');
+    expect(formatBytes(15_000_000, 'fr')).toBe('15 Mo');
+    expect(formatBytes(15_400_000, 'en')).toBe('15.4 MB');
+    // French decimal comma
+    expect(formatBytes(15_400_000, 'fr')).toBe('15,4 Mo');
   });
 });
 
@@ -33,5 +35,21 @@ describe('getFileCategory', () => {
 
     const file2 = new File([''], 'photo.png', { type: '' });
     expect(getFileCategory(file2)).toBe('image');
+  });
+});
+
+describe('normalizeMediaFile', () => {
+  it('keeps files that already have a media type', () => {
+    const f = new File([''], 'a.mp4', { type: 'video/mp4' });
+    expect(normalizeMediaFile(f)).toBe(f);
+  });
+
+  it('fills an empty HEIC type from the extension', () => {
+    const f = normalizeMediaFile(new File([''], 'IMG_1.HEIC', { type: '' }));
+    expect(f?.type).toBe('image/heic');
+  });
+
+  it('rejects unsupported files', () => {
+    expect(normalizeMediaFile(new File([''], 'doc.pdf', { type: 'application/pdf' }))).toBeNull();
   });
 });

@@ -7,16 +7,17 @@ interface Props {
 
 export const FileUploader: React.FC<Props> = ({ onFilesSelected }) => {
   const { t } = useTranslation();
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const inputId = React.useId();
   const [isDragOver, setIsDragOver] = React.useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      onFilesSelected(Array.from(e.target.files));
-    }
+    const files = e.target.files ? Array.from(e.target.files) : [];
+    // Reset so choosing the same file again still triggers a change event.
+    e.target.value = '';
+    if (files.length > 0) onFilesSelected(files);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+  const handleDrop = (e: React.DragEvent<HTMLElement>) => {
     e.preventDefault();
     setIsDragOver(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -25,30 +26,33 @@ export const FileUploader: React.FC<Props> = ({ onFilesSelected }) => {
   };
 
   return (
-    <div
+    <label
+      htmlFor={inputId}
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragOver(true);
       }}
       onDragLeave={() => setIsDragOver(false)}
       onDrop={handleDrop}
-      className={`relative flex flex-col items-center justify-center p-8 rounded-[var(--wm-radius-card)] border-2 border-dashed transition-all cursor-pointer ${
+      className={`relative flex flex-col items-center justify-center p-8 rounded-[var(--wm-radius-card)] border-2 border-dashed transition-all cursor-pointer has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-[var(--wm-focus)] ${
         isDragOver
           ? 'border-[var(--wm-signal)] bg-[var(--wm-signal-light)]'
           : 'border-[var(--wm-border)] hover:border-[var(--wm-signal)] bg-[var(--wm-surface)]'
       }`}
-      onClick={() => fileInputRef.current?.click()}
     >
       <input
-        ref={fileInputRef}
+        id={inputId}
         type="file"
-        accept="video/*,image/*"
+        accept="video/*,image/*,.heic,.heif,.mov"
         multiple
-        className="hidden"
+        className="sr-only"
         onChange={handleFileChange}
       />
 
-      <div className="w-14 h-14 rounded-full bg-[var(--wm-signal-light)] text-[var(--wm-signal)] flex items-center justify-center mb-4 shadow-sm">
+      <span
+        aria-hidden="true"
+        className="w-14 h-14 rounded-full bg-[var(--wm-signal-light)] text-[var(--wm-signal-text)] flex items-center justify-center mb-4 shadow-sm"
+      >
         <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             strokeLinecap="round"
@@ -57,15 +61,11 @@ export const FileUploader: React.FC<Props> = ({ onFilesSelected }) => {
             d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
           />
         </svg>
-      </div>
-
-      <span className="font-semibold text-base text-[var(--wm-ink)] mb-1 text-center">
-        {t('chooseMedia')}
       </span>
 
-      <span className="text-xs text-[var(--wm-muted)] text-center">
-        {t('dragDropHint')}
-      </span>
-    </div>
+      <span className="font-semibold text-base text-[var(--wm-ink)] mb-1 text-center">{t('chooseMedia')}</span>
+      <span className="text-xs text-[var(--wm-muted)] text-center">{t('dragDropHint')}</span>
+      <span className="text-[11px] text-[var(--wm-muted)] text-center mt-1">{t('formatsHint')}</span>
+    </label>
   );
 };

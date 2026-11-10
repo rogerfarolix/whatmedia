@@ -1,123 +1,238 @@
-export interface SectionTranslations {
-  [key: string]: string;
-}
-
-export interface StructuredTranslations {
-  app: SectionTranslations;
-  hero: SectionTranslations;
-  fileCard: SectionTranslations;
-  share: SectionTranslations;
-  footer: SectionTranslations;
-  pills: SectionTranslations;
-  accessibility: SectionTranslations;
-  header: SectionTranslations;
-}
-
+/**
+ * All UI strings. Placeholders use {name} and are filled by t(key, { name }).
+ * FR is the reference language; EN must define exactly the same keys (enforced by type + test).
+ */
 export const fr = {
   appTitle: 'WhatMedia',
   heroTitle: 'Prépare ton statut',
-  heroSubtitle: 'Photos et vidéos nettes sur WhatsApp, traitées 100% sur ton téléphone.',
+  heroSubtitle: 'Photos et vidéos nettes sur WhatsApp, préparées directement sur ton téléphone.',
+  pill1: 'Sur ton téléphone',
+  pill2: 'Gratuit',
+  pill3: 'Open source',
+
   chooseMedia: 'Choisir une vidéo ou une photo',
-  dragDropHint: 'ou glisse-dépose ton fichier ici',
-  analyzingMedia: 'Analyse du fichier...',
+  dragDropHint: 'ou glisse-dépose tes fichiers ici (plusieurs possibles)',
+  formatsHint: 'MP4, MOV, JPEG, PNG, WebP, HEIC',
+
+  presetSectionTitle: 'Format et qualité',
+  segmentSectionTitle: 'Durée de chaque partie',
+  segmentHint: 'Des parties plus courtes reçoivent plus de débit : l’image est plus nette.',
+  segmentOption: '{s} s',
+
+  analyzingMedia: 'Analyse du fichier…',
   analysisResult: 'Analyse terminée',
+  queueBadge: 'Fichier {i} sur {n}',
   duration: 'Durée',
   resolution: 'Résolution',
   fileSize: 'Taille',
+  codec: 'Codec',
   targetSegments: 'Découpage prévu',
-  parts: 'parties',
+  outputLabel: 'Sortie prévue',
+  outputSummaryVideo: '{w} × {h} · {fps} i/s · {mbps} Mbit/s',
+  outputSummaryImage: '{w} × {h} · JPEG',
+  parts: '{n} parties',
   singlePart: '1 seule partie',
+
+  hdrBadge: 'HDR détecté ({type})',
+  hdrHint:
+    'Les couleurs seront converties en SDR pour éviter l’effet délavé. Si le rendu ne te plaît pas, le serveur de secours offre la conversion de référence.',
+  noteResolutionReduced:
+    'Résolution réduite à 720p : la durée de chaque partie ne laisse pas assez de débit pour rester net en 1080p.',
+  noteSplitForSize: 'Vidéo trop longue pour un seul fichier de 16 Mo : elle sera découpée en {n} parties.',
+  noteShorterSharper: 'Astuce : choisis des parties de 30 s pour une image plus nette.',
+  largeFileWarning: 'Fichier volumineux ({size}) : le traitement peut être long. Garde l’app ouverte.',
+
+  cropVerticalLabel: 'Recadrer en 9:16 plein écran (sans bandes noires)',
+  cropVerticalHint: 'Coupe les côtés de la vidéo horizontale pour remplir l’écran du statut.',
+
   changeFile: 'Changer de fichier',
   startOptimization: 'Optimiser maintenant',
-  optimizing: 'Optimisation en cours...',
-  processingPart: 'Traitement de la partie',
-  processingMedia: 'Traitement de la vidéo...',
-  localProcessingNotice: 'Traitement 100% local — tes fichiers ne quittent jamais ton téléphone.',
+  serverFallbackLink: 'Ça ne marche pas sur ton téléphone ? Utiliser le serveur de secours',
+
+  optimizing: 'Optimisation en cours…',
+  processingPart: 'Partie {i} sur {n}',
+  processingMedia: 'Traitement du fichier…',
+  remaining: 'Environ {time} restant',
+  laneLocal: 'Sur ton téléphone — tes fichiers ne le quittent pas.',
+  laneServer: 'Sur le serveur WhatMedia — fichier supprimé au plus tard 15 min après.',
+  keepScreenOn: 'Garde l’écran allumé et l’app au premier plan pendant le traitement.',
   cancel: 'Annuler',
-  readyToPost: 'Fichiers prêts pour ton statut !',
-  partsGenerated: 'parties prêtes à être partagées',
-  onePartGenerated: 'Vidéo optimisée et calibrée',
-  part: 'Partie',
-  sharing: 'Partage...',
+
+  readyToPost: 'Prêt pour ton statut !',
+  partsGenerated: '{n} parties à publier dans l’ordre',
+  onePartGenerated: 'Fichier optimisé',
+  part: 'Partie {i} / {n}',
+  sharing: 'Partage…',
   shareToStatus: 'Partager',
-  saveAllFiles: 'Tout télécharger',
+  download: 'Enregistrer',
+  shared: 'Partagée',
+  saveAllFiles: 'Tout enregistrer',
+  partialResults: 'Traitement annulé : seules les parties terminées sont disponibles.',
+  hdTipTitle: 'Conseil :',
+  hdTip: 'dans WhatsApp, active l’option HD si elle apparaît avant de publier.',
+  shareOrderTip: 'Publie les parties une par une, dans l’ordre.',
+  nextInQueue: 'Média suivant ({n} restant) : {name}',
+  nextInQueuePlural: 'Média suivant ({n} restants) : {name}',
   optimizeAnother: 'Optimiser un autre média',
-  presetStatusHd: 'Statut HD (1080p)',
-  presetStatusLight: 'Statut Léger (720p)',
-  presetChatHd: 'Discussion HD',
-  presetChatCompact: 'Discussion compacte (3G/4G)',
-  presetStatusPhoto: 'Photo Statut',
-  cropVerticalLabel: 'Recadrer en 9:16 plein écran (pas de bandes noires)',
-  cropVerticalHint: 'Adapte la vidéo horizontale au format vertical plein écran des statuts',
-  disclaimer: 'WhatMedia n\'est pas affilié à WhatsApp ou Meta Platforms, Inc.',
-  installPrompt: 'Installe WhatMedia sur ton écran d\'accueil',
-  installInstructions: 'Sur Safari : Appuie sur Partager puis Sur l\'écran d\'accueil.',
+
+  consentTitle: 'Traiter sur le serveur WhatMedia ?',
+  consentReasonFailed: 'Le traitement sur ton téléphone n’a pas abouti ({reason}).',
+  consentReasonManual: 'Tu as choisi le serveur de secours.',
+  consentBody:
+    'Ton fichier sera envoyé à whatmedia.nealix.org, traité, puis supprimé au plus tard 15 minutes après. Rien n’est envoyé sans ton accord.',
+  consentPoint1: 'Transfert chiffré (HTTPS)',
+  consentPoint2: 'Suppression automatique sous 15 min, et dès que tu as récupéré le résultat',
+  consentPoint3: 'Aucun compte, aucun traceur, aucun nom de fichier conservé',
+  consentAccept: 'J’accepte, envoyer ce fichier',
+
+  errorTitle: 'Un problème est survenu',
+  errorUnsupportedType: '« {name} » n’est pas une vidéo ou une photo prise en charge.',
+  errorTooBig: '« {name} » dépasse {max} : trop volumineux pour être traité ici.',
+  errorUnreadable: 'Ce fichier ne peut pas être lu sur cet appareil.',
+  errorUnsupportedCodec: 'Ton appareil ne sait pas lire ce format ici.',
+  errorUnsupportedImage: 'Ton navigateur ne sait pas ouvrir ce format de photo (souvent HEIC).',
+  errorTooLarge: 'Impossible de rester sous la limite de 16 Mo. Essaie des parties de 30 s ou le preset Statut léger.',
+  errorGeneric: 'Le traitement a échoué. Essaie le preset Statut léger ou des parties de 30 s.',
+  errorServer: 'Le serveur de secours n’a pas pu traiter ce fichier : {reason}',
+  errorServerUnavailable: 'Le serveur de secours est indisponible pour le moment.',
+  serverOfferWithServer: 'Tu peux le traiter sur le serveur WhatMedia (supprimé sous 15 min).',
+  tryServer: 'Essayer le serveur de secours',
+  close: 'Fermer',
+
+  installPrompt: 'Installe WhatMedia sur ton écran d’accueil',
+  installInstructionsIos: 'Dans Safari : touche Partager, puis « Sur l’écran d’accueil ».',
+  installInstructionsOther: 'Ouvre le menu du navigateur, puis « Installer l’application ».',
+  installButton: 'Installer',
   dismiss: 'Ignorer',
-  pill1: '100 % sur ton téléphone',
-  pill2: 'Gratuit',
-  pill3: 'Open source',
-  selectedFiles: 'Fichier sélectionné',
-  remove: 'Supprimer',
-  shareDirectly: 'Partager directement',
-  footer: {
-    disclaimer: 'WhatMedia n\'est pas affilié à WhatsApp ou Meta Platforms, Inc. Un projet open source Nealix.',
-  },
+
+  switchLanguage: 'Switch to English',
+  skipToContent: 'Aller au contenu',
+  footerNav: 'Liens du pied de page',
+  footerSite: 'Site',
+  footerPrivacy: 'Confidentialité',
+  footerPrivacyHref: '/confidentialite',
+  footerLegalHref: '/mentions',
+  footerLegal: 'Mentions légales',
+  disclaimer: 'WhatMedia n’est pas affilié à WhatsApp ni à Meta Platforms, Inc.',
+  footerCredit: 'Un projet open source Nealix · Licence MIT · v{version}',
 };
 
-export const en = {
+export type TranslationKey = keyof typeof fr;
+export type Translations = Record<TranslationKey, string>;
+
+export const en: Translations = {
   appTitle: 'WhatMedia',
   heroTitle: 'Prepare your status',
-  heroSubtitle: 'Sharp photos and videos on WhatsApp, processed 100% on your device.',
-  chooseMedia: 'Choose a video or photo',
-  dragDropHint: 'or drag and drop your file here',
-  analyzingMedia: 'Analyzing media...',
-  analysisResult: 'Analysis complete',
-  duration: 'Duration',
-  resolution: 'Resolution',
-  fileSize: 'File size',
-  targetSegments: 'Planned split',
-  parts: 'parts',
-  singlePart: '1 single part',
-  changeFile: 'Change file',
-  startOptimization: 'Optimize now',
-  optimizing: 'Optimization in progress...',
-  processingPart: 'Processing part',
-  processingMedia: 'Processing video...',
-  localProcessingNotice: '100% on-device processing — your files never leave your phone.',
-  cancel: 'Cancel',
-  readyToPost: 'Ready for your status!',
-  partsGenerated: 'parts ready to be shared',
-  onePartGenerated: 'Video calibrated and optimized',
-  part: 'Part',
-  sharing: 'Sharing...',
-  shareToStatus: 'Share',
-  saveAllFiles: 'Download all',
-  optimizeAnother: 'Optimize another media',
-  presetStatusHd: 'Status HD (1080p)',
-  presetStatusLight: 'Status Light (720p)',
-  presetChatHd: 'Chat HD',
-  presetChatCompact: 'Chat Compact (Mobile)',
-  presetStatusPhoto: 'Status Photo',
-  cropVerticalLabel: 'Crop to 9:16 full-screen (remove black bars)',
-  cropVerticalHint: 'Adapts landscape video to full-screen vertical format for WhatsApp Status',
-  disclaimer: 'WhatMedia is not affiliated with WhatsApp or Meta Platforms, Inc.',
-  installPrompt: 'Install WhatMedia on your home screen',
-  installInstructions: 'On Safari: Tap Share then Add to Home Screen.',
-  dismiss: 'Dismiss',
-  pill1: '100% on-device',
+  heroSubtitle: 'Sharp photos and videos on WhatsApp, prepared right on your phone.',
+  pill1: 'On your phone',
   pill2: 'Free',
   pill3: 'Open source',
-  selectedFiles: 'Selected file',
-  remove: 'Remove',
-  shareDirectly: 'Share directly',
-  footer: {
-    disclaimer: 'WhatMedia is not affiliated with WhatsApp or Meta Platforms, Inc. Open source by Nealix.',
-  },
+
+  chooseMedia: 'Choose a video or photo',
+  dragDropHint: 'or drag and drop your files here (several allowed)',
+  formatsHint: 'MP4, MOV, JPEG, PNG, WebP, HEIC',
+
+  presetSectionTitle: 'Format and quality',
+  segmentSectionTitle: 'Length of each part',
+  segmentHint: 'Shorter parts get more bitrate: the picture is sharper.',
+  segmentOption: '{s} s',
+
+  analyzingMedia: 'Analyzing file…',
+  analysisResult: 'Analysis complete',
+  queueBadge: 'File {i} of {n}',
+  duration: 'Duration',
+  resolution: 'Resolution',
+  fileSize: 'Size',
+  codec: 'Codec',
+  targetSegments: 'Planned split',
+  outputLabel: 'Planned output',
+  outputSummaryVideo: '{w} × {h} · {fps} fps · {mbps} Mbit/s',
+  outputSummaryImage: '{w} × {h} · JPEG',
+  parts: '{n} parts',
+  singlePart: '1 single part',
+
+  hdrBadge: 'HDR detected ({type})',
+  hdrHint:
+    'Colours will be converted to SDR to avoid the washed-out look. If you are not happy with the result, the fallback server provides the reference conversion.',
+  noteResolutionReduced:
+    'Resolution lowered to 720p: each part is too long to stay sharp at 1080p within the size limit.',
+  noteSplitForSize: 'Video too long for a single 16 MB file: it will be split into {n} parts.',
+  noteShorterSharper: 'Tip: choose 30 s parts for a sharper picture.',
+  largeFileWarning: 'Large file ({size}): processing may take a while. Keep the app open.',
+
+  cropVerticalLabel: 'Crop to full-screen 9:16 (no black bars)',
+  cropVerticalHint: 'Trims the sides of a landscape video to fill the status screen.',
+
+  changeFile: 'Change file',
+  startOptimization: 'Optimize now',
+  serverFallbackLink: 'Not working on your phone? Use the fallback server',
+
+  optimizing: 'Optimizing…',
+  processingPart: 'Part {i} of {n}',
+  processingMedia: 'Processing file…',
+  remaining: 'About {time} left',
+  laneLocal: 'On your phone — your files never leave it.',
+  laneServer: 'On the WhatMedia server — file deleted within 15 minutes.',
+  keepScreenOn: 'Keep the screen on and the app in the foreground while processing.',
+  cancel: 'Cancel',
+
+  readyToPost: 'Ready for your status!',
+  partsGenerated: '{n} parts to post in order',
+  onePartGenerated: 'File optimized',
+  part: 'Part {i} / {n}',
+  sharing: 'Sharing…',
+  shareToStatus: 'Share',
+  download: 'Save',
+  shared: 'Shared',
+  saveAllFiles: 'Save all',
+  partialResults: 'Processing cancelled: only the finished parts are available.',
+  hdTipTitle: 'Tip:',
+  hdTip: 'in WhatsApp, turn on the HD option if it appears before posting.',
+  shareOrderTip: 'Post the parts one at a time, in order.',
+  nextInQueue: 'Next file ({n} left): {name}',
+  nextInQueuePlural: 'Next file ({n} left): {name}',
+  optimizeAnother: 'Optimize another file',
+
+  consentTitle: 'Process on the WhatMedia server?',
+  consentReasonFailed: 'Processing on your phone did not succeed ({reason}).',
+  consentReasonManual: 'You chose the fallback server.',
+  consentBody:
+    'Your file will be sent to whatmedia.nealix.org, processed, then deleted within 15 minutes at most. Nothing is sent without your consent.',
+  consentPoint1: 'Encrypted transfer (HTTPS)',
+  consentPoint2: 'Deleted automatically within 15 min, and as soon as you get the result',
+  consentPoint3: 'No account, no tracker, no file name stored',
+  consentAccept: 'I agree, send this file',
+
+  errorTitle: 'Something went wrong',
+  errorUnsupportedType: '“{name}” is not a supported video or photo.',
+  errorTooBig: '“{name}” is larger than {max}: too big to process here.',
+  errorUnreadable: 'This file cannot be read on this device.',
+  errorUnsupportedCodec: 'Your device cannot read this format here.',
+  errorUnsupportedImage: 'Your browser cannot open this photo format (often HEIC).',
+  errorTooLarge: 'Could not stay under the 16 MB limit. Try 30 s parts or the Status Light preset.',
+  errorGeneric: 'Processing failed. Try the Status Light preset or 30 s parts.',
+  errorServer: 'The fallback server could not process this file: {reason}',
+  errorServerUnavailable: 'The fallback server is unavailable right now.',
+  serverOfferWithServer: 'You can process it on the WhatMedia server (deleted within 15 min).',
+  tryServer: 'Try the fallback server',
+  close: 'Close',
+
+  installPrompt: 'Install WhatMedia on your home screen',
+  installInstructionsIos: 'In Safari: tap Share, then “Add to Home Screen”.',
+  installInstructionsOther: 'Open the browser menu, then “Install app”.',
+  installButton: 'Install',
+  dismiss: 'Dismiss',
+
+  switchLanguage: 'Passer en français',
+  skipToContent: 'Skip to content',
+  footerNav: 'Footer links',
+  footerSite: 'Website',
+  footerPrivacy: 'Privacy',
+  footerPrivacyHref: '/en/privacy',
+  footerLegalHref: '/en/legal',
+  footerLegal: 'Legal notice',
+  disclaimer: 'WhatMedia is not affiliated with WhatsApp or Meta Platforms, Inc.',
+  footerCredit: 'An open source Nealix project · MIT License · v{version}',
 };
 
-export type Translations = typeof fr;
-
-export const translations = {
-  fr,
-  en,
-};
+export const translations = { fr, en };

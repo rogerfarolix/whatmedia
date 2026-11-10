@@ -17,6 +17,9 @@
 
   /* Signal variants */
   --wm-signal-hover: #e64e18;
+  /* Accessible pairings (WCAG 2.2 AA): text placed ON the signal colour, and signal-coloured text */
+  --wm-on-signal: #0b0f1a;
+  --wm-signal-text: #b93d0c;
   --wm-signal-light: #fff0ea;
   --wm-focus-light: #eef1ff;
   --wm-ok-light: #e7f8ef;
@@ -65,6 +68,8 @@
     --wm-focus-light: #161a2e;
     --wm-ok-light: #0f2018;
     --wm-warn-light: #2a1f10;
+    --wm-muted: #98a2b3;
+    --wm-signal-text: #ff7a45;
   }
 }
 
