@@ -4,6 +4,7 @@ import type { Plan, OutputFile, Progress } from '../types.js';
 export interface RunOptions {
   signal?: AbortSignal;
   onProgress?: (p: Progress) => void;
+  onSegmentComplete?: (output: OutputFile, segmentIndex: number) => void;
 }
 
 /**
@@ -29,7 +30,9 @@ export async function runWebCodecs(
 
   for (let i = 0; i < segmentCount; i++) {
     if (signal?.aborted) {
-      throw new Error('E_ABORTED: Processing aborted by user');
+      const abortErr = new Error('E_ABORTED: Processing aborted by user');
+      (abortErr as Error & { partialOutputs?: OutputFile[] }).partialOutputs = outputFiles;
+      throw abortErr;
     }
 
     const seg = plan.segments[i];
@@ -92,7 +95,16 @@ export async function runWebCodecs(
       );
     }
 
-    await conversion.execute();
+    try {
+      await conversion.execute();
+    } catch (err: unknown) {
+      if (signal?.aborted) {
+        const abortErr = new Error('E_ABORTED: Processing aborted by user');
+        (abortErr as Error & { partialOutputs?: OutputFile[] }).partialOutputs = outputFiles;
+        throw abortErr;
+      }
+      throw err;
+    }
 
     const buffer = target.buffer;
     if (!buffer) {
@@ -107,13 +119,16 @@ export async function runWebCodecs(
     const outBlob = new Blob([buffer], { type: 'video/mp4' });
     const outFile = new File([outBlob], outFileName, { type: 'video/mp4' });
 
-    outputFiles.push({
+    const item: OutputFile = {
       file: outFile,
       index: i + 1,
       totalSegments: segmentCount,
       durationSec,
       sizeBytes: outFile.size,
-    });
+    };
+
+    outputFiles.push(item);
+    options?.onSegmentComplete?.(item, i + 1);
   }
 
   onProgress?.({

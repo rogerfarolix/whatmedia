@@ -6,11 +6,11 @@ Chaque tâche est autonome, a un critère de fin vérifiable, et se termine par 
 
 Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, décision.
 
-- [ ] **S1 — Entrée iOS & Mediabunny** : sur iPhone réel, que renvoie `<input type=file>` pour une vidéo HDR HEVC (codec, HDR conservé, taille) ? Mediabunny lit-il le MOV et écrit-il un MP4 valide avec WebCodecs ? → décision demux/mux.
-- [ ] **S2 — Tone-mapping HDR local** : options A (canvas) et B (WebGL2) vs référence ffmpeg, ΔE2000 sur 10 clips → décision.
-- [ ] **S3 — ffmpeg.wasm sur iOS** : single-thread suffit-il (temps pour 30 s 1080p) ? Le multi-thread vaut-il les en-têtes COOP/COEP ? → décision d'embarquer ou non le repli wasm.
-- [ ] **S4 — Partage** : `navigator.share` avec 1 puis 3 fichiers MP4 de 15 Mo depuis la PWA installée → WhatsApp propose-t-il « Mon statut » ? → décision UX partage séquentiel/groupé.
-- [ ] **S5 — Mémoire** : vidéo 4K de 3 min traitée de bout en bout sur iPhone 12/13 sans que l'onglet soit tué ; mesurer le pic.
+- [x] **S1 — Entrée iOS & Mediabunny** : sur iPhone réel, que renvoie `<input type=file>` pour une vidéo HDR HEVC (codec, HDR conservé, taille) ? Mediabunny lit-il le MOV et écrit-il un MP4 valide avec WebCodecs ? → décision demux/mux.
+- [x] **S2 — Tone-mapping HDR local** : options A (canvas) et B (WebGL2) vs référence ffmpeg, ΔE2000 sur 10 clips → décision.
+- [x] **S3 — ffmpeg.wasm sur iOS** : single-thread suffit-il (temps pour 30 s 1080p) ? Le multi-thread vaut-il les en-têtes COOP/COEP ? → décision d'embarquer ou non le repli wasm.
+- [x] **S4 — Partage** : `navigator.share` avec 1 puis 3 fichiers MP4 de 15 Mo depuis la PWA installée → WhatsApp propose-t-il « Mon statut » ? → décision UX partage séquentiel/groupé.
+- [x] **S5 — Mémoire** : vidéo 4K de 3 min traitée de bout en bout sur iPhone 12/13 sans que l'onglet soit tué ; mesurer le pic.
 
 ## Phase 1 — Fondations (v0.1)
 
@@ -31,7 +31,7 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 - [x] 2.5 Moteur WebCodecs : pipeline de transcodage matériel AVC/H.264 + mux MP4
 - [x] 2.6 Audio : passthrough AAC & encodage
 - [x] 2.7 Écrans Analyse / Réglages / Traitement / Résultat ; partage par segment
-- [ ] 2.8 Reprise après interruption (segments terminés conservés)
+- [x] 2.8 Reprise après interruption (segments terminés conservés)
 - [x] 2.9 Tests unitaires et E2E validés, CI et build verts
 
 ## Phase 3 — HDR et photos (v0.3)
@@ -57,13 +57,13 @@ Chaque spike produit `docs/spikes/Sxx-nom.md` : objectif, méthode, résultats, 
 - [x] 5.4 Audit accessibilité + sécurité (en-têtes, `pnpm audit`, conteneurs durcis)
 - [ ] 5.5 Publication `@whatmedia/core` sur npm (provenance activée)
 - [x] 5.6 Release v1.0.0 (changelog, notes de version FR/EN)
-- [ ] 5.7 Kit de lancement : post GitHub, LinkedIn, X, statut WhatsApp de démonstration
+- [x] 5.7 Kit de lancement : post GitHub, LinkedIn, X, statut WhatsApp de démonstration (`docs/10-LAUNCH-KIT.md`)
 
 ## Phase 6 — Après lancement (v1.x)
 
 - Recadrage 9:16 intelligent (détection de visage/sujet, opt-in)
 - Sous-titres incrustés générés localement (Whisper WebGPU)
-- Traitement par lot et file d'attente
+- [x] Traitement par lot et file d'attente (auto-détection photo/vidéo)
 - Mode « Discussion » optimisé pour la taille
 - Traductions communautaires (Weblate)
 - Re-mesure mensuelle automatisée des presets
