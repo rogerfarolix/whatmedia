@@ -20,7 +20,7 @@ export async function detectCapabilities(): Promise<Capabilities> {
   };
 
   // 1. WebCodecs API check
-  if (typeof window !== 'undefined' && 'VideoDecoder' in window && 'VideoEncoder' in window) {
+  if (typeof globalThis !== 'undefined' && 'VideoDecoder' in globalThis && 'VideoEncoder' in globalThis) {
     caps.webcodecs = true;
 
     // Check HEVC decoding support
@@ -64,7 +64,7 @@ export async function detectCapabilities(): Promise<Capabilities> {
     }
 
     // Check AAC audio encoding support
-    if ('AudioEncoder' in window) {
+    if ('AudioEncoder' in globalThis) {
       try {
         const audioSupport = await AudioEncoder.isConfigSupported({
           codec: 'mp4a.40.2', // AAC-LC
@@ -111,7 +111,8 @@ export async function detectCapabilities(): Promise<Capabilities> {
 
   // 5. SharedArrayBuffer / crossOriginIsolated check
   try {
-    caps.sharedArrayBuffer = typeof SharedArrayBuffer !== 'undefined' && (window?.crossOriginIsolated ?? false);
+    caps.sharedArrayBuffer =
+      typeof SharedArrayBuffer !== 'undefined' && Boolean((globalThis as { crossOriginIsolated?: boolean }).crossOriginIsolated);
   } catch {
     caps.sharedArrayBuffer = false;
   }

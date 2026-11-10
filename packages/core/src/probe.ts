@@ -45,6 +45,7 @@ export async function probe(file: File | Blob): Promise<MediaInfo> {
   let fps = 30;
   let videoCodec: string | undefined;
   let audioCodec: string | undefined;
+  let audioBitrate: number | undefined;
   let hdr: MediaInfo['hdr'] = 'none';
 
   try {
@@ -67,10 +68,15 @@ export async function probe(file: File | Blob): Promise<MediaInfo> {
         rotation = rawRotation;
       }
 
-      // Detect HDR (HLG, PQ, or Dolby Vision)
-      const isHdr = await videoTrack.hasHighDynamicRange();
-      if (isHdr) {
-        hdr = 'hlg';
+      // Detect HDR from the colour transfer characteristics (HLG vs PQ), then Dolby Vision
+      try {
+        const colorSpace = await videoTrack.getColorSpace();
+        const transfer = String(colorSpace.transfer ?? '');
+        if (transfer === 'hlg' || transfer === 'arib-std-b67') hdr = 'hlg';
+        else if (transfer === 'pq' || transfer === 'smpte2084') hdr = 'pq';
+        else if (await videoTrack.hasHighDynamicRange()) hdr = 'hlg';
+      } catch {
+        // Colour metadata unavailable: assume SDR
       }
       if (videoCodec?.startsWith('dvh1') || videoCodec?.startsWith('dvhe')) {
         hdr = 'dolby-vision';
@@ -90,6 +96,12 @@ export async function probe(file: File | Blob): Promise<MediaInfo> {
     if (audioTrack) {
       const aCodec = await audioTrack.getCodec();
       audioCodec = aCodec ?? undefined;
+      try {
+        const bps = await audioTrack.getBitrate();
+        if (bps && bps > 0) audioBitrate = Math.round(bps);
+      } catch {
+        // Unknown bitrate: plan() budgets the preset's audio bitrate
+      }
     }
   } catch {
     // If mediabunny demuxing fails on special containers, fallback to HTMLVideoElement
@@ -125,6 +137,7 @@ export async function probe(file: File | Blob): Promise<MediaInfo> {
     fps,
     videoCodec,
     audioCodec,
+    audioBitrate,
     hdr,
     sizeBytes: file.size,
   };

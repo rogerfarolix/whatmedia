@@ -1,6 +1,6 @@
 import type { PresetId, Preset, VideoPreset, ImagePreset } from '@whatmedia/config';
 import { presets, whatsappLimits } from '@whatmedia/config';
-import type { MediaInfo, Capabilities, Plan } from './types.js';
+import type { MediaInfo, Capabilities, Plan, PlanNote } from './types.js';
 
 export interface PlanOverrides {
   segmentDurationSec?: number;
@@ -8,6 +8,45 @@ export interface PlanOverrides {
   width?: number;
   height?: number;
   crop916?: boolean;
+}
+
+/** Container/muxing overhead reserved in the bitrate budget (bits/s) */
+const OVERHEAD_BPS = 100_000;
+/** Absolute floor so a pathological budget never produces a 0 or negative bitrate */
+const ABSOLUTE_MIN_VIDEO_BPS = 200_000;
+/** Cap for audio passthrough budgeting (a source above this is unusual for phone video) */
+const MAX_PASSTHROUGH_AUDIO_BPS = 320_000;
+
+/** Rounds down to the nearest even integer, minimum 2 (H.264 4:2:0 needs even dimensions) */
+function even(n: number): number {
+  const r = Math.floor(n);
+  return Math.max(2, r - (r % 2));
+}
+
+/**
+ * Fits a source into a bounding box while preserving aspect ratio, never upscaling.
+ * The box is orientation-aware: its long side is matched to the source's long side, so a
+ * landscape video keeps its full width (1920×1080) instead of being squeezed into a portrait box.
+ */
+export function fitInBox(
+  srcW: number,
+  srcH: number,
+  boxW: number,
+  boxH: number,
+): { width: number; height: number } {
+  const boxLong = Math.max(boxW, boxH);
+  const boxShort = Math.min(boxW, boxH);
+
+  if (!(srcW > 0) || !(srcH > 0)) {
+    return { width: even(boxShort), height: even(boxLong) };
+  }
+
+  const landscape = srcW > srcH;
+  const bw = landscape ? boxLong : boxShort;
+  const bh = landscape ? boxShort : boxLong;
+  const scale = Math.min(1, bw / srcW, bh / srcH);
+
+  return { width: even(srcW * scale), height: even(srcH * scale) };
 }
 
 /**
@@ -21,169 +60,159 @@ export function plan(
   overrides?: Partial<PlanOverrides>,
 ): Plan {
   const selectedPreset: Preset = presets[presetId] ?? (presets['status-hd'] as Preset);
+  const budgetBytes = whatsappLimits.maxMediaBytes - whatsappLimits.safetyMarginBytes;
 
-  // Handle Photo Presets
+  // ---------------------------------------------------------------- Photos
   if (info.kind === 'image' || selectedPreset.kind === 'image') {
     const imgPreset: ImagePreset =
-      selectedPreset.kind === 'image'
-        ? selectedPreset
-        : (presets['status-photo'] as ImagePreset);
+      selectedPreset.kind === 'image' ? selectedPreset : (presets['status-photo'] as ImagePreset);
 
-    const maxW = imgPreset.image.width;
-    const maxH = imgPreset.image.height;
-
-    let targetW = info.width;
-    let targetH = info.height;
-
-    // Scale down if larger than preset bounds while preserving aspect ratio
-    if (targetW > maxW || targetH > maxH) {
-      const scale = Math.min(maxW / targetW, maxH / targetH);
-      targetW = Math.round(targetW * scale);
-      targetH = Math.round(targetH * scale);
-    }
+    const { width, height } =
+      info.width > 0 && info.height > 0
+        ? fitInBox(info.width, info.height, imgPreset.image.width, imgPreset.image.height)
+        : { width: imgPreset.image.width, height: imgPreset.image.height };
 
     return {
-      preset: presetId,
-      engine: 'webcodecs', // Can be performed via OffscreenCanvas
-      segments: [
-        {
-          startSec: 0,
-          endSec: 0,
-          targetBytes: whatsappLimits.maxMediaBytes - whatsappLimits.safetyMarginBytes,
-        },
-      ],
-      image: {
-        width: targetW,
-        height: targetH,
-        quality: imgPreset.image.quality,
-      },
+      preset: imgPreset.id,
+      engine: 'webcodecs', // performed with (Offscreen)Canvas
+      segments: [{ startSec: 0, endSec: 0, targetBytes: budgetBytes }],
+      image: { width, height, quality: imgPreset.image.quality },
+      notes: [],
     };
   }
 
-  // Handle Video Presets
+  // ---------------------------------------------------------------- Videos
   const vidPreset: VideoPreset =
-    selectedPreset.kind === 'video'
-      ? selectedPreset
-      : (presets['status-hd'] as VideoPreset);
+    selectedPreset.kind === 'video' ? selectedPreset : (presets['status-hd'] as VideoPreset);
+  const lightPreset = presets['status-light'] as VideoPreset;
+  const notes: PlanNote[] = [];
+  const duration = Math.max(0, info.durationSec ?? 0);
 
-  const duration = info.durationSec ?? 0;
+  // 1. Engine — ffmpeg.wasm was rejected by spike S3, so no WebCodecs means server fallback.
+  const canEncodeLocally = caps.webcodecs && (caps.avcEncode || caps.avcEncode720);
+  const engine: Plan['engine'] = canEncodeLocally ? 'webcodecs' : 'server';
+  const only720 = canEncodeLocally && !caps.avcEncode;
 
-  // 1. Determine engine
-  let engine: Plan['engine'] = 'webcodecs';
-  if (!caps.webcodecs || !caps.avcEncode) {
-    if (caps.wasm) {
-      engine = 'ffmpeg-wasm';
-    } else {
-      engine = 'server';
+  // 2. Audio budget: passthrough keeps the source bitrate, so reserve whichever is higher.
+  const audioBps = Math.max(
+    vidPreset.audio.bitrate,
+    Math.min(info.audioBitrate ?? 0, MAX_PASSTHROUGH_AUDIO_BPS),
+  );
+  const bitsPerSecondAt = (videoBps: number) => videoBps + audioBps + OVERHEAD_BPS;
+  const floorBps = Math.min(vidPreset.video.minBps, lightPreset.video.minBps);
+
+  // 3. Segmentation
+  const isStatus = vidPreset.id.startsWith('status-');
+  let segmentSec: number | undefined;
+  let partLength: number;
+
+  if (isStatus) {
+    let s = overrides?.segmentDurationSec ?? vidPreset.segmentSec ?? whatsappLimits.maxStatusVideoSec;
+    if (!whatsappLimits.allowedStatusVideoSec.includes(s)) {
+      s = whatsappLimits.maxStatusVideoSec;
     }
+    segmentSec = s;
+    partLength = s;
+  } else {
+    // Chat: a single file when it fits at an acceptable bitrate, otherwise equal parts that do.
+    const maxLenAtFloor = Math.floor((budgetBytes * 8) / bitsPerSecondAt(floorBps));
+    partLength = duration > maxLenAtFloor ? maxLenAtFloor : Math.max(duration, 1);
+    if (duration > maxLenAtFloor) notes.push('split-for-size');
   }
-
-  // 2. Determine Segment Duration S
-  // WhatsApp limits: allowedStatusVideoSec = [30, 60, 90]
-  let segmentDurationSec = overrides?.segmentDurationSec ?? vidPreset.segmentSec ?? whatsappLimits.maxStatusVideoSec;
-  if (!whatsappLimits.allowedStatusVideoSec.includes(segmentDurationSec)) {
-    segmentDurationSec = whatsappLimits.maxStatusVideoSec;
-  }
-
-  // For chat presets (chat-hd, chat-compact), video is not segmented (single full video)
-  const isSegmented = vidPreset.id !== 'chat-hd' && vidPreset.id !== 'chat-compact';
 
   const segments: Plan['segments'] = [];
-  if (!isSegmented || duration <= segmentDurationSec) {
-    segments.push({
-      startSec: 0,
-      endSec: duration,
-      targetBytes: whatsappLimits.maxMediaBytes - whatsappLimits.safetyMarginBytes,
-    });
+  if (duration <= partLength) {
+    segments.push({ startSec: 0, endSec: duration, targetBytes: budgetBytes });
   } else {
-    // Splitting logic: N = ceil(duration / S)
-    // If the last segment is < 5s, redistribute evenly across segments
-    const count = Math.ceil(duration / segmentDurationSec);
-    const lastRemainder = duration - (count - 1) * segmentDurationSec;
-
-    let effectiveSegmentSec = segmentDurationSec;
-    if (lastRemainder > 0 && lastRemainder < 5 && count > 1) {
-      // Redistribute evenly
-      effectiveSegmentSec = duration / count;
-    }
+    // N = ceil(duration / S); a trailing part under 5 s is avoided by splitting evenly.
+    const count = Math.ceil(duration / partLength);
+    const lastRemainder = duration - (count - 1) * partLength;
+    const evenSplit = !isStatus || (lastRemainder > 0 && lastRemainder < 5);
+    const effective = evenSplit ? duration / count : partLength;
 
     for (let i = 0; i < count; i++) {
-      const start = i * effectiveSegmentSec;
-      const end = Math.min(duration, (i + 1) * effectiveSegmentSec);
+      const start = i * effective;
+      const end = i === count - 1 ? duration : Math.min(duration, (i + 1) * effective);
       segments.push({
         startSec: Math.round(start * 1000) / 1000,
         endSec: Math.round(end * 1000) / 1000,
-        targetBytes: whatsappLimits.maxMediaBytes - whatsappLimits.safetyMarginBytes,
+        targetBytes: budgetBytes,
       });
     }
   }
 
-  // 3. Bitrate & Resolution calculation
+  // 4. Bitrate — the longest part drives the budget.
   const maxSegmentLen = segments.reduce((max, s) => Math.max(max, s.endSec - s.startSec), 1);
-  const budgetBytes = whatsappLimits.maxMediaBytes - whatsappLimits.safetyMarginBytes;
-  const audioBps = vidPreset.audio.bitrate;
+  const maxVideoBps = Math.floor((budgetBytes * 8) / maxSegmentLen) - audioBps - OVERHEAD_BPS;
 
-  // Max video bps to stay under WhatsApp 16MB file limit
-  const overheadBps = 100_000; // ~100kbps container overhead safety
-  const maxVideoBps = Math.floor((budgetBytes * 8) / maxSegmentLen) - audioBps - overheadBps;
+  const requestedBps = overrides?.targetBps ?? vidPreset.video.targetBps;
+  let targetVideoBps = Math.min(requestedBps, maxVideoBps);
 
-  let targetVideoBps = overrides?.targetBps ?? vidPreset.video.targetBps;
-  targetVideoBps = Math.min(targetVideoBps, maxVideoBps);
+  if (isStatus && segmentSec !== undefined && segmentSec > 30 && maxVideoBps < vidPreset.video.targetBps) {
+    notes.push('shorter-segments-sharper');
+  }
 
-  let targetWidth = vidPreset.video.width;
-  let targetHeight = vidPreset.video.height;
+  // 5. Resolution box
+  let boxW = overrides?.width ?? vidPreset.video.width;
+  let boxH = overrides?.height ?? vidPreset.video.height;
+  const lightLong = Math.max(lightPreset.video.width, lightPreset.video.height);
 
-  // Optional 9:16 vertical crop
+  const budgetTooLow = targetVideoBps < vidPreset.video.minBps;
+  if ((budgetTooLow || only720) && Math.max(boxW, boxH) > lightLong) {
+    boxW = lightPreset.video.width;
+    boxH = lightPreset.video.height;
+    if (budgetTooLow) notes.push('resolution-reduced');
+  }
+  targetVideoBps = Math.max(ABSOLUTE_MIN_VIDEO_BPS, targetVideoBps);
+
+  // 6. Output dimensions
   const crop916 = overrides?.crop916 ?? false;
-  let fit: 'cover' | 'contain' | undefined;
+  let width: number;
+  let height: number;
+  let fit: 'cover' | 'contain';
+
   if (crop916) {
+    // Full-screen vertical 9:16, cropped from the centre. Never upscale: the output height is
+    // bounded by the source height, so a 1920×1080 landscape gives 606×1080 real pixels.
+    const boxShort = Math.min(boxW, boxH);
+    const boxLong = Math.max(boxW, boxH);
+    const srcH = info.height > 0 ? info.height : boxLong;
+    height = even(Math.min(boxLong, srcH));
+    width = even(Math.min(boxShort, (height * 9) / 16));
     fit = 'cover';
-    targetWidth = 1080;
-    targetHeight = 1920;
+  } else {
+    ({ width, height } = fitInBox(info.width, info.height, boxW, boxH));
+    // Dimensions already match the source aspect ratio, so 'contain' adds no visible bars.
+    fit = 'contain';
   }
 
-  // If video bitrate budget is constrained below preset minBps, fall back to 720p
-  if (targetVideoBps < vidPreset.video.minBps && targetWidth > 720) {
-    const lightPreset = presets['status-light'] as VideoPreset;
-    targetWidth = lightPreset.video.width;
-    targetHeight = lightPreset.video.height;
-    targetVideoBps = Math.max(lightPreset.video.minBps, targetVideoBps);
-  }
+  // 7. Frame rate — never above the source
+  const targetFps =
+    info.fps && info.fps > 0 ? Math.min(info.fps, vidPreset.video.fps) : vidPreset.video.fps;
 
-  // Never upscale resolution beyond source unless cropping 9:16 is requested
-  if (!crop916 && info.width > 0 && info.height > 0) {
-    if (targetWidth > info.width && targetHeight > info.height) {
-      targetWidth = info.width % 2 === 0 ? info.width : info.width - 1;
-      targetHeight = info.height % 2 === 0 ? info.height : info.height - 1;
-    }
-  }
-
-  // Ensure dimensions are even (divisible by 2)
-  targetWidth = targetWidth % 2 === 0 ? targetWidth : targetWidth - 1;
-  targetHeight = targetHeight % 2 === 0 ? targetHeight : targetHeight - 1;
-
-  // Never upscale fps beyond source
-  const targetFps = info.fps ? Math.min(info.fps, vidPreset.video.fps) : vidPreset.video.fps;
-
-  // HDR tone-mapping requirement
-  const needsToneMap = info.hdr !== 'none';
+  // 8. HDR
+  const toneMap = info.hdr !== 'none';
+  if (toneMap) notes.push('hdr-converted');
 
   return {
-    preset: presetId,
+    preset: vidPreset.id,
     engine,
     segments,
+    segmentSec,
     video: {
-      width: targetWidth,
-      height: targetHeight,
+      width,
+      height,
       fps: targetFps,
-      bitrate: targetVideoBps,
+      bitrate: Math.round(targetVideoBps),
       codec: vidPreset.video.codec,
-      toneMap: needsToneMap,
+      toneMap,
+      keyframeIntervalSec: vidPreset.video.keyframeIntervalSec,
       fit,
     },
     audio: {
-      mode: 'passthrough', // default passthrough for AAC
+      mode: 'passthrough',
       bitrate: audioBps,
     },
+    notes,
   };
 }

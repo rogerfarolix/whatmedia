@@ -1,5 +1,5 @@
 export * from './types.js';
-export { plan, type PlanOverrides } from './plan.js';
+export { plan, fitInBox, type PlanOverrides } from './plan.js';
 export { detectCapabilities } from './capabilities.js';
 export { probe } from './probe.js';
 export { runWebCodecs, type RunOptions } from './engines/webcodecs.js';
@@ -22,7 +22,7 @@ export async function run(
   const isImage = file.type.startsWith('image/') || !!plan.image;
 
   if (isImage) {
-    return runImageOptimization(file, plan, options?.onProgress);
+    return runImageOptimization(file, plan, options?.onProgress, options?.fileNameBase);
   }
 
   return runWebCodecs(file, plan, options);
