@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Icon from '../components/Icon.astro';
+import Phone from '../components/Phone.astro';
 import { routes, REPO_URL, CONTACT_EMAIL, SITE_URL, type Lang } from '../i18n/site';
 import { features, featurePath } from '../content/features';
 import { faq } from '../content/faq';
@@ -9,121 +10,122 @@ interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
+const shot = (name: string) => `/shots/${lang}-${name}.webp`;
 
 const c = {
   fr: {
     title: 'WhatMedia : prépare tes vidéos et photos pour les statuts WhatsApp',
     description:
       'Outil gratuit qui découpe, redimensionne et convertit tes vidéos et photos pour les statuts WhatsApp, directement sur ton téléphone. Sans compte, open source.',
+    badge: 'Open source · Licence MIT · v1.1',
     h1a: 'Tes statuts WhatsApp,',
-    h1b: 'préparés pour rester nets.',
-    lead: 'WhatMedia découpe, redimensionne et convertit tes vidéos et tes photos au bon format pour les statuts WhatsApp. Le traitement se fait sur ton téléphone.',
+    h1em: 'préparés',
+    h1b: 'pour rester nets.',
+    lead: 'WhatMedia découpe, redimensionne et convertit tes vidéos et tes photos au bon format pour WhatsApp. Tout se passe sur ton téléphone.',
     cta: 'Ouvrir WhatMedia',
-    cta2: 'Voir les fonctionnalités',
-    facts: ['Gratuit et sans compte', 'Traité sur ton téléphone', 'Code open source'],
-    servicesKicker: 'Ce que fait WhatMedia',
-    servicesTitle: 'Quatre outils, un seul but : partir de la meilleure base',
+    github: 'Voir le code',
+    facts: ['Gratuit, sans compte', 'Rien n’est envoyé', 'iPhone et Android'],
+    shots: [
+      { name: 'analysis', alt: 'Écran d’analyse : vidéo de 2 min 30, découpée en 3 parties de 60 secondes en 1080 × 1920.', caption: 'Analyse' },
+      { name: 'processing', alt: 'Écran de traitement : optimisation en cours sur le téléphone, avec le temps restant.', caption: 'Optimisation' },
+      { name: 'results', alt: 'Écran de résultats : trois parties prêtes, chacune sous 16 Mo, avec les boutons Partager et Enregistrer.', caption: 'Partage' },
+    ],
+    worksWith: 'Fonctionne avec',
+    formats: ['iPhone', 'Android', 'MP4', 'MOV', 'HEVC', 'HEIC', 'JPEG', 'PNG', 'WebP'],
+    servicesKicker: 'Fonctionnalités',
+    servicesTitle: 'Quatre outils. Un seul objectif : partir du meilleur fichier.',
     more: 'En savoir plus',
+    batchKicker: 'Nouveau',
+    batchTitle: 'Toute ta sélection, préparée d’un coup.',
+    batchText:
+      'Choisis jusqu’à 20 photos et vidéos dans ta galerie. Tu règles le format une seule fois, WhatMedia les traite l’une après l’autre, puis tu partages tout en une fois ou fichier par fichier.',
+    batchPoints: ['Réglages communs, les photos passent seules au bon format', 'Un fichier qui échoue ne bloque pas les autres', 'Bouton « Tout partager » et « Tout enregistrer »'],
+    batchAlt: 'Écran de sélection multiple : une vidéo et une photo prêtes à être optimisées ensemble.',
     exampleKicker: 'Exemple concret',
-    exampleTitle: 'Une vidéo d’iPhone de 2 min 30 en HDR',
-    exampleNote:
-      'Ces valeurs sont calculées par WhatMedia pour respecter la limite de 16 Mo par fichier. Ce ne sont pas des mesures de qualité après passage par WhatsApp.',
+    exampleTitle: 'Une vidéo d’iPhone de 2 min 30, filmée en HDR.',
     exampleHead: ['Durée des parties', 'Parties', 'Résolution', 'Débit vidéo'],
     exampleRows: [
       ['30 s', '5', '1080 × 1920', '3,9 Mbit/s'],
       ['60 s', '3', '1080 × 1920', '1,8 Mbit/s'],
       ['90 s', '2', '720 × 1280', '1,1 Mbit/s'],
     ],
-    exampleAlways: 'Dans tous les cas : couleurs HDR converties en SDR, 30 i/s au maximum, chaque fichier sous 16 Mo.',
-    stepsKicker: 'Comment ça marche',
-    stepsTitle: 'Trois étapes',
-    steps: [
-      ['Choisis', 'Sélectionne une ou plusieurs vidéos ou photos dans ta galerie. WhatMedia affiche leur durée, leur résolution et le découpage prévu.'],
-      ['Optimise', 'Ton téléphone encode chaque partie en H.264, au débit le plus élevé qui tient sous 16 Mo.'],
-      ['Partage', 'Envoie chaque partie dans ton statut avec le bouton Partager, dans l’ordre, ou enregistre-les.'],
+    exampleAlways: 'Dans tous les cas : couleurs HDR converties, 30 images par seconde au maximum, chaque fichier sous 16 Mo.',
+    exampleNote: 'Valeurs calculées par WhatMedia pour respecter la limite de 16 Mo. Ce ne sont pas des mesures de qualité après passage par WhatsApp.',
+    privacyKicker: 'Vie privée',
+    privacyTitle: 'Tes fichiers restent à toi.',
+    privacyLead: 'Le traitement se fait dans ton navigateur. Pas de compte, pas de cookie, pas de traceur.',
+    privacy: [
+      ['shield', 'Sur ton téléphone', 'Tes photos et vidéos ne quittent pas ton appareil pendant le traitement.'],
+      ['server', 'Serveur seulement si tu le demandes', 'Si ton appareil n’y arrive pas, un serveur de secours est proposé. Rien ne part sans ton accord, et le fichier est supprimé sous 15 minutes.'],
+      ['info', 'Aucune promesse impossible', 'WhatsApp recompresse toujours ce qui est publié. WhatMedia prépare le meilleur fichier de départ, rien de plus.'],
+      ['github', 'Code ouvert', 'Tout le code est public sous licence MIT : chacun peut vérifier ce que fait l’application.'],
     ],
-    stepsLink: 'Lire l’explication détaillée',
-    privacyTitle: 'Tes fichiers restent sur ton téléphone',
-    privacyText:
-      'Le traitement se fait dans ton navigateur : aucun envoi, aucun compte, aucun traceur publicitaire. Si ton appareil ne peut pas traiter un fichier, WhatMedia te propose son serveur de secours, et rien n’est envoyé sans ton accord.',
     privacyLink: 'Lire la politique de confidentialité',
-    honestTitle: 'Ce que WhatMedia ne fait pas',
-    honest: [
-      'Il ne désactive pas la compression de WhatsApp : WhatsApp réencode toujours ce que tu publies.',
-      'Il ne publie rien à ta place : c’est toi qui partages chaque fichier.',
-      'Il n’est pas lié à WhatsApp ni à Meta.',
-    ],
     faqKicker: 'Questions fréquentes',
-    faqTitle: 'Les réponses courtes',
+    faqTitle: 'Avant que tu demandes.',
     faqLink: 'Toutes les questions',
-    feedbackTitle: 'Ton avis nous aide',
-    feedbackText:
-      'WhatMedia est jeune. Dis-nous ce qui marche, ce qui manque ou ce qui ne fonctionne pas sur ton téléphone : nous publierons ici les retours des utilisateurs, avec leur accord.',
-    feedbackIssue: 'Signaler sur GitHub',
-    feedbackMail: 'Écrire un e-mail',
-    devTitle: 'Pour les développeurs',
-    devText:
-      'Le moteur de WhatMedia est un module TypeScript indépendant, @whatmedia/core, dans le dépôt open source. Il analyse un fichier, calcule le plan de découpage et encode avec WebCodecs.',
-    devLink: 'Voir le code du moteur',
-    finalTitle: 'Prêt à préparer ton prochain statut ?',
-    finalText: 'Sans inscription, sans publicité. Ça marche dans Safari et Chrome.',
+    faqMore: 'Une autre question ?',
+    faqWrite: 'Écris-nous',
+    finalTitle: 'Ton prochain statut mérite mieux.',
+    finalText: 'Gratuit, sans inscription, dans Safari et Chrome. Ajoute-le à ton écran d’accueil en deux gestes.',
+    finalAlt: 'Écran d’accueil de WhatMedia sur un téléphone.',
   },
   en: {
     title: 'WhatMedia: prepare your videos and photos for WhatsApp status',
     description:
       'Free tool that splits, resizes and converts your videos and photos for WhatsApp status, right on your phone. No account, open source.',
+    badge: 'Open source · MIT License · v1.1',
     h1a: 'Your WhatsApp statuses,',
-    h1b: 'prepared to stay sharp.',
-    lead: 'WhatMedia splits, resizes and converts your videos and photos to the right format for WhatsApp status. Processing happens on your phone.',
+    h1em: 'prepared',
+    h1b: 'to stay sharp.',
+    lead: 'WhatMedia splits, resizes and converts your videos and photos to the right format for WhatsApp. Everything happens on your phone.',
     cta: 'Open WhatMedia',
-    cta2: 'See the features',
-    facts: ['Free, no account', 'Processed on your phone', 'Open source code'],
-    servicesKicker: 'What WhatMedia does',
-    servicesTitle: 'Four tools, one goal: start from the best possible file',
+    github: 'See the code',
+    facts: ['Free, no account', 'Nothing is uploaded', 'iPhone and Android'],
+    shots: [
+      { name: 'analysis', alt: 'Analysis screen: a 2 min 30 video, split into three 60-second parts at 1080 × 1920.', caption: 'Analysis' },
+      { name: 'processing', alt: 'Processing screen: optimization running on the phone, with the time left.', caption: 'Optimization' },
+      { name: 'results', alt: 'Results screen: three parts ready, each under 16 MB, with Share and Save buttons.', caption: 'Sharing' },
+    ],
+    worksWith: 'Works with',
+    formats: ['iPhone', 'Android', 'MP4', 'MOV', 'HEVC', 'HEIC', 'JPEG', 'PNG', 'WebP'],
+    servicesKicker: 'Features',
+    servicesTitle: 'Four tools. One goal: start from the best possible file.',
     more: 'Learn more',
+    batchKicker: 'New',
+    batchTitle: 'Your whole selection, prepared at once.',
+    batchText:
+      'Pick up to 20 photos and videos from your gallery. You set the format once, WhatMedia processes them one after another, then you share everything at once or file by file.',
+    batchPoints: ['Shared settings, photos switch to the right format on their own', 'A file that fails does not block the others', '“Share all” and “Save all” buttons'],
+    batchAlt: 'Multiple selection screen: a video and a photo ready to be optimized together.',
     exampleKicker: 'A concrete example',
-    exampleTitle: 'A 2 min 30 HDR iPhone video',
-    exampleNote:
-      'These values are computed by WhatMedia to respect the 16 MB per file limit. They are not quality measurements after going through WhatsApp.',
+    exampleTitle: 'A 2 min 30 iPhone video, shot in HDR.',
     exampleHead: ['Part length', 'Parts', 'Resolution', 'Video bitrate'],
     exampleRows: [
       ['30 s', '5', '1080 × 1920', '3.9 Mbit/s'],
       ['60 s', '3', '1080 × 1920', '1.8 Mbit/s'],
       ['90 s', '2', '720 × 1280', '1.1 Mbit/s'],
     ],
-    exampleAlways: 'In every case: HDR colours converted to SDR, 30 fps at most, every file under 16 MB.',
-    stepsKicker: 'How it works',
-    stepsTitle: 'Three steps',
-    steps: [
-      ['Choose', 'Pick one or more videos or photos from your gallery. WhatMedia shows their duration, resolution and planned split.'],
-      ['Optimize', 'Your phone encodes each part as H.264, at the highest bitrate that fits under 16 MB.'],
-      ['Share', 'Send each part to your status with the Share button, in order, or save them.'],
+    exampleAlways: 'In every case: HDR colours converted, 30 frames per second at most, every file under 16 MB.',
+    exampleNote: 'Values computed by WhatMedia to respect the 16 MB limit. They are not quality measurements after going through WhatsApp.',
+    privacyKicker: 'Privacy',
+    privacyTitle: 'Your files stay yours.',
+    privacyLead: 'Processing happens in your browser. No account, no cookie, no tracker.',
+    privacy: [
+      ['shield', 'On your phone', 'Your photos and videos do not leave your device during processing.'],
+      ['server', 'Server only if you ask', 'If your device cannot cope, a fallback server is offered. Nothing leaves without your consent, and the file is deleted within 15 minutes.'],
+      ['info', 'No impossible promise', 'WhatsApp always recompresses what is posted. WhatMedia prepares the best starting file, nothing more.'],
+      ['github', 'Open code', 'All the code is public under the MIT license: anyone can check what the app does.'],
     ],
-    stepsLink: 'Read the detailed explanation',
-    privacyTitle: 'Your files stay on your phone',
-    privacyText:
-      'Processing happens in your browser: no upload, no account, no ad tracker. If your device cannot process a file, WhatMedia offers its fallback server, and nothing is sent without your consent.',
     privacyLink: 'Read the privacy policy',
-    honestTitle: 'What WhatMedia does not do',
-    honest: [
-      'It does not turn off WhatsApp compression: WhatsApp always re-encodes what you post.',
-      'It does not post anything for you: you share each file yourself.',
-      'It is not related to WhatsApp or Meta.',
-    ],
     faqKicker: 'Frequently asked questions',
-    faqTitle: 'The short answers',
+    faqTitle: 'Before you ask.',
     faqLink: 'All questions',
-    feedbackTitle: 'Your feedback helps',
-    feedbackText:
-      'WhatMedia is young. Tell us what works, what is missing or what fails on your phone: we will publish user feedback here, with their consent.',
-    feedbackIssue: 'Report on GitHub',
-    feedbackMail: 'Send an email',
-    devTitle: 'For developers',
-    devText:
-      'The WhatMedia engine is a standalone TypeScript module, @whatmedia/core, in the open source repository. It analyses a file, computes the split plan and encodes with WebCodecs.',
-    devLink: 'See the engine code',
-    finalTitle: 'Ready to prepare your next status?',
-    finalText: 'No sign-up, no ads. Works in Safari and Chrome.',
+    faqMore: 'Another question?',
+    faqWrite: 'Write to us',
+    finalTitle: 'Your next status deserves better.',
+    finalText: 'Free, no sign-up, in Safari and Chrome. Add it to your home screen in two taps.',
+    finalAlt: 'WhatMedia home screen on a phone.',
   },
 }[lang];
 
@@ -138,70 +140,98 @@ const app = {
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
   description: c.description,
   inLanguage: lang,
+  screenshot: `${SITE_URL}${shot('results')}`,
   publisher: { '@id': `${SITE_URL}/#organization` },
 };
+const kicker = 'text-[13px] font-semibold uppercase tracking-[0.14em] text-wm-signal-text';
 ---
 
 <BaseLayout lang={lang} title={c.title} description={c.description} alternates={routes.home} jsonLd={[app]} fullTitle>
-  <!-- Hero: the summary and the main action are visible without scrolling -->
-  <section class="pt-8 pb-12 md:pt-16 md:pb-20">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-3xl text-center">
-        <h1 class="font-heading text-[2.15rem] leading-tight font-extrabold tracking-tight text-wm-ink sm:text-5xl md:text-6xl">
-          {c.h1a}
-          <span class="block text-wm-signal-text">{c.h1b}</span>
-        </h1>
-        <p class="mt-5 text-base sm:text-xl text-wm-muted leading-relaxed">{c.lead}</p>
-        <div class="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <a
-            href="/app/"
-            class="w-full sm:w-auto inline-flex min-h-12 items-center justify-center gap-2 rounded-wm-button bg-wm-signal px-7 text-base font-semibold text-wm-on-signal shadow-md hover:bg-wm-signal-hover"
-          >
-            {c.cta}
-            <Icon name="arrow" class="h-4 w-4" />
-          </a>
-          <a
-            href={routes.features[lang]}
-            class="w-full sm:w-auto inline-flex min-h-12 items-center justify-center rounded-wm-button border border-wm-border bg-wm-surface px-6 text-base font-semibold text-wm-ink hover:border-wm-ink"
-          >
-            {c.cta2}
-          </a>
-        </div>
-        <ul class="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm text-wm-muted">
+  <!-- Hero -->
+  <section class="relative overflow-hidden pt-10 sm:pt-16 md:pt-20">
+    <div class="mx-auto max-w-6xl px-5 sm:px-8 text-center">
+      <p class="inline-flex items-center gap-2 rounded-full border border-wm-border bg-wm-surface px-4 py-1.5 text-[13px] font-medium text-wm-muted">
+        <span class="h-1.5 w-1.5 rounded-full bg-wm-signal" aria-hidden="true"></span>
+        {c.badge}
+      </p>
+      <h1 class="mx-auto mt-6 max-w-4xl text-[2.75rem] leading-[1.02] font-[330] text-wm-ink sm:text-6xl md:text-7xl lg:text-[5.5rem]">
+        {c.h1a} <em class="font-[380] italic text-wm-signal-text">{c.h1em}</em> {c.h1b}
+      </h1>
+      <p class="mx-auto mt-6 max-w-2xl text-[17px] leading-relaxed text-wm-muted sm:text-xl">{c.lead}</p>
+      <div class="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+        <a
+          href="/app/"
+          class="inline-flex min-h-13 items-center justify-center gap-2 rounded-full bg-wm-ink px-7 text-base font-semibold text-wm-paper transition-transform hover:-translate-y-0.5"
+        >
+          {c.cta}
+          <Icon name="arrow" class="h-4 w-4" />
+        </a>
+        <a
+          href={REPO_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex min-h-13 items-center justify-center gap-2 rounded-full border border-wm-border bg-wm-surface px-6 text-base font-semibold text-wm-ink hover:border-wm-ink"
+        >
+          <Icon name="github" class="h-5 w-5" />
+          {c.github}
+        </a>
+      </div>
+      <ul class="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-wm-muted">
+        {c.facts.map((f) => <li class="flex items-center gap-1.5"><Icon name="check" class="h-4 w-4 text-wm-ok" />{f}</li>)}
+      </ul>
+    </div>
+
+    <!-- Stage: real app screens -->
+    <div class="mx-auto mt-12 max-w-6xl px-3 sm:px-8">
+      <div class="relative overflow-hidden rounded-[2rem] bg-wm-ink px-2 pt-10 pb-0 sm:rounded-[2.5rem] sm:px-10 sm:pt-14">
+        <div class="pointer-events-none absolute inset-0 opacity-[0.07] [background-image:radial-gradient(#fff_1px,transparent_1px)] [background-size:22px_22px]" aria-hidden="true"></div>
+        <div class="rail relative -mb-24 flex gap-5 overflow-x-auto px-[12%] pb-4 sm:mb-[-7rem] sm:justify-center sm:overflow-visible sm:px-0 md:gap-8">
           {
-            c.facts.map((f) => (
-              <li class="flex items-center gap-1.5">
-                <Icon name="check" class="h-4 w-4 text-wm-ok" />
-                {f}
-              </li>
+            c.shots.map((s, i) => (
+              <div class={`flex w-[76%] shrink-0 flex-col items-center sm:w-[30%] ${i === 1 ? 'sm:-translate-y-6' : 'sm:translate-y-4'}`}>
+                <span class="mb-3 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/80">{`${i + 1}. ${s.caption}`}</span>
+                <Phone src={shot(s.name)} alt={s.alt} eager={i === 0} class="w-full max-w-[290px]" />
+              </div>
             ))
           }
-        </ul>
+        </div>
       </div>
     </div>
   </section>
 
+  <!-- Works with -->
+  <section class="pt-32 pb-6 sm:pt-40" aria-label={c.worksWith}>
+    <div class="mx-auto max-w-5xl px-5 text-center">
+      <p class="text-sm text-wm-muted">{c.worksWith}</p>
+      <ul class="mt-4 flex flex-wrap justify-center gap-2">
+        {c.formats.map((f) => <li class="rounded-full border border-wm-border bg-wm-surface px-3.5 py-1.5 text-sm font-medium text-wm-ink">{f}</li>)}
+      </ul>
+    </div>
+  </section>
+
   <!-- Services -->
-  <section class="border-t border-wm-border bg-wm-surface py-14 md:py-20" aria-labelledby="services-title">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-      <p class="text-center text-xs font-mono font-semibold uppercase tracking-wider text-wm-signal-text">{c.servicesKicker}</p>
-      <h2 id="services-title" class="mt-2 text-center font-heading text-3xl font-bold tracking-tight sm:text-4xl">{c.servicesTitle}</h2>
-      <ul class="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
+  <section class="py-20 sm:py-28" aria-labelledby="services-title">
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <div class="reveal max-w-3xl">
+        <p class={kicker}>{c.servicesKicker}</p>
+        <h2 id="services-title" class="mt-3 text-4xl leading-[1.08] sm:text-5xl">{c.servicesTitle}</h2>
+      </div>
+      <ul class="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {
-          features.map((f) => (
-            <li class="flex flex-col rounded-wm-card border border-wm-border bg-wm-paper p-6">
-              <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-wm-signal-light text-wm-signal-text">
-                <Icon name={f.icon} />
-              </span>
-              <h3 class="mt-4 font-heading text-xl font-bold">{f[lang].title}</h3>
-              <p class="mt-2 flex-1 text-sm leading-relaxed text-wm-muted">{f[lang].summary}</p>
-              <a
-                href={featurePath(f, lang)}
-                class="mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-wm-signal-text underline-offset-4 hover:underline"
-              >
+          features.map((f, i) => (
+            <li class="reveal group relative flex flex-col rounded-[1.75rem] border border-wm-border bg-wm-surface p-7 transition-shadow hover:shadow-[0_20px_50px_-30px_rgba(11,15,26,0.45)] sm:p-8">
+              <div class="flex items-center justify-between">
+                <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-wm-signal-light text-wm-signal-text">
+                  <Icon name={f.icon} />
+                </span>
+                <span class="font-display text-4xl font-[300] text-wm-border" aria-hidden="true">0{i + 1}</span>
+              </div>
+              <h3 class="mt-6 text-xl font-semibold">{f[lang].title}</h3>
+              <p class="mt-2 flex-1 text-[15px] leading-relaxed text-wm-muted">{f[lang].summary}</p>
+              <a href={featurePath(f, lang)} class="mt-6 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-wm-ink after:absolute after:inset-0 after:content-['']">
                 {c.more}
                 <span class="sr-only">: {f[lang].title}</span>
-                <Icon name="arrow" class="h-4 w-4" />
+                <Icon name="arrow" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
             </li>
           ))
@@ -210,157 +240,127 @@ const app = {
     </div>
   </section>
 
-  <!-- Example: computed by plan(), clearly labelled as such -->
-  <section class="py-14 md:py-20" aria-labelledby="example-title">
-    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-      <p class="text-xs font-mono font-semibold uppercase tracking-wider text-wm-signal-text">{c.exampleKicker}</p>
-      <h2 id="example-title" class="mt-2 font-heading text-3xl font-bold tracking-tight">{c.exampleTitle}</h2>
-      <div class="mt-6 overflow-x-auto rounded-wm-card border border-wm-border bg-wm-surface">
-        <table class="w-full min-w-[30rem] text-left text-sm">
-          <thead class="border-b border-wm-border text-wm-muted">
-            <tr>{c.exampleHead.map((h) => <th scope="col" class="px-4 py-3 font-semibold">{h}</th>)}</tr>
+  <!-- Multiple selection spotlight -->
+  <section class="pb-20 sm:pb-28" aria-labelledby="batch-title">
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <div class="grid grid-cols-1 items-center gap-10 overflow-hidden rounded-[2rem] border border-wm-border bg-wm-signal-light p-7 sm:p-12 lg:grid-cols-2">
+        <div class="reveal">
+          <p class={kicker}>{c.batchKicker}</p>
+          <h2 id="batch-title" class="mt-3 text-4xl leading-[1.08] sm:text-5xl">{c.batchTitle}</h2>
+          <p class="mt-5 text-[17px] leading-relaxed text-wm-ink/80">{c.batchText}</p>
+          <ul class="mt-6 space-y-3">
+            {c.batchPoints.map((p) => <li class="flex gap-3 text-[15px]"><Icon name="check" class="mt-0.5 h-5 w-5 shrink-0 text-wm-signal-text" /><span>{p}</span></li>)}
+          </ul>
+          <a href="/app/" class="mt-8 inline-flex min-h-12 items-center gap-2 rounded-full bg-wm-ink px-6 text-[15px] font-semibold text-wm-paper">
+            {c.cta}
+            <Icon name="arrow" class="h-4 w-4" />
+          </a>
+        </div>
+        <div class="reveal flex justify-center lg:-mb-24 lg:translate-y-6">
+          <Phone src={shot('batch')} alt={c.batchAlt} class="w-[72%] max-w-[300px]" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Example -->
+  <section class="pb-20 sm:pb-28" aria-labelledby="example-title">
+    <div class="mx-auto max-w-4xl px-5 sm:px-8">
+      <div class="reveal">
+        <p class={kicker}>{c.exampleKicker}</p>
+        <h2 id="example-title" class="mt-3 text-4xl leading-[1.08] sm:text-5xl">{c.exampleTitle}</h2>
+      </div>
+      <div class="reveal mt-8 overflow-hidden rounded-[1.5rem] border border-wm-border bg-wm-surface">
+        <table class="w-full text-left text-[15px]">
+          <thead class="border-b border-wm-border text-xs uppercase tracking-wider text-wm-muted">
+            <tr>{c.exampleHead.map((h, i) => <th scope="col" class={`px-4 py-3.5 font-semibold sm:px-6 ${i === 2 ? 'hidden sm:table-cell' : ''}`}>{h}</th>)}</tr>
           </thead>
           <tbody>
             {
               c.exampleRows.map((r) => (
                 <tr class="border-b border-wm-border last:border-0">
-                  <th scope="row" class="px-4 py-3 font-semibold text-wm-ink">{r[0]}</th>
-                  {r.slice(1).map((v) => <td class="px-4 py-3 font-mono">{v}</td>)}
+                  <th scope="row" class="px-4 py-4 font-semibold sm:px-6">{r[0]}</th>
+                  <td class="px-4 py-4 tabular-nums sm:px-6">{r[1]}</td>
+                  <td class="hidden px-4 py-4 tabular-nums sm:table-cell sm:px-6">{r[2]}</td>
+                  <td class="px-4 py-4 tabular-nums sm:px-6">{r[3]}</td>
                 </tr>
               ))
             }
           </tbody>
         </table>
       </div>
-      <p class="mt-3 text-sm text-wm-ink">{c.exampleAlways}</p>
-      <p class="mt-2 flex items-start gap-2 text-xs text-wm-muted">
-        <Icon name="info" class="mt-0.5 h-4 w-4 shrink-0" />
-        <span>{c.exampleNote}</span>
-      </p>
+      <p class="mt-4 text-[15px]">{c.exampleAlways}</p>
+      <p class="mt-2 flex items-start gap-2 text-sm text-wm-muted"><Icon name="info" class="mt-0.5 h-4 w-4 shrink-0" />{c.exampleNote}</p>
     </div>
   </section>
 
-  <!-- Steps -->
-  <section class="border-y border-wm-border bg-wm-surface py-14 md:py-20" aria-labelledby="steps-title">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-      <p class="text-center text-xs font-mono font-semibold uppercase tracking-wider text-wm-signal-text">{c.stepsKicker}</p>
-      <h2 id="steps-title" class="mt-2 text-center font-heading text-3xl font-bold tracking-tight sm:text-4xl">{c.stepsTitle}</h2>
-      <ol class="mt-10 grid grid-cols-1 gap-5 md:grid-cols-3">
+  <!-- Privacy (dark) -->
+  <section class="bg-[#0B0F1A] py-20 text-[#F0F0EC] sm:py-28" aria-labelledby="privacy-title">
+    <div class="mx-auto max-w-6xl px-5 sm:px-8">
+      <div class="reveal max-w-3xl">
+        <p class="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#FF7A45]">{c.privacyKicker}</p>
+        <h2 id="privacy-title" class="mt-3 text-4xl leading-[1.08] text-white sm:text-6xl">{c.privacyTitle}</h2>
+        <p class="mt-5 text-lg text-white/70">{c.privacyLead}</p>
+      </div>
+      <ul class="mt-12 grid grid-cols-1 gap-px overflow-hidden rounded-[1.75rem] bg-white/10 sm:grid-cols-2">
         {
-          c.steps.map(([title, text], i) => (
-            <li class="rounded-wm-card border border-wm-border bg-wm-paper p-6">
-              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-wm-signal font-heading font-bold text-wm-on-signal">
-                {i + 1}
-              </span>
-              <h3 class="mt-4 font-heading text-lg font-bold">{title}</h3>
-              <p class="mt-2 text-sm leading-relaxed text-wm-muted">{text}</p>
+          c.privacy.map(([icon, title, text]) => (
+            <li class="reveal bg-[#0B0F1A] p-7 sm:p-9">
+              <Icon name={icon as 'shield'} class="h-6 w-6 text-[#FF7A45]" />
+              <h3 class="mt-5 text-lg font-semibold text-white">{title}</h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-white/70">{text}</p>
             </li>
           ))
         }
-      </ol>
-      <p class="mt-8 text-center">
-        <a href={routes.howItWorks[lang]} class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-wm-signal-text underline-offset-4 hover:underline">
-          {c.stepsLink}
-          <Icon name="arrow" class="h-4 w-4" />
-        </a>
-      </p>
+      </ul>
+      <a href={routes.privacy[lang]} class="mt-8 inline-flex min-h-11 items-center gap-1.5 text-[15px] font-semibold text-white underline decoration-white/30 underline-offset-4 hover:decoration-white">
+        {c.privacyLink}
+      </a>
     </div>
   </section>
 
-  <!-- Privacy and honesty -->
-  <section class="py-14 md:py-20">
-    <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-      <div class="rounded-wm-card border border-wm-ok bg-wm-ok-light p-7">
-        <Icon name="shield" class="h-8 w-8 text-wm-ok" />
-        <h2 class="mt-3 font-heading text-2xl font-bold">{c.privacyTitle}</h2>
-        <p class="mt-3 text-sm leading-relaxed text-wm-ink">{c.privacyText}</p>
-        <a href={routes.privacy[lang]} class="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-wm-ink underline underline-offset-4">
-          {c.privacyLink}
-        </a>
+  <!-- FAQ -->
+  <section class="py-20 sm:py-28" aria-labelledby="faq-title">
+    <div class="mx-auto max-w-3xl px-5 sm:px-8">
+      <div class="reveal text-center">
+        <p class={kicker}>{c.faqKicker}</p>
+        <h2 id="faq-title" class="mt-3 text-4xl sm:text-5xl">{c.faqTitle}</h2>
       </div>
-      <div class="rounded-wm-card border border-wm-border bg-wm-surface p-7">
-        <Icon name="info" class="h-8 w-8 text-wm-muted" />
-        <h2 class="mt-3 font-heading text-2xl font-bold">{c.honestTitle}</h2>
-        <ul class="mt-3 space-y-2 text-sm leading-relaxed text-wm-ink">
-          {c.honest.map((h) => <li class="flex gap-2"><span aria-hidden="true">·</span><span>{h}</span></li>)}
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ preview -->
-  <section class="border-t border-wm-border bg-wm-surface py-14 md:py-20" aria-labelledby="faq-title">
-    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-      <p class="text-center text-xs font-mono font-semibold uppercase tracking-wider text-wm-signal-text">{c.faqKicker}</p>
-      <h2 id="faq-title" class="mt-2 text-center font-heading text-3xl font-bold tracking-tight">{c.faqTitle}</h2>
-      <div class="mt-8 space-y-3">
+      <div class="mt-10 divide-y divide-wm-border border-y border-wm-border">
         {
-          faq[lang].slice(0, 4).map((item) => (
-            <details class="group rounded-wm-card border border-wm-border bg-wm-paper p-5 [&_summary::-webkit-details-marker]:hidden">
-              <summary class="flex min-h-11 cursor-pointer items-center justify-between gap-4 font-heading text-base font-bold">
+          faq[lang].slice(0, 5).map((item) => (
+            <details class="group py-2 [&_summary::-webkit-details-marker]:hidden">
+              <summary class="flex min-h-14 cursor-pointer items-center justify-between gap-4 text-[17px] font-semibold">
                 {item.q}
-                <span aria-hidden="true" class="text-xl text-wm-muted group-open:rotate-45 motion-safe:transition-transform">+</span>
+                <span aria-hidden="true" class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-wm-border text-lg text-wm-muted group-open:rotate-45 motion-safe:transition-transform">+</span>
               </summary>
-              <p class="mt-2 text-sm leading-relaxed text-wm-muted">{item.a}</p>
+              <p class="pb-4 pr-10 text-[15px] leading-relaxed text-wm-muted">{item.a}</p>
             </details>
           ))
         }
       </div>
-      <p class="mt-6 text-center">
-        <a href={routes.faq[lang]} class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-wm-signal-text underline-offset-4 hover:underline">
-          {c.faqLink}
-          <Icon name="arrow" class="h-4 w-4" />
-        </a>
+      <p class="mt-8 text-center text-[15px] text-wm-muted">
+        <a href={routes.faq[lang]} class="font-semibold text-wm-ink underline underline-offset-4">{c.faqLink}</a>
+        <span aria-hidden="true"> · </span>
+        {c.faqMore} <a href={`mailto:${CONTACT_EMAIL}`} class="font-semibold text-wm-ink underline underline-offset-4">{c.faqWrite}</a>
       </p>
     </div>
   </section>
 
-  <!-- Feedback (no invented testimonials) and developers -->
-  <section class="py-14 md:py-20">
-    <div class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-      <div class="rounded-wm-card border border-wm-border bg-wm-surface p-7">
-        <h2 class="font-heading text-2xl font-bold">{c.feedbackTitle}</h2>
-        <p class="mt-3 text-sm leading-relaxed text-wm-muted">{c.feedbackText}</p>
-        <div class="mt-5 flex flex-wrap gap-3">
-          <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" class="inline-flex min-h-11 items-center gap-2 rounded-wm-button border border-wm-border px-5 text-sm font-semibold hover:border-wm-ink">
-            <Icon name="github" class="h-4 w-4" />
-            {c.feedbackIssue}
-          </a>
-          <a href={`mailto:${CONTACT_EMAIL}?subject=WhatMedia`} class="inline-flex min-h-11 items-center gap-2 rounded-wm-button border border-wm-border px-5 text-sm font-semibold hover:border-wm-ink">
-            <Icon name="mail" class="h-4 w-4" />
-            {c.feedbackMail}
-          </a>
-        </div>
-      </div>
-      <div class="rounded-wm-card border border-wm-border bg-wm-surface p-7">
-        <h2 class="font-heading text-2xl font-bold">{c.devTitle}</h2>
-        <p class="mt-3 text-sm leading-relaxed text-wm-muted">{c.devText}</p>
-        <pre class="mt-4 overflow-x-auto rounded-lg border border-wm-border bg-wm-paper p-4 text-xs leading-relaxed"><code>{`import { probe, plan, run, detectCapabilities } from '@whatmedia/core';
-
-const info = await probe(file);
-const caps = await detectCapabilities();
-const p = plan(info, 'status-hd', caps, { segmentDurationSec: 30 });
-const parts = await run(file, p); // ${lang === 'fr' ? 'chaque fichier sous 16 Mo' : 'each file under 16 MB'}`}</code></pre>
-        <a href={`${REPO_URL}/tree/main/packages/core`} target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-wm-signal-text underline-offset-4 hover:underline">
-          {c.devLink}
+  <!-- Final CTA -->
+  <section class="px-3 pb-16 sm:px-8 sm:pb-24">
+    <div class="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 overflow-hidden rounded-[2rem] bg-[#0B0F1A] p-8 text-white sm:rounded-[2.5rem] sm:p-14 lg:grid-cols-[1.2fr_1fr]">
+      <div class="reveal">
+        <h2 class="text-4xl leading-[1.05] text-white sm:text-6xl">{c.finalTitle}</h2>
+        <p class="mt-5 max-w-md text-lg text-white/70">{c.finalText}</p>
+        <a href="/app/" class="mt-8 inline-flex min-h-13 items-center gap-2 rounded-full bg-[#FF5A1F] px-7 text-base font-semibold text-[#0B0F1A] transition-transform hover:-translate-y-0.5">
+          {c.cta}
           <Icon name="arrow" class="h-4 w-4" />
         </a>
       </div>
-    </div>
-  </section>
-
-  <!-- Final CTA -->
-  <section class="border-t border-wm-border bg-wm-surface py-14 md:py-20 text-center">
-    <div class="mx-auto max-w-3xl px-4">
-      <h2 class="font-heading text-3xl font-extrabold tracking-tight sm:text-4xl">{c.finalTitle}</h2>
-      <p class="mt-3 text-lg text-wm-muted">{c.finalText}</p>
-      <a
-        href="/app/"
-        class="mt-7 inline-flex min-h-12 items-center justify-center gap-2 rounded-wm-button bg-wm-signal px-8 text-base font-bold text-wm-on-signal shadow-md hover:bg-wm-signal-hover"
-      >
-        {c.cta}
-        <Icon name="arrow" class="h-4 w-4" />
-      </a>
+      <div class="reveal flex justify-center lg:-mb-36">
+        <Phone src={shot('results')} alt={c.shots[2]?.alt ?? ''} class="w-[70%] max-w-[280px]" />
+      </div>
     </div>
   </section>
 </BaseLayout>

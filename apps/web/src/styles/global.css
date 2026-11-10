@@ -2,11 +2,19 @@
 @import '@whatmedia/config/tokens.css';
 
 @font-face {
-  font-family: 'Space Grotesk';
+  font-family: 'Newsreader';
   font-style: normal;
-  font-weight: 300 700;
+  font-weight: 200 800;
   font-display: swap;
-  src: url('/fonts/space-grotesk.woff2') format('woff2');
+  src: url('/fonts/newsreader.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/newsreader-italic.woff2') format('woff2');
 }
 
 @font-face {
@@ -15,14 +23,6 @@
   font-weight: 100 900;
   font-display: swap;
   src: url('/fonts/inter.woff2') format('woff2');
-}
-
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 100 800;
-  font-display: swap;
-  src: url('/fonts/jetbrains-mono.woff2') format('woff2');
 }
 
 @theme {
@@ -45,11 +45,12 @@
   --color-wm-border: var(--wm-border);
   --color-wm-border-subtle: var(--wm-border-subtle);
 
-  --font-heading: 'Space Grotesk', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-heading: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-display: 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
 
-  --radius-wm-card: 14px;
+  --radius-wm-card: 20px;
   --radius-wm-button: 999px;
   --radius-wm-input: 10px;
 }
@@ -60,7 +61,8 @@ html {
 }
 
 body {
-  font-family: var(--wm-font-body);
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
   background-color: var(--wm-paper);
   color: var(--wm-ink);
   line-height: 1.5;
@@ -69,12 +71,58 @@ body {
 }
 
 h1,
-h2,
+h2 {
+  font-family: 'Newsreader', Georgia, serif;
+  font-weight: 350;
+  letter-spacing: -0.025em;
+  font-optical-sizing: auto;
+  text-wrap: balance;
+}
+
 h3,
 h4,
 h5,
 h6 {
-  font-family: var(--wm-font-heading);
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Scroll reveal: progressive enhancement, CSS only (no script), off for reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: wm-reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 22%;
+    }
+  }
+}
+@keyframes wm-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Horizontal phone rail on small screens */
+.rail {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar {
+  display: none;
+}
+.rail > * {
+  scroll-snap-align: center;
 }
 
 code,
@@ -96,9 +144,9 @@ kbd {
 
 /* Long-form legal and documentation pages */
 .prose-wm h2 {
-  margin-top: 2.25rem;
-  font-size: 1.375rem;
-  font-weight: 700;
+  margin-top: 2.5rem;
+  font-size: 1.75rem;
+  font-weight: 400;
   color: var(--wm-ink);
 }
 .prose-wm h3 {

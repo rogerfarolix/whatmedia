@@ -1,0 +1,31 @@
+---
+/**
+ * A phone frame showing a real screenshot of the WhatMedia app (390×844 viewport, captured at 2×,
+ * stored as WebP in /public/shots). Pure CSS frame, no image of a device.
+ */
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  eager?: boolean;
+}
+const { src, alt, class: className = '', eager = false } = Astro.props;
+---
+
+<figure class={`relative shrink-0 ${className}`}>
+  <div class="rounded-[2.6rem] bg-[#05070D] p-[9px] shadow-[0_30px_60px_-20px_rgba(11,15,26,0.55),0_0_0_1px_rgba(255,255,255,0.06)_inset]">
+    <div class="relative overflow-hidden rounded-[2.05rem] bg-wm-paper">
+      <img
+        src={src}
+        alt={alt}
+        width="780"
+        height="1688"
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={eager ? 'high' : 'auto'}
+        class="block h-auto w-full"
+      />
+      <span aria-hidden="true" class="absolute left-1/2 top-2 h-[22px] w-[34%] -translate-x-1/2 rounded-full bg-[#05070D]"></span>
+    </div>
+  </div>
+</figure>

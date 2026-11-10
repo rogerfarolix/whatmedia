@@ -23,7 +23,7 @@ const fmt = (n: number) => n.toLocaleString(fr ? 'fr-FR' : 'en-US', { maximumFra
   <section class="mx-auto max-w-3xl px-4 pb-8 sm:px-6 lg:px-8">
     {
       published ? (
-        <div class="overflow-x-auto rounded-wm-card border border-wm-border bg-wm-surface">
+        <div class="overflow-x-auto rounded-3xl border border-wm-border bg-wm-surface">
           <table class="w-full min-w-[34rem] text-left text-sm">
             <caption class="px-4 pt-4 text-left text-xs text-wm-muted">
               {fr ? 'Mesuré le' : 'Measured on'} {measurements.timestamp}, WhatsApp {measurements.whatsappVersion}
@@ -39,16 +39,16 @@ const fmt = (n: number) => n.toLocaleString(fr ? 'fr-FR' : 'en-US', { maximumFra
               {measurements.results.map((r) => (
                 <tr class="border-b border-wm-border last:border-0">
                   <th scope="row" class="px-4 py-3 font-semibold">{r.type}</th>
-                  <td class="px-4 py-3 font-mono">{fmt(r.metrics.directUpload.vmaf)}</td>
-                  <td class="px-4 py-3 font-mono">{fmt(r.metrics.whatmedia.vmaf)}</td>
+                  <td class="px-4 py-3 tabular-nums">{fmt(r.metrics.directUpload.vmaf)}</td>
+                  <td class="px-4 py-3 tabular-nums">{fmt(r.metrics.whatmedia.vmaf)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       ) : (
-        <div role="status" class="rounded-wm-card border border-wm-focus bg-wm-focus-light p-6">
-          <p class="font-heading text-2xl font-bold">{fr ? 'Mesures en cours' : 'Measurements in progress'}</p>
+        <div role="status" class="rounded-3xl border border-wm-focus bg-wm-focus-light p-6">
+          <p class="text-2xl font-semibold">{fr ? 'Mesures en cours' : 'Measurements in progress'}</p>
           <p class="mt-2 text-sm leading-relaxed">
             {fr
               ? 'La première campagne sur de vrais statuts WhatsApp n’est pas encore terminée. Aucun chiffre de qualité n’est publié d’ici là.'

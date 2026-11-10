@@ -31,8 +31,8 @@ const faqLd = {
     <div class="space-y-3">
       {
         items.map((item, i) => (
-          <details class="group rounded-wm-card border border-wm-border bg-wm-surface p-5 [&_summary::-webkit-details-marker]:hidden" open={i === 0}>
-            <summary class="flex min-h-11 cursor-pointer items-center justify-between gap-4 font-heading text-base font-bold sm:text-lg">
+          <details class="group rounded-3xl border border-wm-border bg-wm-surface p-5 [&_summary::-webkit-details-marker]:hidden" open={i === 0}>
+            <summary class="flex min-h-11 cursor-pointer items-center justify-between gap-4 text-base font-semibold sm:text-lg">
               <h2 class="text-base sm:text-lg">{item.q}</h2>
               <span aria-hidden="true" class="text-xl text-wm-muted group-open:rotate-45 motion-safe:transition-transform">+</span>
             </summary>

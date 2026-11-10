@@ -7,11 +7,11 @@ interface Props {
 const { kicker, title, lead } = Astro.props;
 ---
 
-<section class="pt-8 pb-8 md:pt-12 md:pb-10">
-  <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-    {kicker && <p class="text-xs font-mono font-semibold uppercase tracking-wider text-wm-signal-text">{kicker}</p>}
-    <h1 class="mt-2 font-heading text-3xl font-extrabold tracking-tight sm:text-5xl">{title}</h1>
-    {lead && <p class="mt-4 text-base sm:text-lg leading-relaxed text-wm-muted">{lead}</p>}
+<section class="pt-8 pb-10 md:pt-14 md:pb-14">
+  <div class="mx-auto max-w-4xl px-5 sm:px-8">
+    {kicker && <p class="text-[13px] font-semibold uppercase tracking-[0.14em] text-wm-signal-text">{kicker}</p>}
+    <h1 class="mt-3 text-[2.6rem] leading-[1.05] font-[330] sm:text-6xl">{title}</h1>
+    {lead && <p class="mt-5 max-w-2xl text-[17px] sm:text-xl leading-relaxed text-wm-muted">{lead}</p>}
     <slot />
   </div>
 </section>

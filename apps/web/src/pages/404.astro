@@ -12,19 +12,19 @@ import { features, featurePath } from '../content/features';
   noindex
 >
   <section class="mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 lg:px-8">
-    <p class="font-mono text-sm font-semibold text-wm-signal-text">Erreur 404</p>
-    <h1 class="mt-2 font-heading text-4xl font-extrabold tracking-tight sm:text-5xl">Cette page est introuvable</h1>
+    <p class="text-[13px] font-semibold uppercase tracking-[0.14em] text-wm-signal-text">Erreur 404</p>
+    <h1 class="mt-3 text-5xl font-[330] sm:text-6xl">Cette page est introuvable</h1>
     <p class="mt-4 text-lg text-wm-muted">Elle n’existe pas ou a été déplacée. Voici où aller :</p>
     <p class="mt-1 text-sm text-wm-muted" lang="en">This page could not be found. Here is where you can go:</p>
 
     <div class="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-      <a href="/app/" class="inline-flex min-h-12 w-full sm:w-auto items-center justify-center rounded-wm-button bg-wm-signal px-7 font-semibold text-wm-on-signal hover:bg-wm-signal-hover">
+      <a href="/app/" class="inline-flex min-h-12 w-full sm:w-auto items-center justify-center rounded-full bg-wm-ink px-7 font-semibold text-wm-paper">
         Ouvrir WhatMedia
       </a>
-      <a href={routes.home.fr} class="inline-flex min-h-12 w-full sm:w-auto items-center justify-center rounded-wm-button border border-wm-border bg-wm-surface px-6 font-semibold hover:border-wm-ink">
+      <a href={routes.home.fr} class="inline-flex min-h-12 w-full sm:w-auto items-center justify-center rounded-full border border-wm-border bg-wm-surface px-6 font-semibold hover:border-wm-ink">
         Accueil
       </a>
-      <a href={routes.home.en} lang="en" class="inline-flex min-h-12 w-full sm:w-auto items-center justify-center rounded-wm-button border border-wm-border bg-wm-surface px-6 font-semibold hover:border-wm-ink">
+      <a href={routes.home.en} lang="en" class="inline-flex min-h-12 w-full sm:w-auto items-center justify-center rounded-full border border-wm-border bg-wm-surface px-6 font-semibold hover:border-wm-ink">
         English home
       </a>
     </div>
