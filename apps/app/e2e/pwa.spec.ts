@@ -83,6 +83,33 @@ test.describe('WhatMedia PWA App Flow & Privacy', () => {
   });
 });
 
+test.describe('Anonymous usage counter', () => {
+  test.use({ locale: 'fr-FR' });
+
+  test('sends only the kind and number of parts, and nothing after opting out', async ({ page }) => {
+    const bodies: string[] = [];
+    await page.route('**/api/v1/stats/event', async (route) => {
+      bodies.push(route.request().postData() ?? '');
+      await route.fulfill({ status: 204 });
+    });
+    await page.goto('/app/');
+    await page.locator('input[type=file]').setInputFiles(await makePng(page));
+    await page.getByRole('button', { name: 'Optimiser maintenant' }).click();
+    await expect(page.getByRole('heading', { name: /Prêt pour ton statut/ })).toBeVisible({ timeout: 20_000 });
+    await expect.poll(() => bodies.length).toBe(1);
+    expect(JSON.parse(bodies[0]!)).toEqual({ kind: 'photo', parts: 1 });
+
+    // Opt out, process again: nothing is sent
+    await page.getByRole('checkbox', { name: /Compter anonymement/ }).uncheck();
+    await page.getByRole('button', { name: 'Optimiser un autre média' }).click();
+    await page.locator('input[type=file]').setInputFiles(await makePng(page));
+    await page.getByRole('button', { name: 'Optimiser maintenant' }).click();
+    await expect(page.getByRole('heading', { name: /Prêt pour ton statut/ })).toBeVisible({ timeout: 20_000 });
+    await page.waitForTimeout(500);
+    expect(bodies).toHaveLength(1);
+  });
+});
+
 test.describe('Installation', () => {
   test.use({ locale: 'fr-FR' });
 

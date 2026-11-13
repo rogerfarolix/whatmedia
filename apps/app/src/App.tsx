@@ -18,6 +18,7 @@ import { presets, whatsappLimits } from '@whatmedia/config';
 import type { Capabilities, MediaError, MediaInfo, OutputFile } from '@whatmedia/core';
 import { loadEngine } from './utils/loadEngine';
 import { runPipeline } from './utils/workerRunner';
+import { kindOf, reportUsage } from './utils/usageStats';
 import { runServerJob, checkServerAvailable, ServerError } from './utils/serverClient';
 import { normalizeMediaFile, MAX_LOCAL_BYTES, formatBytes } from './utils/format';
 import { useTranslation, type TranslationKey } from './i18n/useTranslation';
@@ -332,6 +333,7 @@ export const App: React.FC = () => {
           onSegmentComplete: (o) => partials.push(o),
         });
         updateBatchItem(item.id, { status: 'done', outputs });
+        reportUsage(kindOf(outputs), outputs.length);
       } catch (err: unknown) {
         const partialOutputs = (err as { partialOutputs?: OutputFile[] })?.partialOutputs ?? partials;
         if (isAbort(err)) {
@@ -361,6 +363,7 @@ export const App: React.FC = () => {
 
   const finishSingle = (outputs: OutputFile[]) => {
     setOutputFiles(outputs);
+    reportUsage(kindOf(outputs), outputs.length);
     if (retryItemIdRef.current) {
       updateBatchItem(retryItemIdRef.current, { status: 'done', outputs, errorKey: undefined });
     }

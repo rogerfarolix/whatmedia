@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHero from '../components/PageHero.astro';
+import { routes, ui, REPO_URL, type Lang } from '../i18n/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const fr = lang === 'fr';
+const title = fr ? 'Statistiques d’utilisation' : 'Usage statistics';
+const description = fr
+  ? 'Combien de fichiers ont été préparés avec WhatMedia : vidéos, photos et parties, comptés de façon anonyme, sans cookie ni identifiant.'
+  : 'How many files have been prepared with WhatMedia: videos, photos and parts, counted anonymously, with no cookie or identifier.';
+const cards = fr
+  ? [
+      ['files', 'Fichiers préparés'],
+      ['videos', 'Vidéos'],
+      ['photos', 'Photos'],
+      ['parts', 'Parties créées'],
+    ]
+  : [
+      ['files', 'Files prepared'],
+      ['videos', 'Videos'],
+      ['photos', 'Photos'],
+      ['parts', 'Parts created'],
+    ];
+---
+
+<BaseLayout lang={lang} title={title} description={description} alternates={routes.statistics} breadcrumbs={[{ name: ui[lang].footer.statistics, path: routes.statistics[lang] }]}>
+  <PageHero
+    title={title}
+    lead={fr
+      ? 'Des chiffres publics et anonymes : on compte des fichiers préparés, jamais des personnes.'
+      : 'Public, anonymous figures: we count prepared files, never people.'}
+  />
+
+  <section class="mx-auto max-w-4xl px-5 pb-10 sm:px-8">
+    <p data-stats-pending hidden class="rounded-3xl border border-wm-focus bg-wm-focus-light p-6 text-[15px] leading-relaxed">
+      {fr ? 'Le compteur a démarré le ' : 'The counter started on '}<span data-stats-since></span>.
+      {fr ? ' Les chiffres seront publiés dès que ' : ' Figures will be published once '}<span data-stats-threshold></span>
+      {fr ? ' fichiers auront été préparés.' : ' files have been prepared.'}
+    </p>
+
+    <div data-stats-ready hidden>
+      <ul class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {
+          cards.map(([key, label]) => (
+            <li class="rounded-3xl border border-wm-border bg-wm-surface p-5">
+              <p class="text-3xl font-semibold tracking-tight tabular-nums sm:text-4xl" data-stat={key}>-</p>
+              <p class="mt-1 text-sm text-wm-muted">{label}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="mt-3 text-sm text-wm-muted">{fr ? 'Depuis le ' : 'Since '}<span data-stats-since></span>.</p>
+
+      <div class="mt-8 overflow-hidden rounded-[1.5rem] border border-wm-border bg-wm-surface">
+        <table class="w-full text-left text-[15px]">
+          <caption class="sr-only">{fr ? 'Fichiers préparés par mois' : 'Files prepared per month'}</caption>
+          <thead class="border-b border-wm-border text-xs uppercase tracking-wider text-wm-muted">
+            <tr>
+              <th scope="col" class="px-4 py-3.5 font-semibold sm:px-6">{fr ? 'Mois' : 'Month'}</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold sm:px-6">{fr ? 'Fichiers' : 'Files'}</th>
+              <th scope="col" class="px-4 py-3.5 font-semibold sm:px-6">{fr ? 'Parties' : 'Parts'}</th>
+            </tr>
+          </thead>
+          <tbody data-stats-months></tbody>
+        </table>
+      </div>
+    </div>
+
+    <noscript><p class="text-sm text-wm-muted">{fr ? 'Active JavaScript pour voir les chiffres.' : 'Enable JavaScript to see the figures.'}</p></noscript>
+  </section>
+
+  <article class="prose-wm mx-auto max-w-3xl px-5 pb-14 sm:px-8">
+    <h2>{fr ? 'Comment c’est compté' : 'How it is counted'}</h2>
+    <ul>
+      {
+        (fr
+          ? [
+              'Quand un fichier est prêt, l’application envoie seulement « vidéo » ou « photo » et le nombre de parties.',
+              'Rien d’autre : ni le fichier, ni son nom, ni sa taille, ni identifiant, ni cookie.',
+              'Le serveur additionne ces envois par jour et ne les inscrit pas dans ses journaux.',
+              'On ne peut donc pas savoir qui utilise WhatMedia, ni combien de personnes différentes : seulement combien de fichiers ont été préparés.',
+              'Tu peux désactiver le comptage dans le pied de page de l’application.',
+            ]
+          : [
+              'When a file is ready, the app only sends “video” or “photo” and the number of parts.',
+              'Nothing else: no file, no name, no size, no identifier, no cookie.',
+              'The server adds these up per day and does not write them to its logs.',
+              'So nobody can tell who uses WhatMedia, or how many different people: only how many files were prepared.',
+              'You can turn counting off in the app footer.',
+            ]
+        ).map((x) => <li>{x}</li>)
+      }
+    </ul>
+    <p>
+      {fr ? 'Les données brutes sont publiques : ' : 'The raw data is public: '}
+      <a href="/api/v1/stats">/api/v1/stats</a>.
+      {fr ? ' Le code du compteur est ' : ' The counter code is '}
+      <a href={`${REPO_URL}/blob/main/apps/api/src/stats.ts`}>{fr ? 'ouvert' : 'open source'}</a>.
+    </p>
+  </article>
+  <script is:inline src="/stats.js" defer></script>
+</BaseLayout>

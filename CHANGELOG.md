@@ -4,6 +4,11 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) · Versions : 
 
 ## [Unreleased]
 
+### Statistiques
+- Compteur anonyme de fichiers préparés : l'app envoie seulement le type (vidéo ou photo) et le nombre de parties, sans identifiant ni cookie, et le serveur ne garde que des totaux par jour, sans journaliser ces envois. Désactivable dans le pied de page de l'app.
+- Page publique « Statistiques » et bandeau de chiffres sur l'accueil, affichés seulement à partir de 100 fichiers. Badges du README : fichiers préparés, étoiles, contributeurs, dernier commit.
+- Politique de confidentialité mise à jour.
+
 ### Design
 - Nouveau design du site, mobile d’abord : typographie système Apple (SF Pro sur iPhone, iPad et Mac, Inter ailleurs), sans italique, vraies captures de l’app en WebP dans des cadres de téléphone, carrousel horizontal sur mobile, sections sombres, boutons pilule, apparitions au défilement en CSS seul (désactivées si l’utilisateur limite les animations).
 - Application harmonisée avec le site (logo, polices).

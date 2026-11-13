@@ -139,6 +139,7 @@ export const fr = {
   footerPrivacyHref: '/confidentialite',
   footerLegalHref: '/mentions',
   footerLegal: 'Mentions légales',
+  statsOptIn: 'Compter anonymement mes fichiers préparés (seulement « vidéo » ou « photo » et le nombre de parties, rien d’autre).',
   disclaimer: 'WhatMedia n’est pas affilié à WhatsApp ni à Meta Platforms, Inc.',
   footerCredit: 'Un projet open source Nealix · Licence MIT · v{version}',
 };
@@ -283,6 +284,7 @@ export const en: Translations = {
   footerPrivacyHref: '/en/privacy',
   footerLegalHref: '/en/legal',
   footerLegal: 'Legal notice',
+  statsOptIn: 'Anonymously count my prepared files (only “video” or “photo” and the number of parts, nothing else).',
   disclaimer: 'WhatMedia is not affiliated with WhatsApp or Meta Platforms, Inc.',
   footerCredit: 'An open source Nealix project · MIT License · v{version}',
 };

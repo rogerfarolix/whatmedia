@@ -113,6 +113,34 @@ describe('Fallback API Endpoints', () => {
     expect(res.statusCode).toBe(415);
   });
 
+  it('counts anonymous usage events and only publishes totals above the threshold', async () => {
+    const send = (payload: unknown) =>
+      app.inject({ method: 'POST', url: '/api/v1/stats/event', payload: payload as Record<string, unknown> });
+
+    const before = (await app.inject({ method: 'GET', url: '/api/v1/stats' })).json();
+    expect(before.public).toBe(false);
+    expect(before.threshold).toBe(3);
+
+    expect((await send({ kind: 'video', parts: 3 })).statusCode).toBe(204);
+    expect((await send({ kind: 'photo', parts: 1 })).statusCode).toBe(204);
+    expect((await send({ kind: 'video' })).statusCode).toBe(204);
+
+    const after = (await app.inject({ method: 'GET', url: '/api/v1/stats' })).json();
+    expect(after.totals).toEqual({ files: 3, videos: 2, photos: 1, parts: 5 });
+    expect(after.public).toBe(true);
+    expect(after.months).toHaveLength(1);
+
+    const badge = (await app.inject({ method: 'GET', url: '/api/v1/stats/badge' })).json();
+    expect(badge).toMatchObject({ schemaVersion: 1, label: 'fichiers préparés', message: '3' });
+  });
+
+  it('rejects malformed usage events', async () => {
+    for (const payload of [{ kind: 'audio', parts: 1 }, { kind: 'video', parts: 0 }, { kind: 'video', parts: 999 }, {}]) {
+      const res = await app.inject({ method: 'POST', url: '/api/v1/stats/event', payload });
+      expect(res.statusCode).toBe(400);
+    }
+  });
+
   it('unknown jobs return 404', async () => {
     expect((await app.inject({ method: 'GET', url: '/api/v1/jobs/unknown' })).statusCode).toBe(404);
     expect((await app.inject({ method: 'GET', url: '/api/v1/jobs/unknown/files/1' })).statusCode).toBe(404);

@@ -34,7 +34,7 @@ RUN apk add --no-cache ffmpeg
 WORKDIR /app
 
 # Non-root user (node:node is UID 1000)
-RUN mkdir -p /data/jobs && chown -R node:node /data/jobs
+RUN mkdir -p /data/jobs /data/stats && chown -R node:node /data/jobs /data/stats
 
 COPY --from=builder /app /app
 

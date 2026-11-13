@@ -10,6 +10,10 @@ Prepare your videos and photos for WhatsApp status, right on your phone.
 [Ouvrir l’app](https://whatmedia.nealix.org/app/) · [Site](https://whatmedia.nealix.org) · [Fonctionnalités](https://whatmedia.nealix.org/fonctionnalites/) · [Contribuer](CONTRIBUTING.md)
 
 [![CI](https://github.com/rogerfarolix/whatmedia/actions/workflows/ci.yml/badge.svg)](https://github.com/rogerfarolix/whatmedia/actions/workflows/ci.yml)
+[![Fichiers préparés](https://img.shields.io/endpoint?url=https%3A%2F%2Fwhatmedia.nealix.org%2Fapi%2Fv1%2Fstats%2Fbadge)](https://whatmedia.nealix.org/statistiques/)
+[![Étoiles GitHub](https://img.shields.io/github/stars/rogerfarolix/whatmedia?style=flat&label=%C3%A9toiles&color=0B0F1A)](https://github.com/rogerfarolix/whatmedia/stargazers)
+[![Contributeurs](https://img.shields.io/github/contributors/rogerfarolix/whatmedia?label=contributeurs&color=0B0F1A)](https://github.com/rogerfarolix/whatmedia/graphs/contributors)
+[![Dernier commit](https://img.shields.io/github/last-commit/rogerfarolix/whatmedia?label=dernier%20commit&color=0B0F1A)](https://github.com/rogerfarolix/whatmedia/commits/main)
 ![Licence MIT](https://img.shields.io/badge/licence-MIT-0B0F1A)
 ![PWA](https://img.shields.io/badge/PWA-iOS%2016.4%2B%20%C2%B7%20Android-FF5A1F)
 
@@ -30,6 +34,7 @@ Une vidéo nette dans ta galerie arrive souvent floue, délavée ou coupée dans
 - **Sélection multiple** : jusqu’à 20 photos et vidéos traitées automatiquement, puis « Tout partager ».
 - **Serveur de secours** facultatif, uniquement avec ton accord, fichier supprimé sous 15 minutes.
 - Gratuit, sans compte, sans traceur, installable, utilisable hors ligne, en français et en anglais.
+- [Statistiques publiques](https://whatmedia.nealix.org/statistiques/) : un compteur anonyme de fichiers préparés (type et nombre de parties seulement, désactivable), jamais de personnes.
 
 > WhatMedia ne désactive pas la compression de WhatsApp : personne ne le peut. Il prépare le meilleur fichier de départ possible. Aucune mesure de qualité n’est publiée tant qu’elle n’a pas été faite sur de vrais statuts WhatsApp ([protocole](docs/08-TESTS-QUALITE.md)).
 

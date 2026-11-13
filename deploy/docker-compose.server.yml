@@ -46,6 +46,7 @@ services:
     cap_drop: [ALL]
     volumes:
       - jobs_data:/data/jobs
+      - stats_data:/data/stats
     ports:
       - "127.0.0.1:8097:3000"
     environment:
@@ -62,6 +63,8 @@ services:
       RATE_LIMIT_PER_HOUR: 10
       TRUST_PROXY_HOPS: 2 # nginx → web (caddy) → api
       LOG_LEVEL: info
+      STATS_FILE: /data/stats/stats.json
+      STATS_PUBLIC_THRESHOLD: 100 # totals stay hidden below this many files
     deploy:
       resources:
         limits:
@@ -76,3 +79,4 @@ services:
 
 volumes:
   jobs_data:
+  stats_data:

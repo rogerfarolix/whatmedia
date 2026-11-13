@@ -8,7 +8,7 @@ interface Props {
 }
 const { lang } = Astro.props;
 const fr = lang === 'fr';
-const updated = fr ? 'Dernière mise à jour : 10 novembre 2026' : 'Last updated: 10 November 2026';
+const updated = fr ? "Dernière mise à jour : 13 novembre 2026" : "Last updated: 13 November 2026";
 const title = fr ? 'Politique de confidentialité' : 'Privacy policy';
 const description = fr
   ? 'Quelles données WhatMedia traite, où, et combien de temps : traitement sur le téléphone, serveur de secours avec accord, aucun cookie, aucun traceur.'
@@ -25,7 +25,7 @@ const description = fr
           <ul>
             <li>Tes photos et vidéos sont traitées dans ton navigateur, sur ton appareil. Elles ne sont pas envoyées.</li>
             <li>Exception : le serveur de secours, uniquement si tu l’acceptes pour un fichier donné. Ce fichier est supprimé au plus tard 15 minutes après le traitement.</li>
-            <li>Aucun compte, aucun cookie, aucune mesure d’audience, aucun traceur publicitaire.</li>
+            <li>Aucun compte, aucun cookie, aucun traceur publicitaire. Seul un compteur anonyme de fichiers préparés existe, désactivable.</li>
           </ul>
 
           <h2>1. Responsable du traitement</h2>
@@ -47,8 +47,11 @@ const description = fr
           <h2>4. Journaux techniques</h2>
           <p>Comme tout site web, le serveur enregistre des journaux techniques : adresse IP, date, page ou adresse appelée, navigateur. Ils servent à la sécurité et à limiter les abus (10 envois au serveur de secours par heure et par adresse). Ils ne contiennent jamais le contenu ni le nom de tes fichiers. Ils sont conservés 14 jours au maximum pour le serveur web, et dans une rotation limitée à 30 Mo pour le service de traitement, puis effacés.</p>
 
+          <h2>4 bis. Compteur anonyme</h2>
+          <p>Quand un fichier est prêt, l’application envoie seulement « vidéo » ou « photo » et le nombre de parties, pour afficher des <a href={routes.statistics.fr}>statistiques publiques</a>. Aucun fichier, nom, taille, identifiant ni cookie n’est envoyé, et ces envois ne sont pas inscrits dans les journaux. Le serveur ne garde que des totaux par jour. Tu peux désactiver ce comptage dans le pied de page de l’application ; ton choix est enregistré dans ton navigateur.</p>
+
           <h2>5. Stockage local et cookies</h2>
-          <p>WhatMedia ne dépose aucun cookie. L’application enregistre seulement dans ton navigateur (stockage local) ta langue, ton dernier format choisi et le fait d’avoir masqué le bandeau d’installation, ainsi que ses propres fichiers pour fonctionner hors ligne. Tu peux tout effacer depuis les réglages de ton navigateur.</p>
+          <p>WhatMedia ne dépose aucun cookie. L’application enregistre seulement dans ton navigateur (stockage local) ta langue, ton dernier format choisi et ton choix sur le compteur anonyme, ainsi que ses propres fichiers pour fonctionner hors ligne. Tu peux tout effacer depuis les réglages de ton navigateur.</p>
 
           <h2>6. Aucun service tiers</h2>
           <p>Polices, scripts et images sont servis depuis whatmedia.nealix.org. Aucune requête n’est faite vers Google, un réseau publicitaire ou un outil de mesure d’audience.</p>
@@ -65,7 +68,7 @@ const description = fr
           <ul>
             <li>Your photos and videos are processed in your browser, on your device. They are not uploaded.</li>
             <li>Exception: the fallback server, only if you accept it for a given file. That file is deleted within 15 minutes after processing at the latest.</li>
-            <li>No account, no cookies, no analytics, no ad trackers.</li>
+            <li>No account, no cookies, no ad trackers. Only an anonymous, optional counter of prepared files.</li>
           </ul>
 
           <h2>1. Data controller</h2>
@@ -87,8 +90,11 @@ const description = fr
           <h2>4. Technical logs</h2>
           <p>Like any website, the server keeps technical logs: IP address, date, page or address requested, browser. They are used for security and to limit abuse (10 fallback uploads per hour per address). They never contain the content or name of your files. They are kept for 14 days at most for the web server, and within a rotation limited to 30 MB for the processing service, then deleted.</p>
 
+          <h2>4a. Anonymous counter</h2>
+          <p>When a file is ready, the app only sends “video” or “photo” and the number of parts, to show <a href={routes.statistics.en}>public statistics</a>. No file, name, size, identifier or cookie is sent, and these requests are not written to the logs. The server only keeps daily totals. You can turn this counting off in the app footer; your choice is stored in your browser.</p>
+
           <h2>5. Local storage and cookies</h2>
-          <p>WhatMedia sets no cookies. The app only stores in your browser (local storage) your language, your last chosen format and whether you hid the install banner, plus its own files to work offline. You can clear all of it from your browser settings.</p>
+          <p>WhatMedia sets no cookies. The app only stores in your browser (local storage) your language, your last chosen format and your choice about the anonymous counter, plus its own files to work offline. You can clear all of it from your browser settings.</p>
 
           <h2>6. No third-party services</h2>
           <p>Fonts, scripts and images are served from whatmedia.nealix.org. No request is made to Google, an ad network or an analytics tool.</p>

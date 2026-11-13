@@ -15,6 +15,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { buildFfmpegArgs, buildImageArgs } from './ffmpeg/builder.js';
 import { runFfprobe, sniffMediaType, toMediaInfo } from './ffmpeg/probe.js';
 import { JobQueue } from './queue.js';
+import { StatsStore, type StatKind } from './stats.js';
 
 export const API_VERSION = '1.1.0';
 
@@ -36,6 +37,11 @@ const RATE_LIMIT_PER_HOUR = Math.max(1, env('RATE_LIMIT_PER_HOUR', 10));
 /** Number of reverse proxies in front of the API (nginx → caddy → api = 2). 0 = trust none. */
 const TRUST_PROXY_HOPS = env('TRUST_PROXY_HOPS', 0);
 const PUBLIC_ORIGIN = process.env.PUBLIC_ORIGIN;
+const STATS_FILE = process.env.STATS_FILE || '/data/stats/stats.json';
+/** Totals are only shown publicly once this many files have been prepared */
+const STATS_PUBLIC_THRESHOLD = env('STATS_PUBLIC_THRESHOLD', 100);
+const MAX_PARTS_PER_EVENT = 60;
+export const stats = new StatsStore(STATS_FILE, STATS_PUBLIC_THRESHOLD);
 const MAX_SIZE_RETRIES = 2;
 
 /** The server always has ffmpeg: every capability is available. */
@@ -269,6 +275,41 @@ async function processJob(job: Job, log: FastifyInstance['log']): Promise<void> 
 }
 
 const routes: FastifyPluginAsync = async (server) => {
+  // Anonymous usage counter (docs/04-API.md §stats). logLevel 'warn': these requests are never
+  // logged, so not even the technical log keeps an IP address next to a usage event.
+  server.post<{ Body: { kind?: unknown; parts?: unknown } }>(
+    '/stats/event',
+    { logLevel: 'warn', config: { rateLimit: { max: 120, timeWindow: '1 hour' } } },
+    async (request, reply) => {
+      const body = (request.body ?? {}) as { kind?: unknown; parts?: unknown };
+      const kind = body.kind;
+      const parts = Number(body.parts ?? 1);
+      if ((kind !== 'video' && kind !== 'photo') || !Number.isInteger(parts) || parts < 1 || parts > MAX_PARTS_PER_EVENT) {
+        throw server.httpErrors.badRequest('Expected { kind: "video" | "photo", parts: 1..60 }');
+      }
+      stats.record(kind as StatKind, parts);
+      return reply.status(204).send();
+    },
+  );
+
+  server.get('/stats', { logLevel: 'warn' }, async (_request, reply) => {
+    reply.header('Cache-Control', 'public, max-age=300');
+    return stats.summary();
+  });
+
+  // https://shields.io/badges/endpoint-badge
+  server.get<{ Querystring: { lang?: string } }>('/stats/badge', { logLevel: 'warn' }, async (request, reply) => {
+    const s = stats.summary();
+    const en = request.query.lang === 'en';
+    reply.header('Cache-Control', 'public, max-age=3600');
+    return {
+      schemaVersion: 1,
+      label: en ? 'files prepared' : 'fichiers préparés',
+      message: s.public ? s.totals.files.toLocaleString(en ? 'en-US' : 'fr-FR') : en ? 'counting' : 'comptage en cours',
+      color: 'FF5A1F',
+    };
+  });
+
   server.get('/health', { logLevel: 'warn' }, async () => ({
     status: 'ok',
     version: API_VERSION,
@@ -465,6 +506,7 @@ export async function start(): Promise<void> {
   cleanDataDir();
   const server = await buildServer();
   const shutdown = async () => {
+    stats.flush();
     for (const job of jobs.values()) removeJob(job);
     await server.close();
     process.exit(0);

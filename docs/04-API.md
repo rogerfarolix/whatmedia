@@ -74,3 +74,13 @@ Les schémas de requête/réponse vivent dans `packages/core/src/api-schema.ts` 
 
 ## 5. OpenAPI
 Générer `apps/api/openapi.json` via `@fastify/swagger` ; publier la doc sur `/api/docs` en développement seulement.
+
+## 6. Compteur anonyme d'utilisation
+
+Aucun identifiant, aucune adresse IP, aucun nom de fichier n'est enregistré : seulement des totaux par jour, dans `STATS_FILE` (volume `stats_data`). Ces routes ne sont pas journalisées.
+
+| Route | Rôle |
+|---|---|
+| `POST /api/v1/stats/event` | Corps `{ "kind": "video" ou "photo", "parts": 1 à 60 }`, réponse `204`. Envoyé par l'app après chaque fichier préparé, sauf si l'utilisateur a désactivé le comptage. Limite : 120 par heure et par adresse. |
+| `GET /api/v1/stats` | `{ since, public, threshold, totals: { files, videos, photos, parts }, months: [{ month, files, parts }] }`. `public` est faux tant que `totals.files` est sous `STATS_PUBLIC_THRESHOLD` (100 par défaut) : le site masque alors les chiffres. |
+| `GET /api/v1/stats/badge` | Format [Shields endpoint](https://shields.io/badges/endpoint-badge) pour le badge du README (`?lang=en` pour l'anglais). |
