@@ -23,6 +23,7 @@ import { runServerJob, checkServerAvailable, ServerError } from './utils/serverC
 import { normalizeMediaFile, MAX_LOCAL_BYTES, formatBytes } from './utils/format';
 import { useTranslation, type TranslationKey } from './i18n/useTranslation';
 import { useWakeLock } from './utils/useWakeLock';
+import { useUpdateReady } from './utils/appUpdate';
 
 export interface AppError {
   key: TranslationKey;
@@ -117,6 +118,12 @@ export const App: React.FC = () => {
   const [batchStopped, setBatchStopped] = React.useState(false);
   /** Set when a file of a batch is retried alone: its result goes back into the batch */
   const retryItemIdRef = React.useRef<string | null>(null);
+
+  // A new version is already installed: reload as soon as nothing is in progress (home screen only).
+  const updateReady = useUpdateReady();
+  React.useEffect(() => {
+    if (updateReady && screen === 'home') window.location.reload();
+  }, [updateReady, screen]);
 
   const processing = screen === 'processing';
   useWakeLock(processing);

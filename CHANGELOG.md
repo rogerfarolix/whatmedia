@@ -4,6 +4,9 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) · Versions : 
 
 ## [Unreleased]
 
+### Mises à jour de l'app installée
+- Une app déjà installée se met à jour toute seule : quand une nouvelle version est prête, elle se recharge dès que l'utilisateur est sur l'écran d'accueil (jamais pendant un traitement ou un partage). Avant, il fallait ouvrir l'app deux fois. La recherche de mise à jour se fait aussi à chaque retour au premier plan et toutes les 30 minutes.
+
 ### Statistiques
 - Compteur anonyme de fichiers préparés : l'app envoie seulement le type (vidéo ou photo) et le nombre de parties, sans identifiant ni cookie, et le serveur ne garde que des totaux par jour, sans journaliser ces envois. Désactivable dans le pied de page de l'app.
 - Page publique « Statistiques » et bandeau de chiffres sur l'accueil, affichés seulement à partir de 100 fichiers. Badges du README : fichiers préparés, étoiles, contributeurs, dernier commit.
