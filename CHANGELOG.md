@@ -4,6 +4,9 @@ Format : [Keep a Changelog](https://keepachangelog.com/fr/1.1.0/) · Versions : 
 
 ## [Unreleased]
 
+### Reprise après mise en arrière-plan
+- Quand on quittait l'app pendant une optimisation sur iPhone, iOS pouvait tuer le Web Worker : l'écran restait bloqué et « Annuler » ne répondait plus, jusqu'à fermer l'app. « Annuler » s'arrête maintenant toujours tout de suite (les parties déjà terminées sont gardées). Au retour dans l'app, un worker qui ne répond plus est détecté en moins de 10 s, remplacé, et le traitement redémarre automatiquement (nouveau worker, puis fil principal en dernier recours).
+
 ### Mises à jour de l'app installée
 - Une app déjà installée se met à jour toute seule : quand une nouvelle version est prête, elle se recharge dès que l'utilisateur est sur l'écran d'accueil (jamais pendant un traitement ou un partage). Avant, il fallait ouvrir l'app deux fois. La recherche de mise à jour se fait aussi à chaque retour au premier plan et toutes les 30 minutes.
 
